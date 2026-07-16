@@ -12,8 +12,7 @@ const buttonVariants = cva(
           "bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90",
         outline:
           "border bg-[var(--background)] hover:bg-[var(--accent)] hover:text-[var(--accent-foreground)]",
-        ghost:
-          "hover:bg-[var(--accent)] hover:text-[var(--accent-foreground)]",
+        ghost: "hover:bg-[var(--accent)] hover:text-[var(--accent-foreground)]",
       },
       size: {
         default: "h-9 px-4 py-2",
