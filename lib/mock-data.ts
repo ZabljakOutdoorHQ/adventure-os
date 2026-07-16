@@ -131,7 +131,7 @@ export const projects: Project[] = [
 export const people: Person[] = [
   {
     id: "boris",
-    name: "Boris Stijović",
+    name: "Boris Stijepović",
     role: "Owner / product lead",
     connectedTo: ["da", "multiday", "wild", "xelements", "wbata", "discover"],
   },
