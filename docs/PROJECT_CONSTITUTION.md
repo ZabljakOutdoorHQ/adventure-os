@@ -1,0 +1,112 @@
+# Adventure OS — Project Constitution
+
+## 1. Mission
+
+Adventure OS is the spatial operating layer for Boris Stijepovic, Durmitor Adventure and connected organisations, brands and projects.
+
+It exists to reduce cognitive load, connect fragmented information and make important work reachable in **three clicks or one question**.
+
+Adventure OS is not an ERP replacement, a second wiki, another task manager or a copy of every source system. It is a visual and agent-accessible layer above the tools that already perform specialised work.
+
+## 2. North Star
+
+Every important item must be reachable in three clicks or one question, with its source, freshness and confidence visible.
+
+A feature that does not materially improve understanding, retrieval, coordination or execution should not be built.
+
+## 3. Product principles
+
+1. **Human clarity before automation.** The system must reduce work, not create another system Boris must maintain.
+2. **Preserve working reality.** Existing tools remain authoritative until a migration is explicitly approved.
+3. **Read before write.** Every integration starts read-only. Controlled writes come only after the source contract is understood and tested.
+4. **One operational view, not one physical database.** Adventure OS may present unified information while data remains in specialist systems.
+5. **Graph over folders.** People, projects, bookings, documents, tasks, payments, assets and messages are connected entities, not isolated files.
+6. **Source and confidence are mandatory.** Derived information must state where it came from and whether a relationship is confirmed, probable or suggested.
+7. **Reversible actions.** Consequential changes require audit logs, user confirmation and a recovery path.
+8. **Technology stays subordinate.** The system serves real outdoor operations, people and experiences. It must not turn the organisation into a technology story.
+9. **Progressive complexity.** Start with useful visibility. Add graph, automation and agents only where they remove real work.
+10. **No silent agent authority.** AI may search, classify, summarise and propose. Sending, publishing, deleting, moving money or changing bookings requires explicit authority.
+
+## 4. Authoritative systems
+
+Until changed by an approved architecture decision:
+
+- Adventure Hub is authoritative for daily activity catalogue, booking and booking lifecycle data available through its API.
+- Plane is authoritative for operational tasks once a task is accepted into the shared task system.
+- Docmost is authoritative for maintained internal wiki content.
+- Documenso is authoritative for document-signing state and signed outputs.
+- Google Workspace is authoritative for original email, Drive documents and Calendar events.
+- Notion remains authoritative for existing Multiday data until a deliberate migration is completed.
+- Payload CMS is authoritative for public website content.
+- GitHub is authoritative for code, technical decisions and versioned system documentation.
+- Adventure OS stores links, indexes, derived summaries, graph relationships, preferences and audit records; it does not silently replace source records.
+
+## 5. Safety boundaries
+
+Adventure OS must never, without explicit approval:
+
+- delete or move source files;
+- merge duplicate people, companies, bookings or payments;
+- modify production bookings or financial records;
+- send external messages;
+- publish content;
+- sign documents;
+- allocate money or equipment;
+- expose secrets or personal information beyond the user's permissions.
+
+Production credentials never enter Git, prompts, screenshots or documentation.
+
+## 6. Decision hierarchy
+
+When instructions conflict, use this order:
+
+1. legal, privacy and safety obligations;
+2. this Constitution;
+3. approved architecture decisions in `docs/decisions/`;
+4. authoritative domain and integration documents;
+5. current sprint acceptance criteria;
+6. agent implementation preferences.
+
+## 7. Knowledge quality
+
+Every knowledge record or relation should support:
+
+- source reference;
+- observed or effective date;
+- last verification date;
+- owner or responsible organisation;
+- confidence: `confirmed`, `probable`, `suggested`;
+- lifecycle: `current`, `superseded`, `archived`, `unknown`.
+
+An AI summary is not a fact merely because it is written confidently.
+
+## 8. Development governance
+
+- Work is performed through focused branches and pull requests.
+- CI must pass before merge.
+- New dependencies and integrations require a documented reason.
+- Mock data precedes live data.
+- Read-only precedes write access.
+- A stable API or adapter boundary precedes UI coupling.
+- ChatDev or other agent teams may implement and test, but do not determine product truth.
+- Major decisions are recorded as ADRs in `docs/decisions/`.
+
+## 9. Success criteria
+
+Adventure OS succeeds when Boris can:
+
+- understand what needs attention without checking six applications;
+- open a person, project, group or organisation and see its connected context;
+- find scattered information without remembering its storage location;
+- receive concise, source-grounded briefings;
+- convert notes, messages and observations into organised work with minimal manual entry;
+- trust that automation will not make consequential changes behind his back.
+
+## 10. Non-goals for the initial phases
+
+- replacing all existing operational tools;
+- migrating the full historical archive;
+- building a generic commercial SaaS product;
+- autonomous financial or booking decisions;
+- real 3D visual effects before spatial navigation proves useful;
+- indexing every personal file before access, privacy and retention rules are defined.
