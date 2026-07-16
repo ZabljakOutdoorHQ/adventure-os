@@ -32,5 +32,16 @@ jobs:
       - name: Build
         shell: bash
         run: |
-          set -o pipefail
-          bun run build 2>&1 | tail -120
+          set +e
+          bun run build > build.log 2>&1
+          status=$?
+          tail -160 build.log
+          exit $status
+
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: build.log
+          if-no-files-found: ignore
