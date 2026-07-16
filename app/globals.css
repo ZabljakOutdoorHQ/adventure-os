@@ -6,9 +6,15 @@
   --foreground: #17211c;
   --card: #ffffff;
   --card-foreground: #17211c;
+  --primary: #17211c;
+  --primary-foreground: #ffffff;
+  --secondary: #e8ebe7;
+  --secondary-foreground: #17211c;
   --muted: #e8ebe7;
   --muted-foreground: #66716b;
   --border: #d8ded9;
+  --input: #d8ded9;
+  --ring: #6d8577;
   --accent: #dfe9e2;
   --accent-foreground: #1e3928;
   --warning: #f4e8cf;
@@ -34,6 +40,7 @@ body {
 }
 
 button,
-input {
+input,
+textarea {
   font: inherit;
 }
