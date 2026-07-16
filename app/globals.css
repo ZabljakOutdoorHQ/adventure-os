@@ -1,0 +1,39 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+:root {
+  --background: #f4f5f3;
+  --foreground: #17211c;
+  --card: #ffffff;
+  --card-foreground: #17211c;
+  --muted: #e8ebe7;
+  --muted-foreground: #66716b;
+  --border: #d8ded9;
+  --accent: #dfe9e2;
+  --accent-foreground: #1e3928;
+  --warning: #f4e8cf;
+  --danger: #f4dddd;
+  --radius: 1rem;
+}
+
+* {
+  box-sizing: border-box;
+  border-color: var(--border);
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+button,
+input {
+  font: inherit;
+}
