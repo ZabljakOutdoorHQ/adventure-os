@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "check": "biome check .",
+    "check": "biome lint .",
+    "format": "biome format --write .",
+    "format:check": "biome format .",
     "check:fix": "biome check --write .",
     "typecheck": "tsc --noEmit",
     "test:e2e": "playwright test"
