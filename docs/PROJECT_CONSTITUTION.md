@@ -26,6 +26,10 @@ A feature that does not materially improve understanding, retrieval, coordinatio
 8. **Technology stays subordinate.** The system serves real outdoor operations, people and experiences. It must not turn the organisation into a technology story.
 9. **Progressive complexity.** Start with useful visibility. Add graph, automation and agents only where they remove real work.
 10. **No silent agent authority.** AI may search, classify, summarise and propose. Sending, publishing, deleting, moving money or changing bookings requires explicit authority.
+11. **The canonical domain belongs to Adventure OS.** Source systems implement or expose parts of the domain; they do not define it.
+12. **Every canonical entity has one primary domain.** If a concept does not clearly fit the existing Domain Landscape, review the model before introducing it.
+13. **No parallel models.** An AI agent may not introduce a parallel domain model or documentation hierarchy without an explicit reason and migration plan.
+14. **Improve or disprove.** Every model change must improve the existing model or demonstrate why the existing model is wrong.
 
 ## 4. Authoritative systems
 
