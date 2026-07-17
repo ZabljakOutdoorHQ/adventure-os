@@ -4,7 +4,7 @@
 
 This document defines the shared vocabulary and core entities used by the UI, knowledge graph, integrations and AI agents. It prevents the same word from meaning different things across Adventure Hub, Plane, Notion, Drive and internal conversation.
 
-The conceptual business domains that organise these canonical entities are defined in [`docs/domain/DOMAIN_LANDSCAPE.md`](domain/DOMAIN_LANDSCAPE.md). This document defines the entities themselves; the Domain Landscape defines their primary conceptual domains.
+The conceptual business domains that organise these canonical entities are defined in [`docs/domain/DOMAIN_LANDSCAPE.md`](domain/DOMAIN_LANDSCAPE.md). This document defines the entities themselves; the Domain Landscape defines their primary conceptual domains. Canonical relationship types are defined in [`docs/RELATIONSHIPS.md`](RELATIONSHIPS.md).
 
 ## Modelling rule
 
@@ -194,6 +194,8 @@ Every inferred relation uses one of:
 - `confirmed`: directly supported by an authoritative source or human confirmation;
 - `probable`: strongly supported by matching identifiers and context;
 - `suggested`: useful hypothesis requiring review.
+
+The canonical relationship catalogue and service contract live in [`docs/RELATIONSHIPS.md`](RELATIONSHIPS.md). Services should add or return relationship types from that document rather than inventing source-specific links.
 
 ## Lifecycle fields
 
