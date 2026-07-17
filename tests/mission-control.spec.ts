@@ -41,6 +41,18 @@ test("Mission Control shows the daily operational sections with honest empty sta
   }
 });
 
+test("Waiting for me shows a disconnected state when Plane is not configured", async ({
+  page,
+}) => {
+  await page.goto("/");
+
+  await expect(
+    page.getByText(
+      "Not yet connected. Configure Plane to see your tasks here.",
+    ),
+  ).toBeVisible();
+});
+
 test("the Mission Control search banner opens the shared global search dialog", async ({
   page,
 }) => {
