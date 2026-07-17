@@ -135,21 +135,43 @@ export const people: Person[] = [
     role: "Owner / product lead",
     connectedTo: ["da", "multiday", "wild", "xelements", "wbata", "discover"],
   },
-  { id: "misa", name: "Miša", role: "Frontend developer", connectedTo: ["da", "discover"] },
-  { id: "borko", name: "Borko", role: "Infrastructure", connectedTo: ["da", "server"] },
-  { id: "andrija", name: "Andrija Šćepanović", role: "Sampas partner", connectedTo: ["multiday"] },
-  { id: "dejan", name: "Dejan Radonjić", role: "Other Trails partner", connectedTo: ["multiday"] },
+  {
+    id: "misa",
+    name: "Miša",
+    role: "Frontend developer",
+    connectedTo: ["da", "discover"],
+  },
+  {
+    id: "borko",
+    name: "Borko",
+    role: "Infrastructure",
+    connectedTo: ["da", "server"],
+  },
+  {
+    id: "andrija",
+    name: "Andrija Šćepanović",
+    role: "Sampas partner",
+    connectedTo: ["multiday"],
+  },
+  {
+    id: "dejan",
+    name: "Dejan Radonjić",
+    role: "Other Trails partner",
+    connectedTo: ["multiday"],
+  },
 ];
 
 export const attentionItems = [
   {
     title: "Adventure OS",
-    detail: "Functional shell, shadcn foundation and preview are the current delivery path",
+    detail:
+      "Functional shell, shadcn foundation and preview are the current delivery path",
     level: "urgent" as const,
   },
   {
     title: "Multiday migration",
-    detail: "WeTravel should become the system of record before further Notion expansion",
+    detail:
+      "WeTravel should become the system of record before further Notion expansion",
     level: "watch" as const,
   },
   {

@@ -3,10 +3,13 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Adventure OS",
-  description: "Visual command centre for outdoor operations and connected projects.",
+  description:
+    "Visual command centre for outdoor operations and connected projects.",
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
       <body>{children}</body>
