@@ -24,16 +24,17 @@ Until a private component registry is formalised:
 
 The first prototype may use or implement shadcn-compatible versions of:
 
-- Button
-- Card
+- Button — implemented
+- Card — implemented
 - Badge
-- Input
+- Input — implemented
 - Textarea
 - Separator
 - Tooltip
 - Avatar
 - Dropdown menu
-- Command palette
+- Dialog — implemented (Radix); backs the global search overlay
+- Command palette — the global search dialog is a structural placeholder only; fuzzy filtering and keyboard result navigation are not yet built
 - Sheet / drawer
 - Tabs
 - Scroll area
@@ -43,9 +44,11 @@ The first prototype may use or implement shadcn-compatible versions of:
 
 These are composed product blocks, not new UI primitives:
 
-- Application shell
+- Application shell — implemented (`components/shell/app-shell.tsx`)
+- Top navigation — implemented (`components/shell/top-nav.tsx`), replaces the earlier left-sidebar tab shell
+- Right context panel — implemented as a structural placeholder (`components/shell/right-context-panel.tsx`); not yet wired to a selected entity
+- Global command bar — implemented as a structural placeholder (`components/shell/global-search.tsx`)
 - Domain switcher
-- Global command bar
 - Attention signal card
 - Project card
 - Entity summary
