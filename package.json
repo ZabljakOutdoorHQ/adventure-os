@@ -12,7 +12,8 @@
     "check:fix": "biome check --write .",
     "typecheck": "tsc --noEmit",
     "test:e2e": "playwright test",
-    "hub:smoke": "bun run scripts/adventure-hub-smoke.ts"
+    "hub:smoke": "bun run scripts/adventure-hub-smoke.ts",
+    "plane:smoke": "bun run scripts/plane-smoke.ts"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.10",
