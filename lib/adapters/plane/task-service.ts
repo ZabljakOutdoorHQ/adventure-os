@@ -6,6 +6,7 @@ import type {
 } from "@/lib/tasks/types";
 import { PlaneClient, type PlaneClientConfig } from "./client";
 import { toCanonicalTask } from "./mapping";
+import type { PlaneProject } from "./types";
 
 // The only place in this codebase that is allowed to know Plane exists
 // beyond lib/adapters/plane itself. Implements the canonical TaskService —
@@ -44,14 +45,13 @@ export class PlaneTaskService implements TaskService {
   //
   // Not handled: pagination beyond each endpoint's first page. Plane's
   // pagination contract (limit/offset vs cursor) isn't fully confirmed
-  // (see docs/integrations/plane.md), and this adapter isn't connected to
-  // any UI yet — adding untested pagination logic now would be guessing at
-  // a contract, not implementing a confirmed one.
+  // (see docs/integrations/plane.md) — adding untested pagination logic
+  // now would be guessing at a contract, not implementing a confirmed one.
   async listTasks(filter?: TaskFilter): Promise<CanonicalTask[]> {
     const projects = await this.client.listProjects();
     const perProject = await Promise.all(
       projects.results.map((project) =>
-        this.listTasksForProject(project.id, filter),
+        this.listTasksForProject(project, filter),
       ),
     );
     const tasks = perProject.flat();
@@ -64,15 +64,15 @@ export class PlaneTaskService implements TaskService {
   }
 
   private async listTasksForProject(
-    projectId: string,
+    project: PlaneProject,
     filter?: TaskFilter,
   ): Promise<CanonicalTask[]> {
     const [workItems, states] = await Promise.all([
       this.client.listWorkItems(
-        projectId,
+        project.id,
         filter?.assigneeId ? { assignee: filter.assigneeId } : undefined,
       ),
-      this.client.listStates(projectId),
+      this.client.listStates(project.id),
     ]);
     const stateById = new Map(states.results.map((state) => [state.id, state]));
 
@@ -80,6 +80,7 @@ export class PlaneTaskService implements TaskService {
       toCanonicalTask(
         workItem,
         workItem.state ? stateById.get(workItem.state) : undefined,
+        project.name,
       ),
     );
   }

@@ -11,6 +11,7 @@ import type { PlaneState, PlaneWorkItem } from "./types";
 export function toCanonicalTask(
   workItem: PlaneWorkItem,
   state: PlaneState | undefined,
+  projectName: string | undefined,
   observedAt: string = new Date().toISOString(),
 ): CanonicalTask {
   return {
@@ -29,6 +30,10 @@ export function toCanonicalTask(
         system: "plane",
         objectType: "work_item",
         externalId: workItem.id,
+        // Project name, not a deep link — the work-item URL format isn't
+        // confirmed anywhere in docs/integrations/plane.md's sources, so
+        // `url` is deliberately left unset rather than guessed.
+        title: projectName,
         observedAt,
       },
     ],

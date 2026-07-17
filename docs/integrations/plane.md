@@ -311,7 +311,33 @@ only establishes the boundary.
   one safe `GET /workspaces/{slug}/projects/` call. Not wired into CI, for
   the same reason as the AdventureHub smoke test: real credentials and
   network egress this repository's CI shouldn't depend on.
-- **Not connected to Mission Control or any other page.**
+
+## Connected to Mission Control's "Waiting for me" card
+
+`lib/task-service-provider.ts` is the composition root: it reads
+`PLANE_ENABLED` plus the existing Plane env vars and returns a
+`TaskServiceStatus` — `{ state: "disabled" }` unless `PLANE_ENABLED` is
+exactly `"true"` and both `PLANE_API_KEY` and `PLANE_WORKSPACE_SLUG` are
+set. It's marked `import "server-only"`, so an accidental import from a
+Client Component fails the build rather than leaking `PLANE_API_KEY` to the
+browser.
+
+`components/mission-control/attention-section.tsx` is an async Server
+Component that calls `getTaskService()` and
+`resolveWaitingForMeViewState()` (`lib/tasks/waiting-for-me.ts`), then
+passes the result to `components/mission-control/waiting-for-me-card.tsx`.
+That card renders one of four states — disconnected, unavailable (Plane
+configured but the live call failed), empty, or populated (sorted overdue,
+then due today, then upcoming, then no due date) — and imports only
+canonical types (`CanonicalTask`, `WaitingForMeViewState`) from
+`lib/tasks`, never anything Plane-shaped.
+
+**This has not been verified against a live workspace** — see "Session
+constraints" above; this environment cannot reach `api.plane.so` even with
+a real key. The disconnected state is the only one exercised in CI/e2e
+(Plane isn't configured there by design); the empty/populated/unavailable
+state logic is covered by unit tests (`lib/tasks/waiting-for-me.test.ts`,
+`bun run test:unit`) against a mock `TaskService`, not a live one.
 
 ## Next steps (not part of this PR)
 

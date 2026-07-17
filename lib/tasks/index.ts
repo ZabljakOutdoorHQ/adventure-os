@@ -1,4 +1,4 @@
-export type { TaskService } from "./task-service";
+export type { TaskService, TaskServiceStatus } from "./task-service";
 export type {
   CanonicalTask,
   CanonicalTaskPriority,
@@ -7,3 +7,5 @@ export type {
   SourceReference,
   TaskFilter,
 } from "./types";
+export { resolveWaitingForMeViewState } from "./waiting-for-me";
+export type { WaitingForMeViewState } from "./waiting-for-me";
