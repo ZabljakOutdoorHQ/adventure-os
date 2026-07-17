@@ -9,7 +9,7 @@ The knowledge graph connects records that currently live in separate systems. It
 The graph consists of:
 
 - **nodes**: entities from `DOMAIN_MODEL.md`;
-- **edges**: typed relationships between nodes;
+- **edges**: typed relationships between nodes, using the canonical catalogue in `RELATIONSHIPS.md`;
 - **source references**: evidence for nodes and edges;
 - **events**: time-stamped changes or observations;
 - **views**: Today, Matrix, Project, Person, TripGroup, Timeline and Search.
@@ -41,28 +41,28 @@ Additional types are added only after a real use case requires them.
 
 ## Initial edge types
 
-Examples:
+The canonical relationship catalogue and service contract live in [`docs/RELATIONSHIPS.md`](RELATIONSHIPS.md). The list below is an initial subset, not a separate model:
 
 - `PERSON_MEMBER_OF_ORGANISATION`
 - `PERSON_PARTICIPATES_IN_PROJECT`
-- `PERSON_PARTICIPATES_IN_TRIP_GROUP`
-- `PERSON_ASSIGNED_TO_TASK`
 - `ORGANISATION_OPERATES_BRAND`
 - `PROJECT_BELONGS_TO_BRAND`
 - `PROJECT_HAS_TASK`
-- `PROJECT_REFERENCES_DOCUMENT`
-- `TRIP_GROUP_MANAGED_BY_AGENCY`
+- `TASK_ASSIGNED_TO_PERSON`
+- `ADVENTURE_HAS_ACTIVITY_TYPE`
+- `TOUR_DELIVERS_ADVENTURE`
+- `BOOKING_CONTAINS_BOOKING_ITEM`
+- `BOOKING_ITEM_RESERVES_ADVENTURE`
 - `TRIP_GROUP_HAS_PARTICIPANT`
-- `TRIP_GROUP_HAS_PAYMENT`
-- `TRIP_GROUP_HAS_EXPENSE`
-- `TRIP_GROUP_USES_ASSET`
-- `BOOKING_CONTAINS_ITEM`
-- `BOOKING_CUSTOMER_IS_PERSON`
+- `PERSON_ACTS_AS_PARTICIPANT`
+- `PERSON_GUIDES_TOUR`
+- `ALLOCATION_ASSIGNS_ASSET`
+- `PAYMENT_APPLIES_TO_BOOKING`
+- `PAYMENT_APPLIES_TO_TRIP_GROUP`
+- `DOCUMENT_EVIDENCES_ENTITY`
 - `DOCUMENT_MENTIONS_ENTITY`
 - `MESSAGE_RELATES_TO_ENTITY`
-- `MEETING_PRODUCED_DECISION`
 - `ASSET_LOCATED_AT_LOCATION`
-- `ASSET_ALLOCATED_TO_OPERATION`
 - `EVENT_RECORD_AFFECTS_ENTITY`
 
 Edges are directional but can be queried in both directions.
