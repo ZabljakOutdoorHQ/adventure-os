@@ -68,7 +68,7 @@ them through one internal read API — the foundation every later epic reads fro
   references, events, audit; the internal read API (`getEntity`, `listRelated`,
   `searchById`); confidence + review status persisted end to end; a fixture
   adapter that seeds the **minimum initial relationship set** from
-  `RELATIONSHIPS.md` (20 types) so the graph is exercisable without any live
+  `RELATIONSHIPS.md` (21 types) so the graph is exercisable without any live
   source.
 - Out: `pgvector` semantic index (Epic 9), identity auto-merge (kept as
   *suggested* only, per `KNOWLEDGE_GRAPH.md`), any write-back to a source
@@ -82,7 +82,7 @@ container; the production target is Dokploy/Netcup per `SYSTEM_ARCHITECTURE.md`
 
 - Versioned SQL migrations (`entities`, `edges`, `source_refs`, `events`, `audit`).
 - `lib/graph/*` internal service returning canonical records (never raw adapter shapes).
-- Fixture adapter + seed of the 20-type minimum relationship set.
+- Fixture adapter + seed of the 21-type minimum relationship set.
 - Unit tests: seed → traverse → every result exposes `sourceRefs` + `confidence`.
 
 **Acceptance criteria.**
@@ -169,7 +169,7 @@ Drive documents as canonical `Document` entities with `sourceRefs`.
   (`KNOWLEDGE_GRAPH.md` indexing boundaries).
 
 **Dependencies.** Epic 2 (adapter framework), Epic 1 (graph to store into).
-Google Drive access is available to this workspace (read connectors present).
+Google Drive connector/access must be confirmed for the implementation environment.
 
 **Deliverables.**
 
@@ -681,7 +681,7 @@ deployment`; `deploy: Postgres backup to R2 + restore test (after graph core)`.
    source_refs, events, audit (Epic 1). `S/M`.
 2. **graph: internal read API** — `getEntity`, `listRelated`, `searchById`,
    returning canonical records with source + confidence (Epic 1). `M`.
-3. **graph: fixture adapter** seeding the `RELATIONSHIPS.md` minimum 20-type set;
+3. **graph: fixture adapter** seeding the `RELATIONSHIPS.md` minimum 21-type set;
    traversal test asserts source + confidence on every result (Epic 1). `S/M`.
 4. **adapters: define `SourceAdapter` contract** in `lib` (capabilities/health/
    discover/read/changes) (Epic 2). `S`.
@@ -694,7 +694,7 @@ deployment`; `deploy: Postgres backup to R2 + restore test (after graph core)`.
 8. **drive: read-only `SourceAdapter`** emitting canonical `Document` records
    with `sourceRefs` (Epic 3). `M`.
 9. **notion: read-only `SourceAdapter`** for TripGroup-relevant collections
-   (groups, participants, payments, allocations) (Epic 4). `L`.
+   (groups, participants, payments, expenses, allocations) (Epic 4). `L`.
 10. **tripgroup: first validation slice** — ingest one real TripGroup via the
     read-only adapters and render its connected context read-only from the graph
     (Epic 6). `L`.
