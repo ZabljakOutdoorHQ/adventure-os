@@ -15,9 +15,30 @@ export function RightContextPanel({ open }: { open: boolean }) {
         </div>
         <p className="context-panel-title">No context selected</p>
         <p className="context-panel-body">
-          Open a person, project, organisation or item and its connected context
-          — summary, related entities, documents and source — will appear here.
+          Select an item and its connected context will appear here, with source
+          and freshness shown for everything.
         </p>
+        <ul className="list-disc space-y-1.5 pl-4 text-sm">
+          <li>
+            <strong>Person</strong> — their organisations, projects and recent
+            activity.
+          </li>
+          <li>
+            <strong>Booking</strong> — participants, payments and related
+            documents.
+          </li>
+          <li>
+            <strong>Project</strong> — owner, status, next action and related
+            work.
+          </li>
+          <li>
+            <strong>Organisation</strong> — people, projects and shared history.
+          </li>
+          <li>
+            <strong>Document</strong> — where it lives, who it mentions and what
+            it's linked to.
+          </li>
+        </ul>
       </div>
     </aside>
   );
