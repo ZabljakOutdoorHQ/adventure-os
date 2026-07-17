@@ -1,43 +1,20 @@
-import type {
-  PlanePriority,
-  PlaneState,
-  PlaneStateGroup,
-  PlaneWorkItem,
-} from "./types";
+import type { CanonicalTask } from "@/lib/tasks/types";
+import type { PlaneState, PlaneWorkItem } from "./types";
 
-// Shape matches docs/KNOWLEDGE_GRAPH.md's confirmed SourceReference —
-// "plane" is already a literal in that document's system union.
-export type SourceReference = {
-  system: "plane";
-  objectType: "work_item";
-  externalId: string;
-  observedAt: string;
-};
-
-// Partial canonical Task per docs/DOMAIN_MODEL.md's Task entity and
-// lifecycle fields. Deliberately does NOT include a single `ownerRef` — see
-// docs/integrations/plane.md "Known mismatch": Plane work items can have
-// multiple assignees, and collapsing that to one owner is a decision for
-// whoever wires this into the knowledge graph, not for this mapper.
-export type CanonicalTask = {
-  title: string;
-  status: PlaneStateGroup | "unknown";
-  priority: PlanePriority | null;
-  dueDate: string | null;
-  startDate: string | null;
-  assigneeIds: string[];
-  createdAt: string;
-  updatedAt: string;
-  archivedAt: string | null;
-  sourceRefs: [SourceReference];
-};
-
+// Maps one Plane work item (+ its resolved state, for the canonical status
+// bucket) to the shared canonical Task shape from lib/tasks/types.ts.
+//
+// Deliberately does NOT collapse Plane's multi-assignee array into a single
+// canonical owner — see docs/integrations/plane.md "Known mismatch": that
+// decision belongs to whoever wires this into the knowledge graph, not to
+// this mapper.
 export function toCanonicalTask(
   workItem: PlaneWorkItem,
   state: PlaneState | undefined,
   observedAt: string = new Date().toISOString(),
 ): CanonicalTask {
   return {
+    id: `plane:${workItem.id}`,
     title: workItem.name,
     status: state?.group ?? "unknown",
     priority: workItem.priority ?? null,

@@ -260,6 +260,34 @@ that decision (first assignee? all as separate participant edges?) belongs
 to whoever wires this into the knowledge graph, not to a read-only discovery
 adapter.
 
+## Service interface
+
+Everything Plane-specific is isolated behind one interface,
+`TaskService` (`lib/tasks/task-service.ts`):
+
+```ts
+interface TaskService {
+  getCurrentUser(): Promise<CanonicalTaskUser>;
+  listTasks(filter?: TaskFilter): Promise<CanonicalTask[]>;
+}
+```
+
+`lib/tasks/` (the interface plus `CanonicalTask`, `CanonicalTaskUser`,
+`TaskFilter`, `SourceReference`) has **zero imports from any adapter** —
+verified by grep, not just by convention. `PlaneTaskService`
+(`lib/adapters/plane/task-service.ts`) is the only class that implements the
+interface today; it's also the only place outside `lib/adapters/plane/`
+itself that's allowed to know Plane exists. It does the per-project
+iteration and client-side due-date filtering the confirmed API gaps above
+require, and returns only `CanonicalTask[]` / `CanonicalTaskUser` — never a
+`PlaneWorkItem` or `PlaneUser`.
+
+Mission Control (or any future consumer) would depend on `TaskService` and
+`CanonicalTask` only. Replacing Plane with a different task system later
+means writing a new class that implements `TaskService` — no consumer
+changes. This PR does not wire a `TaskService` into Mission Control; it
+only establishes the boundary.
+
 ## What this PR implements
 
 - `lib/adapters/plane/types.ts` — types for the confirmed shapes above, each
@@ -271,6 +299,11 @@ adapter.
   brief.
 - `lib/adapters/plane/mapping.ts` — the canonical task mapping above, as a
   pure function (`toCanonicalTask(workItem, state)`).
+- `lib/tasks/{types,task-service,index}.ts` — the source-agnostic
+  `TaskService` interface and canonical types (see "Service interface"
+  above). No Plane import anywhere in this directory.
+- `lib/adapters/plane/task-service.ts` — `PlaneTaskService`, the concrete
+  `TaskService` implementation, plus a `createPlaneTaskService()` factory.
 - `.env.example` — `PLANE_API_KEY` (placeholder only — **never a real
   value**), `PLANE_WORKSPACE_SLUG`, `PLANE_API_BASE_URL` (optional,
   self-hosted override).
