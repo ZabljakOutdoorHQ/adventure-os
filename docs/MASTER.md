@@ -19,6 +19,12 @@ The first phase is read-only. Existing systems are not moved, deleted or reorgan
 
 Initial work is limited to inventory, classification, relationship discovery, duplicate detection and proposed future structure.
 
+The authoritative conceptual path is:
+
+`Reality → Domain Landscape → Canonical Entities → Relationships / States / Verbs → Knowledge Graph → Source Systems`
+
+Read [`docs/domain/DOMAIN_LANDSCAPE.md`](domain/DOMAIN_LANDSCAPE.md) before extending the canonical model. Source systems never define the domain.
+
 ## Domains
 
 - Durmitor Adventure
@@ -29,6 +35,8 @@ Initial work is limited to inventory, classification, relationship discovery, du
 - DiscoverMNE / Deep MNE
 - Personal operations
 
+These are organisational and operational areas, not the canonical conceptual domains defined in `docs/domain/DOMAIN_LANDSCAPE.md`.
+
 ## Existing sources
 
 Structured and operational:
@@ -36,6 +44,7 @@ Structured and operational:
 - Adventure Hub
 - Payload CMS
 - Notion
+- Plane
 - Google Drive
 - Gmail
 - Google Calendar
@@ -43,6 +52,11 @@ Structured and operational:
 - Docmost
 - Documenso
 - Mattermost
+
+Proposed or transitional:
+
+- Chatwoot as a unified guest communication layer
+- Wandero as the current replaceable guest-facing AI/chat adapter
 
 Unstructured:
 
