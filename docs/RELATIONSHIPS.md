@@ -151,11 +151,13 @@ unless the more specific legal, operational, commercial or evidentiary meaning i
 | `TRIP_GROUP_INCLUDES_TOUR` | TripGroup | Tour | A multiday group includes one operational tour or segment. |
 | `TRIP_GROUP_HAS_PARTICIPANT` | TripGroup | Participant | A trip group includes a participant role. |
 | `PERSON_ACTS_AS_PARTICIPANT` | Person | Participant | A person acts as a participant in a specific context. |
-| `PERSON_GUIDES_TOUR` | Person | Tour | A person acts as guide for a tour. |
+| `PERSON_GUIDES_TOUR` | Person | Tour | Convenience relationship derived from an accepted GuideAssignment when no assignment-level detail is needed. Do not store it as an independent canonical claim if a GuideAssignment record exists. |
 | `GUIDE_ASSIGNMENT_ASSIGNS_PERSON` | GuideAssignment | Person | A guide assignment assigns a person. |
 | `GUIDE_ASSIGNMENT_COVERS_TOUR` | GuideAssignment | Tour | A guide assignment covers a tour. |
 | `GUIDE_ASSIGNMENT_COVERS_BOOKING_ITEM` | GuideAssignment | BookingItem | A guide assignment covers a booking item. |
 | `GUIDE_ASSIGNMENT_COVERS_TRIP_GROUP` | GuideAssignment | TripGroup | A guide assignment covers a multiday group or segment. |
+
+`GuideAssignment` is the canonical record when the relationship has source, time, role, segment, responsibility or review metadata. `PERSON_GUIDES_TOUR` exists only as a derived read-model/convenience edge from `GUIDE_ASSIGNMENT_ASSIGNS_PERSON` plus `GUIDE_ASSIGNMENT_COVERS_TOUR`; services must not persist both as independent facts for the same assignment.
 
 ### Resources and logistics
 
@@ -176,6 +178,8 @@ unless the more specific legal, operational, commercial or evidentiary meaning i
 | `TRANSFER_MOVES_ASSET` | Transfer | Asset | A transfer moves an asset. |
 | `TRANSFER_FROM_LOCATION` | Transfer | Location | A transfer starts at a location. |
 | `TRANSFER_TO_LOCATION` | Transfer | Location | A transfer ends at a location. |
+
+TODO: resolve Asset subtype treatment before implementation. `Bike` and `Vehicle` are currently specialised Assets, while `EquipmentItem` may be either an individually tracked Asset-like item or stock/countable equipment depending on source evidence. `Device` appears in `DOMAIN_LANDSCAPE.md` but is not yet defined in `DOMAIN_MODEL.md`. Do not redesign the Asset model or add subtype-specific service behaviour until this boundary is resolved.
 
 ### Commercial and finance
 
@@ -211,11 +215,6 @@ unless the more specific legal, operational, commercial or evidentiary meaning i
 |---|---|---|---|
 | `DOCUMENT_EVIDENCES_ENTITY` | Document | Any canonical entity | A document is evidence for an entity. |
 | `DOCUMENT_MENTIONS_ENTITY` | Document | Any canonical entity | A document mentions an entity without necessarily evidencing it. |
-| `DOCUMENT_SUPPORTS_PROJECT` | Document | Project | A document supports a project. |
-| `DOCUMENT_SUPPORTS_TOUR` | Document | Tour | A document supports a tour. |
-| `DOCUMENT_SUPPORTS_TRIP_GROUP` | Document | TripGroup | A document supports a multiday group. |
-| `DOCUMENT_SUPPORTS_PAYMENT` | Document | Payment | A document supports a payment. |
-| `DOCUMENT_SUPPORTS_EXPENSE` | Document | Expense | A document supports an expense. |
 | `DOCUMENT_CURATED_INTO_KNOWLEDGE_RECORD` | Document | KnowledgeRecord | A document was curated into a knowledge record. |
 | `KNOWLEDGE_RECORD_DESCRIBES_ENTITY` | KnowledgeRecord | Any canonical entity | A curated fact, policy or explanation describes an entity. |
 | `CONVERSATION_CONTAINS_MESSAGE` | Conversation | Message | A conversation contains a message. |
@@ -224,6 +223,8 @@ unless the more specific legal, operational, commercial or evidentiary meaning i
 | `MESSAGE_RELATES_TO_ENTITY` | Message | Any canonical entity | A message relates to an entity. |
 | `NOTE_RELATES_TO_ENTITY` | Note | Any canonical entity | A note relates to an entity. |
 | `REMINDER_RELATES_TO_ENTITY` | Reminder | Any canonical entity | A reminder relates to an entity. |
+
+Use `DOCUMENT_EVIDENCES_ENTITY` when the document is evidence for a fact, state, obligation or decision about the target entity, including Project, Tour, TripGroup, Payment or Expense. Use `DOCUMENT_MENTIONS_ENTITY` when the entity appears in the document but the document does not support a claim about it. Do not create specialised `DOCUMENT_SUPPORTS_*` aliases without a stricter semantic distinction; otherwise the same relationship can be recorded two ways.
 
 ### Governance, systems and audit
 
@@ -299,6 +300,7 @@ The first graph/service implementation should support this subset before expandi
 - `PERSON_MEMBER_OF_ORGANISATION`
 - `ORGANISATION_OPERATES_BRAND`
 - `PROJECT_BELONGS_TO_BRAND`
+- `PERSON_PARTICIPATES_IN_PROJECT`
 - `PROJECT_HAS_TASK`
 - `TASK_ASSIGNED_TO_PERSON`
 - `ADVENTURE_HAS_ACTIVITY_TYPE`
