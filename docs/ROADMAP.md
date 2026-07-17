@@ -230,16 +230,17 @@ Business-agent scope:
 
 ## Immediate next actions
 
-1. Review and merge the Knowledge Foundation PR.
-2. Complete CI and merge the functional shell PR.
-3. Add standard shadcn/ui setup and preview deployment.
-4. Inspect the supplied Plane CSV without exposing its token.
-5. Inventory the Drive WORK folder in read-only mode.
-6. Audit Notion Multiday databases and relationships.
-7. Select the first real TripGroup validation case.
-8. Decide the initial Docmost workaround after a security and maintenance review.
-9. Confirm the Adventure Hub internal/reporting API scope with its developers.
-10. Document Documenso Docker/Dokploy deployment and ownership.
+Current status is tracked in [`docs/STATUS.md`](STATUS.md).
+
+1. Finish review for PR #21.
+2. Confirm the Phase 1 preview deployment.
+3. Inventory the Drive WORK folder in read-only mode.
+4. Audit Notion Multiday databases and relationships.
+5. Inventory Docmost spaces/pages and decide the first maintainable integration path.
+6. Select the first real TripGroup validation case.
+7. Continue the Plane read-only pilot without expanding write scope.
+8. Confirm the Adventure Hub internal/reporting API scope with its developers.
+9. Document Documenso Docker/Dokploy deployment and ownership.
 
 ## Stop conditions
 
