@@ -1,26 +1,31 @@
 import { Inbox, MessagesSquare } from "lucide-react";
-import { PagePlaceholder } from "@/components/shell/page-placeholder";
+import { EntitySectionCard } from "@/components/demo/entity-section-card";
+import { SectionHeader } from "@/components/demo/section-header";
+import { factValue, messages } from "@/lib/demo/data";
 
 export default function CommunicationsPage() {
+  const inbox = messages.filter(
+    (message) => factValue(message, "Channel") === "Gmail",
+  );
+  const threads = messages.filter(
+    (message) => factValue(message, "Channel") === "Mattermost",
+  );
+
   return (
-    <PagePlaceholder
-      description="Email, chat and messages connected to the people, projects and work they relate to — read-only, never sent without approval."
-      eyebrow="Communications"
-      regions={[
-        {
-          title: "Inbox",
-          description:
-            "Gmail and Mattermost messages linked to the people, organisations and bookings they relate to.",
-          icon: Inbox,
-        },
-        {
-          title: "Threads",
-          description:
-            "Conversations grouped by subject and entity, not scattered across separate inboxes.",
-          icon: MessagesSquare,
-        },
-      ]}
-      title="Communications"
-    />
+    <div className="flex flex-col gap-6">
+      <SectionHeader
+        description="Email and chat connected to the people, projects and work they relate to — read-only, never sent without approval. Demo data only."
+        eyebrow="Communications"
+        title="Communications"
+      />
+      <div className="grid gap-4 md:grid-cols-2">
+        <EntitySectionCard icon={Inbox} items={inbox} title="Inbox" />
+        <EntitySectionCard
+          icon={MessagesSquare}
+          items={threads}
+          title="Threads"
+        />
+      </div>
+    </div>
   );
 }

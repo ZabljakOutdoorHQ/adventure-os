@@ -1,9 +1,13 @@
 import {
   BookOpen,
+  CalendarDays,
+  CheckSquare,
+  FileText,
   FolderKanban,
   LayoutDashboard,
   MessagesSquare,
   Radar,
+  Search,
   Waypoints,
 } from "lucide-react";
 
@@ -23,11 +27,18 @@ export const navItems: NavItem[] = [
     icon: LayoutDashboard,
   },
   {
-    href: "/communications",
-    label: "Communications",
+    href: "/search",
+    label: "Search",
     description:
-      "Email, chat and messages connected to the people, projects and work they relate to.",
-    icon: MessagesSquare,
+      "Search across people, projects, operations, communications and knowledge.",
+    icon: Search,
+  },
+  {
+    href: "/system-map",
+    label: "System Map",
+    description:
+      "The connected graph of people, organisations, projects and operations.",
+    icon: Waypoints,
   },
   {
     href: "/operations",
@@ -44,6 +55,13 @@ export const navItems: NavItem[] = [
     icon: FolderKanban,
   },
   {
+    href: "/tasks",
+    label: "Tasks",
+    description:
+      "Tasks assigned across the team, connected to the projects they serve.",
+    icon: CheckSquare,
+  },
+  {
     href: "/knowledge",
     label: "Knowledge",
     description:
@@ -51,10 +69,24 @@ export const navItems: NavItem[] = [
     icon: BookOpen,
   },
   {
-    href: "/system-map",
-    label: "System Map",
+    href: "/documents",
+    label: "Documents",
     description:
-      "The connected graph of people, organisations, projects and operations.",
-    icon: Waypoints,
+      "Files and signed agreements connected to the work they relate to.",
+    icon: FileText,
+  },
+  {
+    href: "/communications",
+    label: "Communications",
+    description:
+      "Email, chat and messages connected to the people, projects and work they relate to.",
+    icon: MessagesSquare,
+  },
+  {
+    href: "/calendar",
+    label: "Calendar",
+    description:
+      "Tours, meetings and deadlines connected to the work they relate to.",
+    icon: CalendarDays,
   },
 ];

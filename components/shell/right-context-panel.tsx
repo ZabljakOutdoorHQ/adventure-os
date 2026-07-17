@@ -2,8 +2,23 @@
 
 import { Layers } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useContextSelection } from "./context-selection";
+import { EntityDetail } from "./entity-detail";
 
 export function RightContextPanel({ open }: { open: boolean }) {
+  const { selected } = useContextSelection();
+
+  if (selected) {
+    return (
+      <aside
+        aria-label="Context panel"
+        className={cn("context-panel", open && "context-panel-open")}
+      >
+        <EntityDetail entity={selected} />
+      </aside>
+    );
+  }
+
   return (
     <aside
       aria-label="Context panel"
