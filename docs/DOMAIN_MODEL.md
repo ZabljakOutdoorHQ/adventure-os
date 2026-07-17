@@ -4,9 +4,13 @@
 
 This document defines the shared vocabulary and core entities used by the UI, knowledge graph, integrations and AI agents. It prevents the same word from meaning different things across Adventure Hub, Plane, Notion, Drive and internal conversation.
 
+The conceptual business domains that organise these canonical entities are defined in [`docs/domain/DOMAIN_LANDSCAPE.md`](domain/DOMAIN_LANDSCAPE.md). This document defines the entities themselves; the Domain Landscape defines their primary conceptual domains.
+
 ## Modelling rule
 
 Adventure OS treats every important business object as an **entity** with a stable internal ID and one or more source references. Source-system IDs are never used as the only global identity.
+
+No source system defines the canonical domain. Source-system terminology and records are mapped into the Adventure OS model.
 
 ## Core entity groups
 
@@ -77,6 +81,8 @@ A Person participating in a TripGroup, Tour or Event. Participant is a contextua
 
 #### Agency
 An Organisation acting as a travel intermediary or group client. Agency is a role/type of Organisation.
+
+This meaning must remain distinct from the internal economic or cost-recovery concept called “Agency” in ADR-0002. The latter requires separate terminology before it becomes canonical.
 
 #### GuideAssignment
 The relationship between a Person acting as guide and a Tour, BookingItem, Event or TripGroup segment.
@@ -214,3 +220,6 @@ The following must be resolved with source audits, not guessed:
 3. Whether Plane should hold only Tasks or also Projects and Ideas.
 4. Whether Apple Reminders remain personal-only or selected lists become shared operational input.
 5. Which finance objects are authoritative in accounting/fiscalisation systems versus Adventure OS reporting.
+6. Whether ADR-0002 requires canonical `Activity`, `VATEntry`, `Supplier` and `Import` entities, and how they relate to `ActivityType`, `Adventure`, organisations and commercial records.
+7. Which distinct term should replace the internal economic meaning of “Agency” in ADR-0002.
+8. Whether `Adventure` remains the final canonical term or is later placed beneath a broader `Product` abstraction.
