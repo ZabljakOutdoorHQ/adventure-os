@@ -39,8 +39,12 @@
 - **No Guides / Guide Assignments database.** Guides change frequently and often
   work different locations within the same tour. Guides are assigned at the
   **day-by-day itinerary level** (a Guide / Guides field per day or stage).
-  Guide *fees* continue to go to Expenses.
-- **No Room Allocations database.** That approach is dropped.
+  Guide *fees* continue to go to Expenses (the EXPENSES table already has a
+  `Guides` category — consistent with this).
+- **No Room Allocations database.** That approach is dropped. Rooming already
+  lives on PARTICIPANTS (Room type: Single/Double/Twin/Triple) — so the separate
+  Room Allocations DB and the `PARTICIPANTS → Room allocation` relation are both
+  slated for removal in Phase 4.
 - **Google Sheets stays the source of truth for pricing calculations.** Notion
   holds the operational layer + a final-quote snapshot, not the calculators.
 
@@ -85,56 +89,113 @@ Databases pointing **into** TOURS:
 
 Plus a **bikes import** table and hotel-reference material.
 
-### 1.3 Two parallel copies
+### 1.3 The MCP Cleanup workspace (our working environment) — full contents
 
-Every core database *and* every per-group page exists twice — once under
-`2026 Multiday` (production), once under `2026 Multiday — MCP Cleanup`
-(experimental). The MCP Cleanup copy is the **more advanced** one (revenue
-model, dashboards, closeout) and is our working environment. The copies have
-**drifted** (see Data Quality Report).
+Databases (all internally wired to the Cleanup `TOURS`, i.e. a **complete,
+self-contained graph**):
 
-### 1.4 Inbound pipeline
+| Database | Role | Key relations |
+|---|---|---|
+| **TOURS** | hub (one row = one tour) | Agency, Participants, Payments, Hotel Bookings |
+| **AGENCIES** 🏦 | external client (TO / DMC / Direct / Corporate) | GROUPS 1 → TOURS |
+| **PARTICIPANTS** 👥 | traveller (rooming, bike, rider type, price) | Group → TOURS, Payments, Bike, ~~Room allocation~~ |
+| **PAYMENTS** 💶 | money in | Group → TOURS, Participant, Company |
+| **HOTEL BOOKINGS** 🏨 | accommodation (most polished table) | Tour → TOURS |
+| **EXPENSES** 💸 | money out (categories incl. `Guides`) | Tour → TOURS, Paid by → Company |
+| **TRANSFERS** 🚌 | transport legs | Group → TOURS |
+| **bikes import** | asset pool | (linked from PARTICIPANTS.Bike) |
+| **Company** *(68e8…)* | own paying/receiving entity/account | used by Payments.Company, Expenses.Paid by |
+| ~~**Room Allocations**~~ *(004a…)* | **to be removed** (decision) | orphaned once PARTICIPANTS.Room allocation drops |
+
+Pages: `2026 INQUIRES`, `PONUDE` (offers), `HOTELI INFO`, **14 per-group pages +
+`TEMPLATE - Tour Page`**, plus `Multiday 2026 OS Dashboard`, `Daily Operations
+Dashboard`, `Closeout Dashboard — Clean`, `MCP Cleanup Log`, `Bike Allocation
+System - Implementation Plan`, `Sync-up 21.04.2026`.
+
+Note: **14 group pages vs 13 TOURS rows** — the narrative pages and the DB rows
+are not even in 1:1 correspondence, confirming they are a separate, unsynced
+layer (P5).
+
+### 1.4 Two parallel copies — total duplication, not "split"
+
+Correction to a first impression: it is **not** that relations are split across
+the two copies. **Each universe is internally complete** — production has its
+own Expenses/Transfers pointing at the production TOURS, and MCP Cleanup has its
+own pointing at the Cleanup TOURS. So the whole graph (hub + all spokes) exists
+**twice, in full**, and the two have **drifted** (see Data Quality Report). The
+Cleanup copy is the more advanced one (revenue model, dashboards, closeout) and
+is our working environment.
+
+### 1.5 Two "company"-shaped concepts (modelling clarity needed)
+
+Three different things currently blur together and must be separated in the
+canonical model:
+
+- **Partner / Agency** (AGENCIES) — the *external* client who books a group
+  (tour operator, DMC, direct, corporate).
+- **Entity / own company** — *our* legal entities that pay and get paid. Present
+  as a select on Hotel Bookings (`Durmitor Adventure`, `Sampas`, `Other Trails`)
+  and as a relation table (`Company`) used by Payments and Expenses. **The
+  business runs under multiple own entities** — the model must be multi-entity.
+- **Payer/account** — who physically paid an expense (`Expenses.Paid by`).
+
+### 1.6 Inconsistent relation naming (schema hygiene)
+
+The *same* TOURS relation is named differently in every table: `GROUPS 1`
+(Agencies), `Tour` (Hotel Bookings, Expenses), `Group` (Participants, Payments,
+Transfers), `Payments ` (trailing space, on TOURS), `👥 PARTICIPANTS` (emoji in
+the property name). Phase 2 must define **one naming convention**.
+
+### 1.7 Inbound pipeline
 
 `2026 INQUIRES` is a **free-form page with a Markdown table** (~15 tour-operator
 leads: dates, pax range, program, calc link, prices), plus a few loose embedded
 mini-databases (a finance/dates grid, a calendar) and inline to-do checklists.
-It is **not a real database** and carries **no relation** to TOURS.
+It is **not a real database** and carries **no relation** to TOURS. `PONUDE`
+(offers) is a further, separate quote surface. Both are duplicated across the two
+universes.
 
-### 1.5 To finish the inventory (open)
+### 1.8 To finish the inventory (open)
 
-- Full property lists for the MCP Cleanup satellite tables (COMPANIES,
-  PARTICIPANTS, PAYMENTS, HOTEL BOOKINGS, EXPENSES, bikes) as they exist in the
-  working workspace.
-- The INQUIRES embedded mini-DBs (finance/dates grid, calendar) — schema + role.
-- Legacy-year databases — enough to define an archive boundary.
-- Per-group page anatomy — which sections exist, how inconsistent they are.
+- The `Company` (68e8…) table contents — confirm it is the own-entity/account
+  register.
+- The INQUIRES embedded mini-DBs (finance/dates grid, calendar) and `PONUDE` —
+  schema + role.
+- Legacy-year databases (2023/24/25) — enough to define an archive boundary.
+- Per-group page anatomy — which of the 10 standard sections each page has, to
+  quantify inconsistency (P7).
 
 ---
 
 ## Deliverable 2 — Relationship Map
 
-Current, as-built (✅ wired · ⚠️ partial/split · ❌ missing):
+Current, as-built **within one universe** (✅ wired · ❌ missing). Both universes
+have this same internal shape:
 
 ```
+AGENCIES ──GROUPS 1──────────▶  TOURS   ✅ (relation exists; ~⅓ rows empty)
+PARTICIPANTS ──Group─────────▶  TOURS   ✅ (relation exists; ~⅓–½ empty)
+   PARTICIPANTS ──Payments───▶  PAYMENTS ✅   PARTICIPANTS ──Bike──▶ bikes ✅
+   PARTICIPANTS ──Room alloc─▶  (Room Allocations)  ✂️ to be removed
+PAYMENTS ──Group─────────────▶  TOURS   ✅ (~½ empty)
+   PAYMENTS ──Company────────▶  Company ✅   PAYMENTS ──Participant▶ PARTICIPANTS ✅
+HOTEL BOOKINGS ──Tour────────▶  TOURS   ✅ (fully linked)
+EXPENSES ──Tour──────────────▶  TOURS   ✅   EXPENSES ──Paid by──▶ Company ✅
+TRANSFERS ──Group────────────▶  TOURS   ✅
 INQUIRES (lead)  ❌─not linked─▶  TOURS
-COMPANIES/Agency ─────────────▶  TOURS   ✅ (relation exists; ~⅓ rows empty)
-PARTICIPANTS ─────────────────▶  TOURS   ✅ (relation exists; ~⅓–½ empty)
-PAYMENTS ─────────────────────▶  TOURS   ✅ (relation exists; ~½ empty)
-HOTEL BOOKINGS ───────────────▶  TOURS   ✅ (fully linked)
-EXPENSES.Tour ────────────────▶  TOURS(production)  ⚠️ points at production copy
-TRANSFERS.Group ──────────────▶  TOURS(production)  ⚠️ points at production copy
-BIKES ────────────────────────▶  (import table; allocation not modelled cleanly)
-Per-group narrative pages ────▶  TOURS   ❌ not linked (parallel double-entry)
+PONUDE (offer)   ❌─not linked─▶  TOURS
+Per-group pages  ❌─not linked─▶  TOURS   (14 pages vs 13 rows)
 ```
 
-Two structural faults stand out:
+Structural faults that stand out:
 
-- **The graph is split across the two copies.** The advanced schema lives in the
-  MCP Cleanup TOURS, but the Expenses/Transfers relations still point at the
-  production TOURS. Neither copy is a complete graph on its own.
-- **Two entry points that never meet the hub:** the INQUIRES table (leads) and
-  the rich per-group pages both describe the same tours as the TOURS rows, with
-  no relation between them → the same group is captured 2–3 times.
+- **The entire graph is duplicated across two universes** (production + MCP
+  Cleanup), each internally complete, now drifted apart. This — not a split — is
+  the core problem.
+- **Two/three entry points never meet the hub:** INQUIRES (leads), PONUDE
+  (offers), and the rich per-group pages all describe the same tours as the
+  TOURS rows, with no relation → the same group is captured 2–3 times.
+- **One relation to prune:** PARTICIPANTS → Room Allocations (per decision).
 
 ---
 
@@ -176,13 +237,14 @@ Notion (today) and Adventure OS (later) are both just implementations of this.
 |---|---|---|
 | **Inquiry (Lead)** | Inbound request from a tour operator before it's sold | Open → Quoted → Won (→ becomes a TripGroup) / Lost |
 | **TripGroup** | One sold/planned multiday tour for one client group — the **aggregate root** | Inquiry → Quoted → Deposit → Confirmed → Hotels booked → Operating → Completed → Closed/Paid |
-| **Partner (Agency/DMC)** | The B2B client who books the group | reused across seasons |
-| **Participant** | An individual traveller in a group | bike/non-bike, guest type, rooming, payment status |
+| **Partner (Agency/DMC)** | The **external** B2B client who books the group (TO / DMC / Direct / Corporate) | reused across seasons |
+| **Entity (own company)** | One of **our own** legal entities that pays/receives (e.g. multiple trading names) | multi-entity from day one; a booking/payment belongs to one entity |
+| **Participant** | An individual traveller in a group | rider type (biker/non-biker), **room type (single/double/twin/triple)**, bike + size, unit price, payment status |
 | **ItineraryDay** | One day/stage of a TripGroup | date, base, hotel, program, transfer, meals, **guide(s)**, status |
-| **Accommodation** | A hotel stay for a group segment | check-in/out, nights, PAX, confirmation + payment status |
-| **Transfer** | A transport leg | route, supplier, vehicle, PAX/bikes/luggage, status |
-| **Payment** | Money **in** from the client | amount, method, date, applied to TripGroup |
-| **Expense** | Money **out** (incl. guide fees) | category, amount, method, paid-by |
+| **Accommodation** | A hotel stay for a group segment | check-in/out, nights, PAX, rooms, cost, confirmation #, payment status/deadline, **responsible entity** |
+| **Transfer** | A transport leg | route, supplier, PAX, date, status |
+| **Payment** | Money **in** — attaches to a TripGroup and/or a Participant | amount, method (cash/bank/Wise), receiving **Entity** |
+| **Expense** | Money **out** (incl. guide fees) | category, amount, method, **paid-by (Entity/payer)** |
 | **Asset (Bike)** | Equipment allocated to a participant | frame size, bike no. |
 | **Document** | External file (Drive) | type (calc/brochure/confirmation/invoice), status, link |
 | **Guide** | A person referenced on ItineraryDay | **not** a managed DB — a reference at day level; fees → Expense |
@@ -197,11 +259,13 @@ TripGroup      HAS_DAY            ItineraryDay
 ItineraryDay   GUIDED_BY          Guide(s)
 ItineraryDay   STAYS_AT           Accommodation
 ItineraryDay   USES               Transfer
-TripGroup      RECEIVES           Payment
-TripGroup      INCURS             Expense
+TripGroup      RECEIVES           Payment          (→ collected by an Entity)
+Participant    PAYS               Payment
+TripGroup      INCURS             Expense          (→ paid by an Entity/payer)
+Accommodation  OPERATED_BY        Entity
 Participant    ASSIGNED           Asset(Bike)
 TripGroup      REFERENCES         Document
-TripGroup      PRICED_IN          GoogleSheet   (external system of record)
+TripGroup      PRICED_IN          GoogleSheet      (external system of record)
 ```
 
 ### 4.3 Boundaries
@@ -221,8 +285,9 @@ business model, not the Notion layout, is the deliverable:
 | Canonical entity | Notion (this season) | Adventure OS (later) |
 |---|---|---|
 | TripGroup | TOURS row | TripGroup aggregate |
-| Partner | COMPANIES | Company/Partner |
-| Participant | PARTICIPANTS | Participant |
+| Partner | AGENCIES | Company/Partner |
+| Entity (own company) | `Company` table + Hotel `Entity/Company` select | Entity / org unit |
+| Participant | PARTICIPANTS (rooming inline) | Participant |
 | ItineraryDay (+ guide) | *Day-by-day table (to add)* | ItineraryDay |
 | Accommodation | HOTEL BOOKINGS | Accommodation |
 | Transfer | TRANSFERS | Logistics |
@@ -230,13 +295,14 @@ business model, not the Notion layout, is the deliverable:
 | Asset | bikes | Asset |
 | Inquiry | INQUIRES *(promote to DB)* | Lead |
 | Document | *(to add: Drive link + status)* | Document |
+| *(dropped)* | ~~Room Allocations~~ | — (rooming lives on Participant) |
 
 ---
 
 ## What remains to complete Phase 1
 
-1. Finish the inventory (§1.5): satellite-table schemas in MCP Cleanup, INQUIRES
-   mini-DBs, legacy-year DBs, per-group page anatomy.
+1. Finish the inventory (§1.8): confirm the `Company` table, the INQUIRES/PONUDE
+   mini-DBs, legacy-year DBs, and per-group page anatomy.
 2. Confirm the canonical model draft (§4) against how the business actually
    operates — corrections welcome; this is a draft.
 3. Only then move to **Phase 2 — System Design** (canonical Notion schema,
