@@ -1,0 +1,700 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Adventure OS — The Map</title>
+
+<style>
+  :root {
+    --ground: #eef1ec;
+    --ground-2: #e6ebe4;
+    --panel: #f7f9f5;
+    --ink: #15211c;
+    --ink-soft: #48554d;
+    --ink-faint: #77837a;
+    --line: #d2dacf;
+    --line-strong: #c1cabd;
+    --pine: #163127;
+    --pine-2: #1e4536;
+    --pine-ink: #e7efe5;
+    --accent: #3f7d57;
+    --accent-strong: #2d6142;
+    --now: #3f7d57;
+    --wait: #bd8227;
+    --blocked: #b6503e;
+    --exp: #5c67a4;
+    --shadow: 0 1px 2px rgba(20, 40, 30, .05), 0 8px 24px -12px rgba(20, 40, 30, .18);
+    --radius: 14px;
+    --maxw: 1080px;
+
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #0d1310;
+      --ground-2: #121a15;
+      --panel: #131c17;
+      --ink: #e7efe5;
+      --ink-soft: #a6b3a8;
+      --ink-faint: #6f7d73;
+      --line: #223029;
+      --line-strong: #2c3c33;
+      --pine: #0c221a;
+      --pine-ink: #dce8dc;
+      --accent: #5ea67b;
+      --accent-strong: #74bd91;
+      --now: #5ea67b;
+      --wait: #d4a251;
+      --blocked: #d0664f;
+      --exp: #8790c8;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px -14px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="light"] {
+    --ground: #eef1ec; --ground-2: #e6ebe4; --panel: #f7f9f5;
+    --ink: #15211c; --ink-soft: #48554d; --ink-faint: #77837a;
+    --line: #d2dacf; --line-strong: #c1cabd;
+    --pine: #163127; --pine-ink: #e7efe5;
+    --accent: #3f7d57; --accent-strong: #2d6142;
+    --now: #3f7d57; --wait: #bd8227; --blocked: #b6503e; --exp: #5c67a4;
+    --shadow: 0 1px 2px rgba(20, 40, 30, .05), 0 8px 24px -12px rgba(20, 40, 30, .18);
+  }
+  :root[data-theme="dark"] {
+    --ground: #0d1310; --ground-2: #121a15; --panel: #131c17;
+    --ink: #e7efe5; --ink-soft: #a6b3a8; --ink-faint: #6f7d73;
+    --line: #223029; --line-strong: #2c3c33;
+    --pine: #0c221a; --pine-ink: #dce8dc;
+    --accent: #5ea67b; --accent-strong: #74bd91;
+    --now: #5ea67b; --wait: #d4a251; --blocked: #d0664f; --exp: #8790c8;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px -14px rgba(0,0,0,.6);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 clamp(18px, 4vw, 40px); }
+
+  h1, h2, h3 { font-family: var(--serif); font-weight: 600; text-wrap: balance; letter-spacing: -0.01em; }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 0.9rem;
+    display: flex; align-items: center; gap: 0.6rem;
+  }
+  .eyebrow::before {
+    content: ""; width: 22px; height: 1px; background: var(--accent); opacity: 0.6;
+  }
+  a { color: inherit; }
+
+  /* ---------- HERO ---------- */
+  .hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--line); }
+  #contour {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    display: block; z-index: 0; opacity: 0.55;
+  }
+  .hero-inner {
+    position: relative; z-index: 1;
+    padding: clamp(56px, 11vw, 128px) 0 clamp(44px, 7vw, 84px);
+  }
+  .kicker {
+    font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.28em;
+    text-transform: uppercase; color: var(--ink-faint); margin: 0 0 1.4rem;
+  }
+  .hero h1 {
+    font-size: clamp(2.5rem, 7vw, 4.6rem);
+    line-height: 1.02; margin: 0 0 1.1rem; max-width: 15ch;
+  }
+  .hero .lede {
+    font-size: clamp(1.08rem, 2.2vw, 1.4rem);
+    color: var(--ink-soft); max-width: 46ch; margin: 0 0 0.5rem;
+    font-family: var(--serif); font-style: italic;
+  }
+  .hero .sub {
+    max-width: 54ch; color: var(--ink-soft); margin: 1.3rem 0 0; font-size: 1.02rem;
+  }
+  .hero .me {
+    font-family: var(--mono); font-size: 0.75rem; color: var(--ink-faint);
+    margin-top: 2.2rem; letter-spacing: 0.02em;
+  }
+
+  section { padding: clamp(48px, 8vw, 92px) 0; border-bottom: 1px solid var(--line); }
+  .sec-head { max-width: 60ch; margin-bottom: clamp(28px, 4vw, 48px); }
+  .sec-head h2 { font-size: clamp(1.7rem, 3.6vw, 2.5rem); margin: 0 0 0.7rem; }
+  .sec-head p { color: var(--ink-soft); margin: 0; font-size: 1.04rem; }
+
+  /* ---------- CROSS SECTION ---------- */
+  .strata { display: flex; flex-direction: column; gap: 10px; position: relative; }
+  .stratum {
+    display: grid;
+    grid-template-columns: 108px 1fr;
+    gap: clamp(14px, 3vw, 34px);
+    align-items: center;
+    padding: 18px clamp(16px, 2.5vw, 26px);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--panel);
+    box-shadow: var(--shadow);
+    position: relative;
+  }
+  .stratum .alt {
+    font-family: var(--mono); font-size: 0.72rem; color: var(--ink-faint);
+    letter-spacing: 0.04em; text-align: right; line-height: 1.35;
+  }
+  .stratum .alt b { display: block; color: var(--accent); font-size: 0.82rem; font-weight: 600; }
+  .stratum h3 { margin: 0 0 3px; font-size: 1.12rem; }
+  .stratum .role { color: var(--ink-soft); font-size: 0.9rem; margin: 0 0 10px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip {
+    font-size: 0.78rem; font-family: var(--mono);
+    padding: 3px 9px; border-radius: 999px;
+    border: 1px solid var(--line-strong); color: var(--ink-soft);
+    background: var(--ground-2); white-space: nowrap;
+  }
+
+  /* the control-plane band, highlighted */
+  .stratum.plane {
+    background: var(--pine); border-color: var(--pine);
+    color: var(--pine-ink);
+  }
+  .stratum.plane h3 { color: #fff; }
+  .stratum.plane .role { color: rgba(231,239,229,.72); }
+  .stratum.plane .alt { color: rgba(231,239,229,.55); }
+  .stratum.plane .alt b { color: var(--accent-strong); }
+  .stratum.plane .chip {
+    background: rgba(255,255,255,.07); border-color: rgba(255,255,255,.14);
+    color: rgba(231,239,229,.9);
+  }
+  .stratum.graph { border-color: var(--accent); border-width: 1.5px; }
+  .stratum.graph .alt b { color: var(--accent); }
+
+  .band-note {
+    grid-column: 1 / -1;
+    font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--ink-faint);
+    display: flex; align-items: center; gap: 8px; margin: 4px 0 -2px;
+  }
+  .band-note.summit { color: var(--accent); }
+  .flowlabels { display: flex; justify-content: space-between; margin-top: 14px; }
+  .flowlabels span {
+    font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--ink-faint);
+    display: flex; align-items: center; gap: 7px;
+  }
+  .arrow-dn::before { content: "↓"; color: var(--accent); font-size: 0.95rem; }
+  .arrow-up::after { content: "↑"; color: var(--wait); font-size: 0.95rem; }
+
+  /* ---------- DOMAINS ---------- */
+  .domain-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+  }
+  .domain {
+    border: 1px solid var(--line); border-radius: 12px; padding: 16px 15px;
+    background: var(--panel); position: relative; min-height: 108px;
+    display: flex; flex-direction: column; gap: 6px;
+    transition: border-color .15s ease, transform .15s ease;
+  }
+  .domain:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .domain .n { font-family: var(--mono); font-size: 0.68rem; color: var(--ink-faint); letter-spacing: 0.1em; }
+  .domain h3 { margin: 0; font-size: 1.02rem; }
+  .domain p { margin: 0; font-size: 0.8rem; color: var(--ink-soft); line-height: 1.45; }
+
+  /* ---------- WIREFRAME ---------- */
+  .wf {
+    border: 1px solid var(--line-strong); border-radius: var(--radius);
+    background: var(--panel); overflow: hidden; box-shadow: var(--shadow);
+    font-family: var(--mono);
+  }
+  .wf-top {
+    display: flex; align-items: center; gap: 12px;
+    padding: 11px 14px; border-bottom: 1px dashed var(--line-strong);
+    background: var(--ground-2);
+  }
+  .wf-mark { width: 26px; height: 26px; border-radius: 7px; background: var(--pine); flex: none;
+    display: grid; place-items: center; color: #fff; font-size: 0.7rem; }
+  .wf-brand { font-size: 0.72rem; color: var(--ink); font-weight: 600; }
+  .wf-brand small { display: block; color: var(--ink-faint); font-weight: 400; font-size: 0.62rem; }
+  .wf-nav { display: flex; gap: 6px; flex-wrap: wrap; margin-left: 6px; }
+  .wf-nav span {
+    font-size: 0.6rem; color: var(--ink-soft); padding: 3px 7px;
+    border: 1px solid var(--line-strong); border-radius: 6px;
+  }
+  .wf-nav span.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .wf-search {
+    margin-left: auto; font-size: 0.6rem; color: var(--ink-faint);
+    border: 1px solid var(--line-strong); border-radius: 6px; padding: 4px 10px;
+  }
+  .wf-body { display: grid; grid-template-columns: 1fr 190px; min-height: 300px; }
+  .wf-main { padding: 16px; border-right: 1px dashed var(--line-strong); }
+  .wf-hello { font-family: var(--serif); font-size: 1.15rem; color: var(--ink); }
+  .wf-date { font-size: 0.62rem; color: var(--ink-faint); margin-bottom: 12px; }
+  .wf-bar {
+    border: 1px solid var(--line-strong); border-radius: 8px; padding: 9px 12px;
+    font-size: 0.62rem; color: var(--ink-faint); margin-bottom: 16px;
+    display: flex; justify-content: space-between;
+  }
+  .wf-label { font-size: 0.58rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin: 4px 0 8px; }
+  .wf-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 16px; }
+  .wf-card {
+    border: 1px solid var(--line); border-radius: 8px; padding: 9px; min-height: 58px;
+    background: var(--ground-2);
+  }
+  .wf-card b { font-size: 0.6rem; color: var(--ink); display: block; margin-bottom: 5px; }
+  .wf-card i { display: block; height: 4px; border-radius: 3px; background: var(--line-strong); margin-top: 4px; }
+  .wf-card i.s { width: 60%; }
+  .wf-ops { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .wf-ops .wf-card { min-height: 40px; }
+  .wf-ctx { padding: 16px; background: var(--ground-2); }
+  .wf-ctx .dot { width: 30px; height: 30px; border-radius: 8px; background: var(--accent); opacity: .28; margin-bottom: 10px; }
+  .wf-ctx b { font-size: 0.66rem; color: var(--ink); display: block; margin-bottom: 4px; }
+  .wf-ctx p { font-size: 0.58rem; color: var(--ink-faint); margin: 0 0 12px; line-height: 1.5; }
+  .wf-ctx ul { margin: 0; padding-left: 14px; }
+  .wf-ctx li { font-size: 0.58rem; color: var(--ink-soft); margin-bottom: 4px; }
+  .wf-caption { margin-top: 14px; font-size: 0.82rem; color: var(--ink-faint); }
+  .wf-caption b { color: var(--ink-soft); font-weight: 600; }
+
+  /* ---------- ROUTE / PLAN ---------- */
+  .slice {
+    border: 1.5px solid var(--accent); border-radius: var(--radius);
+    background: linear-gradient(180deg, color-mix(in oklab, var(--accent) 10%, var(--panel)), var(--panel));
+    padding: 22px 24px; margin-bottom: 26px; display: flex; gap: 18px; align-items: flex-start;
+  }
+  .slice .badge {
+    font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: #fff; background: var(--accent); padding: 4px 9px; border-radius: 6px; white-space: nowrap; flex: none; margin-top: 3px;
+  }
+  .slice h3 { margin: 0 0 5px; font-size: 1.18rem; }
+  .slice p { margin: 0; color: var(--ink-soft); font-size: 0.95rem; }
+
+  .lanes { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+  .lane { border: 1px solid var(--line); border-radius: 12px; background: var(--panel); overflow: hidden; }
+  .lane-head {
+    padding: 12px 15px; display: flex; align-items: center; gap: 9px;
+    border-bottom: 1px solid var(--line);
+    font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .lane-head .tick { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+  .lane[data-l="now"] .tick { background: var(--now); }
+  .lane[data-l="wait"] .tick { background: var(--wait); }
+  .lane[data-l="blocked"] .tick { background: var(--blocked); }
+  .lane[data-l="exp"] .tick { background: var(--exp); }
+  .lane[data-l="now"] .lane-head { color: var(--now); }
+  .lane[data-l="wait"] .lane-head { color: var(--wait); }
+  .lane[data-l="blocked"] .lane-head { color: var(--blocked); }
+  .lane[data-l="exp"] .lane-head { color: var(--exp); }
+  .lane ul { list-style: none; margin: 0; padding: 12px 15px; display: flex; flex-direction: column; gap: 9px; }
+  .lane li { font-size: 0.86rem; color: var(--ink-soft); padding-left: 15px; position: relative; line-height: 1.4; }
+  .lane li::before { content: ""; position: absolute; left: 0; top: 8px; width: 5px; height: 5px; border-radius: 50%; background: var(--line-strong); }
+  .lane li b { color: var(--ink); font-weight: 600; }
+
+  .horizons { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin-top: 26px; }
+  .horizon { border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 10px; padding: 16px 18px; background: var(--panel); }
+  .horizon .h-when { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); margin-bottom: 9px; }
+  .horizon ul { margin: 0; padding-left: 16px; }
+  .horizon li { font-size: 0.85rem; color: var(--ink-soft); margin-bottom: 5px; }
+
+  /* ---------- SOURCES ---------- */
+  .src-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+  .src {
+    display: flex; align-items: center; gap: 11px; padding: 12px 14px;
+    border: 1px solid var(--line); border-radius: 10px; background: var(--panel);
+  }
+  .src .st { width: 8px; height: 8px; border-radius: 50%; flex: none; }
+  .src[data-s="live"] .st { background: var(--now); }
+  .src[data-s="soon"] .st { background: var(--wait); }
+  .src[data-s="blocked"] .st { background: var(--blocked); }
+  .src[data-s="proposed"] .st { background: var(--exp); }
+  .src .nm { font-size: 0.9rem; color: var(--ink); font-weight: 600; }
+  .src .rl { font-size: 0.72rem; color: var(--ink-faint); }
+  .legend { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 20px; }
+  .legend span { display: flex; align-items: center; gap: 7px; font-size: 0.76rem; color: var(--ink-soft); font-family: var(--mono); }
+  .legend .st { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* ---------- PRINCIPLES / FOOTER ---------- */
+  .principles { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+  .principle h3 { margin: 0 0 6px; font-size: 1.05rem; }
+  .principle p { margin: 0; font-size: 0.9rem; color: var(--ink-soft); }
+  .principle .no { font-family: var(--mono); font-size: 0.72rem; color: var(--accent); letter-spacing: 0.1em; }
+
+  footer { padding: 46px 0 60px; }
+  footer p { color: var(--ink-faint); font-size: 0.82rem; margin: 0; font-family: var(--mono); letter-spacing: 0.02em; }
+
+  @media (max-width: 720px) {
+    .stratum { grid-template-columns: 1fr; gap: 10px; }
+    .stratum .alt { text-align: left; display: flex; gap: 10px; align-items: baseline; }
+    .stratum .alt b { display: inline; }
+    .wf-body { grid-template-columns: 1fr; }
+    .wf-main { border-right: none; border-bottom: 1px dashed var(--line-strong); }
+    .wf-cards, .wf-ops { grid-template-columns: repeat(2, 1fr); }
+    .wf-nav { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+
+
+<div class="hero">
+  <canvas id="contour" aria-hidden="true"></canvas>
+  <div class="wrap hero-inner">
+    <p class="kicker">Adventure OS · The map of what we're building</p>
+    <h1>A calm layer above your tools — not another tool.</h1>
+    <p class="lede">One place that answers: what needs my attention right now?</p>
+    <p class="sub">Adventure OS sits <em>above</em> Adventure Hub, Plane, Notion, Drive and the rest — connecting what belongs together, while every system of record stays exactly where it is. This is the terrain we're entering, drawn from summit to bedrock.</p>
+    <p class="me">za Borisa · Durmitor Adventure · pregled konstrukcije</p>
+  </div>
+</div>
+
+<!-- ARCHITECTURE CROSS-SECTION -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Cross-section</p>
+      <h2>The architecture, read as altitude</h2>
+      <p>A question travels down the mountain; grounded answers travel back up. Nothing at the base is moved or overwritten — the source systems stay authoritative.</p>
+    </div>
+
+    <div class="strata">
+      <div class="stratum">
+        <div class="alt"><b>Summit</b>who asks</div>
+        <div>
+          <h3>People &amp; agents</h3>
+          <p class="role">Boris and the team — plus AI and coding agents, under explicit policy.</p>
+          <div class="chips"><span class="chip">You</span><span class="chip">Team</span><span class="chip">ChatGPT / agents</span></div>
+        </div>
+      </div>
+
+      <div class="stratum">
+        <div class="alt"><b>Surface</b>what you see</div>
+        <div>
+          <h3>Adventure OS interface</h3>
+          <p class="role">The calm operational surface — spatial, searchable, source-aware.</p>
+          <div class="chips"><span class="chip">Mission Control</span><span class="chip">System Map</span><span class="chip">Search</span><span class="chip">Today</span><span class="chip">Context panel</span></div>
+        </div>
+      </div>
+
+      <div class="stratum plane">
+        <div class="alt"><b>Control plane</b>one interface</div>
+        <div>
+          <h3>Internal API · MCP gateway</h3>
+          <p class="role">One stable business interface. Agents talk to this — never to each raw source API.</p>
+          <div class="chips"><span class="chip">Entity &amp; relationship queries</span><span class="chip">Approvals</span><span class="chip">Audit</span></div>
+        </div>
+      </div>
+
+      <div class="stratum">
+        <div class="alt"><b>Reasoning</b>the services</div>
+        <div>
+          <h3>Knowledge · Search · Events · Audit</h3>
+          <p class="role">Identity resolution, ranking, change events, and a complete trail of who did what.</p>
+          <div class="chips"><span class="chip">Knowledge</span><span class="chip">Search</span><span class="chip">Events</span><span class="chip">Audit</span></div>
+        </div>
+      </div>
+
+      <div class="stratum graph">
+        <div class="alt"><b>Bedrock</b>the memory</div>
+        <div>
+          <h3>The Adventure Graph</h3>
+          <p class="role">One connected memory — entities, relationships, sources and confidence. PostgreSQL + pgvector.</p>
+          <div class="chips"><span class="chip">Entities</span><span class="chip">Relationships</span><span class="chip">Source refs</span><span class="chip">Confidence</span></div>
+        </div>
+      </div>
+
+      <div class="stratum">
+        <div class="alt"><b>Roots</b>the translators</div>
+        <div>
+          <h3>Source adapters — read-only first</h3>
+          <p class="role">Each connector speaks its system's language and returns canonical records with evidence attached.</p>
+          <div class="chips"><span class="chip">One contract</span><span class="chip">Health-checked</span><span class="chip">No writes yet</span></div>
+        </div>
+      </div>
+
+      <div class="stratum">
+        <div class="alt">systems of record</div>
+        <div>
+          <h3>Your existing systems — untouched</h3>
+          <p class="role">Authoritative, exactly where they are. Adventure OS reads and connects; it does not replace.</p>
+          <div class="chips"><span class="chip">Adventure Hub</span><span class="chip">Plane</span><span class="chip">Notion</span><span class="chip">Google Drive</span><span class="chip">Docmost</span><span class="chip">Documenso</span><span class="chip">Mattermost</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flowlabels">
+      <span class="arrow-dn">A question descends</span>
+      <span class="arrow-up">Grounded answers rise</span>
+    </div>
+  </div>
+</section>
+
+<!-- DOMAINS -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">The world, mapped</p>
+      <h2>Eleven domains hold the whole business</h2>
+      <p>Not software modules and not source systems — conceptual regions of reality. Every canonical entity belongs to exactly one, while relationships cross freely between them.</p>
+    </div>
+    <div class="domain-grid">
+      <div class="domain"><span class="n">01</span><h3>Identity</h3><p>Person · Role · Team</p></div>
+      <div class="domain"><span class="n">02</span><h3>Organisations</h3><p>Organisation · Brand · Partner</p></div>
+      <div class="domain"><span class="n">03</span><h3>Experience</h3><p>Adventure · Activity type · Waiver · Media</p></div>
+      <div class="domain"><span class="n">04</span><h3>Operations</h3><p>Tour · Booking · TripGroup · Guide</p></div>
+      <div class="domain"><span class="n">05</span><h3>Resources</h3><p>Asset · Bike · Location · Route</p></div>
+      <div class="domain"><span class="n">06</span><h3>Commercial</h3><p>Customer · Payment · Expense · Settlement</p></div>
+      <div class="domain"><span class="n">07</span><h3>Knowledge</h3><p>Document · Decision · Policy · Record</p></div>
+      <div class="domain"><span class="n">08</span><h3>Communication</h3><p>Conversation · Message · Contact</p></div>
+      <div class="domain"><span class="n">09</span><h3>Strategy</h3><p>Goal · Project · Milestone · KPI</p></div>
+      <div class="domain"><span class="n">10</span><h3>Governance</h3><p>Compliance · Audit · Risk · Permission</p></div>
+      <div class="domain"><span class="n">11</span><h3>Time</h3><p>Season · Calendar · Deadline · Event</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- WIREFRAME -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">The surface</p>
+      <h2>What the first screen looks like</h2>
+      <p>Mission Control — the screen you open every morning. Top navigation, an attention row, today's operations, and a context panel on the right that fills in the moment you select anything.</p>
+    </div>
+
+    <div class="wf" role="img" aria-label="Wireframe of the Mission Control screen: top navigation, welcome, search bar, an Attention row of four cards, Today's operations, and a right-hand context panel.">
+      <div class="wf-top">
+        <div class="wf-mark">AO</div>
+        <div class="wf-brand">Adventure OS<small>Mission Control</small></div>
+        <div class="wf-nav">
+          <span class="on">Mission Control</span><span>System Map</span><span>Search</span><span>Operations</span><span>Tasks</span><span>Knowledge</span>
+        </div>
+        <div class="wf-search">Search everything · ⌘K</div>
+      </div>
+      <div class="wf-body">
+        <div class="wf-main">
+          <div class="wf-hello">Good morning.</div>
+          <div class="wf-date">Friday · Durmitor Adventure</div>
+          <div class="wf-bar"><span>Search people, projects, bookings, tasks…</span><span>⌘K</span></div>
+
+          <div class="wf-label">Attention</div>
+          <div class="wf-cards">
+            <div class="wf-card"><b>Waiting for me</b><i></i><i class="s"></i></div>
+            <div class="wf-card"><b>Waiting for team</b><i></i><i class="s"></i></div>
+            <div class="wf-card"><b>AI prepared</b><i></i><i class="s"></i></div>
+            <div class="wf-card"><b>Open questions</b><i></i><i class="s"></i></div>
+          </div>
+
+          <div class="wf-label">Today's operations</div>
+          <div class="wf-ops">
+            <div class="wf-card"><b>Tours</b></div>
+            <div class="wf-card"><b>Guides</b></div>
+            <div class="wf-card"><b>Equipment</b></div>
+            <div class="wf-card"><b>Weather</b></div>
+          </div>
+        </div>
+        <div class="wf-ctx">
+          <div class="dot"></div>
+          <b>No context selected</b>
+          <p>Select anything and its connected context appears here — with source and freshness on everything.</p>
+          <ul><li>Person</li><li>Booking</li><li>Project</li><li>Organisation</li><li>Document</li></ul>
+        </div>
+      </div>
+    </div>
+    <p class="wf-caption"><b>Already clickable today.</b> This shell, the System Map graph, Search and the live "Waiting for me" card are built and merged — the prototype runs end to end on demo data while the real connections are wired in beneath it.</p>
+  </div>
+</section>
+
+<!-- ROUTE / DELIVERY -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">The route up</p>
+      <h2>How we climb — one slice at a time</h2>
+      <p>Not the whole platform floor-by-floor. A single vertical slice first: one real trip, connected end to end, so value shows before the next layer of infrastructure.</p>
+    </div>
+
+    <div class="slice">
+      <span class="badge">First ascent</span>
+      <div>
+        <h3>One real TripGroup, connected end to end</h3>
+        <p>Take one actual Multiday group and assemble its whole picture from the graph — agency, participants, payments, allocations, tasks and documents — every link tracing back to its source, facts kept separate from guesses. That is the first proof the whole idea works.</p>
+      </div>
+    </div>
+
+    <div class="lanes">
+      <div class="lane" data-l="now">
+        <div class="lane-head"><span class="tick"></span>Now</div>
+        <ul>
+          <li><b>Graph core</b> — the shared memory + read API</li>
+          <li><b>Adapter framework</b> — one contract for every source</li>
+          <li><b>Drive inventory</b> — read-only WORK folder</li>
+          <li><b>Notion audit</b> — the Multiday schema</li>
+          <li><b>Preview deployment</b> — click it from anywhere</li>
+        </ul>
+      </div>
+      <div class="lane" data-l="wait">
+        <div class="lane-head"><span class="tick"></span>Waiting on a step</div>
+        <ul>
+          <li><b>TripGroup validation</b> — after graph + adapters</li>
+          <li><b>Mission Control data</b> — real, not demo</li>
+          <li><b>Today briefing</b> — one screen, cited</li>
+          <li><b>Unified search</b> — across everything</li>
+        </ul>
+      </div>
+      <div class="lane" data-l="blocked">
+        <div class="lane-head"><span class="tick"></span>Blocked — named</div>
+        <ul>
+          <li><b>Docmost</b> — needs a reachable URL + auth</li>
+          <li><b>Hub reporting</b> — that API doesn't exist yet</li>
+          <li><b>Booking / payment writes</b> — barred by the constitution</li>
+        </ul>
+      </div>
+      <div class="lane" data-l="exp">
+        <div class="lane-head"><span class="tick"></span>Experiments</div>
+        <ul>
+          <li><b>Semantic search</b> — is it worth it?</li>
+          <li><b>Identity matching</b> — across Notion &amp; Drive</li>
+          <li><b>Agent proposals</b> — precision on real data</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="horizons">
+      <div class="horizon">
+        <div class="h-when">First 30 days</div>
+        <ul><li>Graph core (thin slice)</li><li>Adapter contract + Plane retrofit</li><li>Drive inventory · Notion audit</li><li>Confirm the preview</li></ul>
+      </div>
+      <div class="horizon">
+        <div class="h-when">Next 60 days</div>
+        <ul><li>Notion &amp; Drive adapters</li><li>First real TripGroup, end to end</li><li>Mission Control on real data</li><li>Search across the graph</li></ul>
+      </div>
+      <div class="horizon">
+        <div class="h-when">Later</div>
+        <ul><li>Today briefing</li><li>First controlled write</li><li>Agent operations (MCP)</li><li>Production hardening</li></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOURCES -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">The roots</p>
+      <h2>Where the data actually lives</h2>
+      <p>Every source keeps its own authority. Adventure OS connects to them one at a time, read-only first, and never claims a link it can't trace.</p>
+    </div>
+    <div class="src-grid">
+      <div class="src" data-s="live"><span class="st"></span><div><div class="nm">Plane</div><div class="rl">Tasks · live, read-only</div></div></div>
+      <div class="src" data-s="soon"><span class="st"></span><div><div class="nm">Adventure Hub</div><div class="rl">Bookings &amp; catalogue · booking surface confirmed</div></div></div>
+      <div class="src" data-s="soon"><span class="st"></span><div><div class="nm">Notion</div><div class="rl">Multiday · audit in progress</div></div></div>
+      <div class="src" data-s="soon"><span class="st"></span><div><div class="nm">Google Drive</div><div class="rl">Documents · inventory next</div></div></div>
+      <div class="src" data-s="blocked"><span class="st"></span><div><div class="nm">Docmost</div><div class="rl">Wiki · access to confirm</div></div></div>
+      <div class="src" data-s="soon"><span class="st"></span><div><div class="nm">Documenso</div><div class="rl">Waivers &amp; signatures</div></div></div>
+      <div class="src" data-s="soon"><span class="st"></span><div><div class="nm">Mattermost</div><div class="rl">Team communication</div></div></div>
+      <div class="src" data-s="proposed"><span class="st"></span><div><div class="nm">Chatwoot</div><div class="rl">Guest inbox · proposed</div></div></div>
+    </div>
+    <div class="legend">
+      <span><span class="st" style="background:var(--now)"></span>Live</span>
+      <span><span class="st" style="background:var(--wait)"></span>Discovery / next</span>
+      <span><span class="st" style="background:var(--blocked)"></span>Blocked</span>
+      <span><span class="st" style="background:var(--exp)"></span>Proposed</span>
+    </div>
+  </div>
+</section>
+
+<!-- PRINCIPLES -->
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">The rules of the climb</p>
+      <h2>Four promises the whole thing is built on</h2>
+    </div>
+    <div class="principles">
+      <div class="principle"><p class="no">01</p><h3>Read before write</h3><p>Every integration starts read-only. Controlled writes come only after the contract is understood and tested.</p></div>
+      <div class="principle"><p class="no">02</p><h3>Source &amp; confidence, always</h3><p>Every fact shows where it came from and whether it's confirmed, probable or just suggested.</p></div>
+      <div class="principle"><p class="no">03</p><h3>No silent authority</h3><p>AI may search, connect and propose. Sending, publishing, moving money or changing bookings needs your explicit yes.</p></div>
+      <div class="principle"><p class="no">04</p><h3>Your tools stay yours</h3><p>Existing systems remain authoritative. Adventure OS is a lens over them, never a replacement that traps your data.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>Adventure OS · grounded in the accepted architecture — Constitution, Domain Landscape, Knowledge Graph, Relationships &amp; Implementation Plan. A map, not a promise of dates.</p>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    const canvas = document.getElementById("contour");
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    let w = 0, h = 0, dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+    function accent() {
+      const c = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim();
+      return c || "#3f7d57";
+    }
+    // deterministic pseudo-noise
+    function hash(x) { const s = Math.sin(x * 12.9898) * 43758.5453; return s - Math.floor(s); }
+    function ridge(x, seed) {
+      return Math.sin(x * 0.9 + seed) * 0.5
+           + Math.sin(x * 2.3 + seed * 1.7) * 0.28
+           + Math.sin(x * 4.7 + seed * 0.4) * 0.14;
+    }
+
+    function draw() {
+      const host = canvas.parentElement;
+      w = host.clientWidth; h = host.clientHeight;
+      canvas.width = w * dpr; canvas.height = h * dpr;
+      canvas.style.width = w + "px"; canvas.style.height = h + "px";
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, w, h);
+
+      const col = accent();
+      const lines = 22;
+      for (let i = 0; i < lines; i++) {
+        const t = i / (lines - 1);
+        const seed = i * 0.7 + 1.3;
+        const amp = 26 + i * 3.2;
+        const baseY = h * 0.16 + t * h * 0.98;
+        ctx.beginPath();
+        for (let px = -20; px <= w + 20; px += 6) {
+          const nx = px / 120;
+          const y = baseY + ridge(nx, seed) * amp - i * 2;
+          if (px === -20) ctx.moveTo(px, y); else ctx.lineTo(px, y);
+        }
+        ctx.strokeStyle = col;
+        ctx.globalAlpha = 0.05 + (1 - t) * 0.12;
+        ctx.lineWidth = i % 5 === 0 ? 1.4 : 0.8;
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    draw();
+    let raf = null;
+    window.addEventListener("resize", function () {
+      if (raf) cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(draw);
+    });
+    // redraw once when theme toggles (attribute change on <html>)
+    new MutationObserver(draw).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  })();
+</script>
+
+</body>
+</html>

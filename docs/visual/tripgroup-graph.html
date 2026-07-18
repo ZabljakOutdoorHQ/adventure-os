@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Adventure OS — TripGroup graph</title>
+<style>
+  :root {
+    --ground: #eef1ec; --ground-2: #e6ebe4; --panel: #f7f9f5;
+    --ink: #15211c; --ink-soft: #48554d; --ink-faint: #77837a;
+    --line: #d2dacf; --line-strong: #c1cabd;
+    --pine: #163127; --accent: #3f7d57;
+    --confirmed: #3f7d57; --probable: #bd8227; --suggested: #9aa39a;
+    --c-tg: #163127; --c-people: #3f7d57; --c-org: #2b6b57; --c-ops: #2f7d86;
+    --c-res: #b07d2e; --c-com: #9d5a6a; --c-know: #5c74a4; --c-work: #6a5fa4; --c-comm: #8a5a9c;
+    --shadow: 0 1px 2px rgba(20,40,30,.05), 0 8px 24px -12px rgba(20,40,30,.18);
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #0d1310; --ground-2: #121a15; --panel: #131c17;
+      --ink: #e7efe5; --ink-soft: #a6b3a8; --ink-faint: #6f7d73;
+      --line: #223029; --line-strong: #2c3c33;
+      --pine: #0c221a; --accent: #5ea67b;
+      --confirmed: #5ea67b; --probable: #d4a251; --suggested: #6f7d73;
+      --c-tg: #0c221a; --c-people: #5ea67b; --c-org: #4f9a80; --c-ops: #57aab4;
+      --c-res: #d4a251; --c-com: #c98297; --c-know: #8aa0d0; --c-work: #9088cf; --c-comm: #b585c6;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px -14px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="light"] {
+    --ground: #eef1ec; --ground-2: #e6ebe4; --panel: #f7f9f5;
+    --ink: #15211c; --ink-soft: #48554d; --ink-faint: #77837a;
+    --line: #d2dacf; --line-strong: #c1cabd; --pine: #163127; --accent: #3f7d57;
+    --confirmed: #3f7d57; --probable: #bd8227; --suggested: #9aa39a;
+    --c-tg: #163127; --c-people: #3f7d57; --c-org: #2b6b57; --c-ops: #2f7d86;
+    --c-res: #b07d2e; --c-com: #9d5a6a; --c-know: #5c74a4; --c-work: #6a5fa4; --c-comm: #8a5a9c;
+  }
+  :root[data-theme="dark"] {
+    --ground: #0d1310; --ground-2: #121a15; --panel: #131c17;
+    --ink: #e7efe5; --ink-soft: #a6b3a8; --ink-faint: #6f7d73;
+    --line: #223029; --line-strong: #2c3c33; --pine: #0c221a; --accent: #5ea67b;
+    --confirmed: #5ea67b; --probable: #d4a251; --suggested: #6f7d73;
+    --c-tg: #0c221a; --c-people: #5ea67b; --c-org: #4f9a80; --c-ops: #57aab4;
+    --c-res: #d4a251; --c-com: #c98297; --c-know: #8aa0d0; --c-work: #9088cf; --c-comm: #b585c6;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--ground); color: var(--ink); font-family: var(--sans); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: clamp(28px, 5vw, 56px) clamp(18px, 4vw, 40px); }
+  h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(1.8rem, 4vw, 2.7rem); letter-spacing: -0.01em; margin: 0 0 0.5rem; text-wrap: balance; }
+  .eyebrow { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); margin: 0 0 0.9rem; display: flex; align-items: center; gap: 0.6rem; }
+  .eyebrow::before { content: ""; width: 22px; height: 1px; background: var(--accent); opacity: .6; }
+  .lede { color: var(--ink-soft); max-width: 62ch; margin: 0 0 0.4rem; font-size: 1.02rem; }
+  .demo-tag { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--probable); border: 1px solid color-mix(in oklab, var(--probable) 40%, var(--line)); border-radius: 999px; padding: 3px 10px; margin-top: 14px; }
+
+  .stage { display: grid; grid-template-columns: 1fr 300px; gap: 18px; margin-top: 28px; align-items: start; }
+  .graph-card { border: 1px solid var(--line); border-radius: 16px; background: var(--panel); box-shadow: var(--shadow); overflow: hidden; }
+  .graph-scroll { overflow-x: auto; }
+  svg.graph { display: block; width: 100%; height: auto; min-width: 620px; touch-action: manipulation; }
+
+  .edge { fill: none; stroke: var(--line-strong); transition: stroke .15s, opacity .15s, stroke-width .15s; }
+  .edge.confirmed { stroke-dasharray: none; }
+  .edge.probable { stroke-dasharray: 6 4; }
+  .edge.suggested { stroke-dasharray: 1.5 5; stroke-linecap: round; }
+  .edge.dim { opacity: .12; }
+  .edge.hot { stroke: var(--accent); stroke-width: 2.4; opacity: 1; }
+
+  .node { cursor: pointer; }
+  .node circle { stroke: var(--panel); stroke-width: 2.5; transition: transform .12s; }
+  .node .ring { fill: none; stroke: transparent; stroke-width: 2.5; }
+  .node text { font-family: var(--sans); fill: var(--ink); pointer-events: none; }
+  .node .lab { font-size: 12.5px; font-weight: 600; }
+  .node .sub { font-size: 10.5px; fill: var(--ink-faint); }
+  .node.center .lab { font-size: 15px; }
+  .node:focus { outline: none; }
+  .node:focus-visible .ring { stroke: var(--accent); }
+  .node.dim { opacity: .28; }
+  .node.sel .ring { stroke: var(--accent); }
+
+  .panel { border: 1px solid var(--line); border-radius: 16px; background: var(--panel); box-shadow: var(--shadow); padding: 20px; position: sticky; top: 18px; }
+  .panel .p-kind { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.14em; text-transform: uppercase; display: flex; align-items: center; gap: 7px; margin-bottom: 8px; }
+  .panel .p-kind .kd { width: 10px; height: 10px; border-radius: 50%; }
+  .panel h2 { font-family: var(--serif); font-weight: 600; font-size: 1.25rem; margin: 0 0 4px; line-height: 1.2; }
+  .panel .p-sub { color: var(--ink-faint); font-size: 0.85rem; margin: 0 0 16px; }
+  .panel .rel { font-size: 0.92rem; color: var(--ink-soft); margin: 0 0 16px; padding: 12px 14px; background: var(--ground-2); border-radius: 10px; line-height: 1.5; }
+  .panel .rel b { color: var(--ink); }
+  .panel .meta { display: flex; flex-direction: column; gap: 10px; }
+  .panel .row { display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; gap: 12px; }
+  .panel .row .k { color: var(--ink-faint); font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; }
+  .panel .row .v { color: var(--ink); font-weight: 600; text-align: right; }
+  .conf { display: inline-flex; align-items: center; gap: 6px; }
+  .conf .cd { width: 9px; height: 9px; border-radius: 50%; }
+  .conf.confirmed .cd { background: var(--confirmed); } .conf.confirmed { color: var(--confirmed); }
+  .conf.probable .cd { background: var(--probable); } .conf.probable { color: var(--probable); }
+  .conf.suggested .cd { background: var(--suggested); } .conf.suggested { color: var(--suggested); }
+  .p-hint { margin-top: 16px; font-size: 0.78rem; color: var(--ink-faint); line-height: 1.5; border-top: 1px solid var(--line); padding-top: 14px; }
+
+  .legends { display: flex; flex-wrap: wrap; gap: 28px; margin-top: 22px; padding: 18px 20px; border: 1px solid var(--line); border-radius: 14px; background: var(--panel); }
+  .legends h3 { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-faint); margin: 0 0 10px; }
+  .legends .items { display: flex; flex-wrap: wrap; gap: 8px 16px; }
+  .legends .it { display: flex; align-items: center; gap: 7px; font-size: 0.78rem; color: var(--ink-soft); }
+  .legends .sw { width: 11px; height: 11px; border-radius: 50%; flex: none; }
+  .legends .ln { width: 22px; height: 0; border-top: 2px solid var(--ink-soft); flex: none; }
+  .legends .ln.pr { border-top-style: dashed; }
+  .legends .ln.sg { border-top-style: dotted; }
+  .foot { margin-top: 26px; font-family: var(--mono); font-size: 0.72rem; color: var(--ink-faint); line-height: 1.7; }
+
+  @media (max-width: 860px) {
+    .stage { grid-template-columns: 1fr; }
+    .panel { position: static; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">System Map · one connected trip</p>
+  <h1>What Adventure OS sees when it looks at a single TripGroup</h1>
+  <p class="lede">This is the first thing the graph must prove it can do: take one real multi-day group and show everything connected to it — the agency, the guests, the guide, payments, bikes, accommodation, documents, tasks and messages — with every link tracing back to a source, and guesses kept visibly separate from facts.</p>
+  <span class="demo-tag">● Illustrative example · shape is real, the names are demo</span>
+
+  <div class="stage">
+    <div class="graph-card">
+      <div class="graph-scroll">
+        <svg class="graph" id="graph" viewBox="0 0 1000 720" role="img"
+             aria-label="A relationship graph centred on the Durmitor e-Bike Multiday trip group, connecting its agency, participants, guide, tours, bikes, accommodation, payments, expenses, documents, a task and a message.">
+          <g id="edges"></g>
+          <g id="nodes"></g>
+        </svg>
+      </div>
+    </div>
+
+    <aside class="panel" id="panel" aria-live="polite">
+      <!-- filled by JS -->
+    </aside>
+  </div>
+
+  <div class="legends">
+    <div>
+      <h3>Entity type</h3>
+      <div class="items" id="kindLegend"></div>
+    </div>
+    <div>
+      <h3>Confidence of the link</h3>
+      <div class="items">
+        <span class="it"><span class="ln"></span> Confirmed — a source says so</span>
+        <span class="it"><span class="ln pr"></span> Probable — strong match</span>
+        <span class="it"><span class="ln sg"></span> Suggested — needs review</span>
+      </div>
+    </div>
+  </div>
+
+  <p class="foot">
+    Every node keeps its source and confidence — the same rule the whole system runs on.<br>
+    Relationship verbs (has participant · guides · payment applies to · supports …) are the canonical types from <b>docs/RELATIONSHIPS.md</b>.<br>
+    This is the "first graph validation scenario" from <b>docs/KNOWLEDGE_GRAPH.md</b>, drawn as it will look once the read-only adapters land.
+  </p>
+</div>
+
+<script>
+(function () {
+  var CX = 500, CY = 360;
+
+  var KIND = {
+    tripgroup:   { c: "--c-tg",    label: "Trip group" },
+    organisation:{ c: "--c-org",   label: "Organisation / agency" },
+    person:      { c: "--c-people",label: "Person" },
+    guide:       { c: "--c-people",label: "Guide assignment" },
+    participant: { c: "--c-people",label: "Participant" },
+    tour:        { c: "--c-ops",   label: "Tour segment" },
+    asset:       { c: "--c-res",   label: "Asset (bikes)" },
+    location:    { c: "--c-res",   label: "Accommodation / place" },
+    payment:     { c: "--c-com",   label: "Payment" },
+    expense:     { c: "--c-com",   label: "Expense" },
+    document:    { c: "--c-know",  label: "Document" },
+    task:        { c: "--c-work",  label: "Task" },
+    message:     { c: "--c-comm",  label: "Message" }
+  };
+
+  // group -> angular centre (degrees, 0 = up, clockwise) and arc spread
+  var GROUPS = {
+    org:   { ang: 0,   spread: 0  },
+    people:{ ang: 52,  spread: 60 },
+    ops:   { ang: 108, spread: 26 },
+    res:   { ang: 150, spread: 26 },
+    com:   { ang: 200, spread: 34 },
+    know:  { ang: 250, spread: 26 },
+    work:  { ang: 292, spread: 0  },
+    comm:  { ang: 320, spread: 0  }
+  };
+
+  var nodes = [
+    { id:"tg", kind:"tripgroup", title:"Durmitor e-Bike Multiday", sub:"18–22 Aug 2026 · 3 guests", center:true },
+
+    { id:"org",  kind:"organisation", group:"org",   title:"Multiday",          sub:"Operating agency", rel:"acts as agency for", verb:"ORGANISATION_ACTS_AS_AGENCY_FOR_TRIP_GROUP", src:"Notion",        conf:"confirmed" },
+
+    { id:"coord",kind:"person",      group:"people", title:"Jelena Popović",    sub:"Coordinator",      rel:"coordinates",        verb:"PERSON_HOLDS_ROLE",                           src:"Notion",        conf:"confirmed" },
+    { id:"guide",kind:"guide",       group:"people", title:"Marko Vuković",     sub:"Guide",            rel:"guides",             verb:"GUIDE_ASSIGNMENT_COVERS_TRIP_GROUP",          src:"Notion",        conf:"confirmed" },
+    { id:"p1",   kind:"participant", group:"people", title:"Anna Weber",        sub:"Participant",      rel:"has participant",    verb:"TRIP_GROUP_HAS_PARTICIPANT",                  src:"Notion",        conf:"confirmed" },
+    { id:"p2",   kind:"participant", group:"people", title:"Thomas Berger",     sub:"Participant",      rel:"has participant",    verb:"TRIP_GROUP_HAS_PARTICIPANT",                  src:"Notion",        conf:"confirmed" },
+    { id:"p3",   kind:"participant", group:"people", title:"Lena Schmidt",      sub:"Participant",      rel:"has participant",    verb:"TRIP_GROUP_HAS_PARTICIPANT",                  src:"Notion",        conf:"probable" },
+
+    { id:"t1",   kind:"tour",        group:"ops",    title:"Žabljak → Trsa",    sub:"Day 1 segment",    rel:"includes tour",      verb:"TRIP_GROUP_INCLUDES_TOUR",                    src:"Notion",        conf:"confirmed" },
+    { id:"t2",   kind:"tour",        group:"ops",    title:"Tara Canyon loop",  sub:"Day 3 segment",    rel:"includes tour",      verb:"TRIP_GROUP_INCLUDES_TOUR",                    src:"Notion",        conf:"probable" },
+
+    { id:"bike", kind:"asset",       group:"res",    title:"3× e-Bike",         sub:"Fleet DA-07/08/09",rel:"allocates asset to", verb:"ALLOCATION_TO_TRIP_GROUP",                    src:"Adventure Hub", conf:"confirmed" },
+    { id:"hut",  kind:"location",    group:"res",    title:"Eko-Oaza",          sub:"Accommodation",    rel:"stays at",           verb:"TOUR_OCCURS_AT_LOCATION",                     src:"Notion",        conf:"probable" },
+
+    { id:"pay1", kind:"payment",     group:"com",    title:"Deposit €600",      sub:"Received",         rel:"payment applies to", verb:"PAYMENT_APPLIES_TO_TRIP_GROUP",               src:"WSPay",         conf:"confirmed" },
+    { id:"pay2", kind:"payment",     group:"com",    title:"Balance €1,800",    sub:"Due 10 Aug",       rel:"payment applies to", verb:"PAYMENT_APPLIES_TO_TRIP_GROUP",               src:"—",             conf:"suggested" },
+    { id:"exp",  kind:"expense",     group:"com",    title:"Hotel + transfer",  sub:"Expense",          rel:"expense applies to", verb:"EXPENSE_APPLIES_TO_TRIP_GROUP",               src:"Drive",         conf:"probable" },
+
+    { id:"wav",  kind:"document",    group:"know",   title:"Waivers ×3",        sub:"Signed",           rel:"supports",           verb:"DOCUMENT_SUPPORTS_TRIP_GROUP",                src:"Documenso",     conf:"confirmed" },
+    { id:"itin", kind:"document",    group:"know",   title:"Itinerary PDF",     sub:"v2",               rel:"supports",           verb:"DOCUMENT_SUPPORTS_TRIP_GROUP",                src:"Drive",         conf:"confirmed" },
+
+    { id:"task", kind:"task",        group:"work",   title:"Confirm bike sizes",sub:"Open task",        rel:"relates to",         verb:"MESSAGE_RELATES_TO_ENTITY",                   src:"Plane",         conf:"confirmed" },
+    { id:"msg",  kind:"message",     group:"comm",   title:"Guest email thread",sub:"Arrival details",  rel:"relates to",         verb:"MESSAGE_RELATES_TO_ENTITY",                   src:"Gmail",         conf:"probable" }
+  ];
+
+  // cross-links (graph, not a star): show two secondary connections
+  var cross = [
+    { from:"guide", to:"t1",   rel:"guides",   conf:"confirmed" },
+    { from:"p1",    to:"pay1", rel:"paid by",  conf:"probable" }
+  ];
+
+  var byId = {};
+  nodes.forEach(function (n) { byId[n.id] = n; });
+
+  // ---- layout: radial, grouped ----
+  var R = 250;
+  var groupList = {};
+  nodes.forEach(function (n) {
+    if (n.center) { n.x = CX; n.y = CY; return; }
+    (groupList[n.group] = groupList[n.group] || []).push(n);
+  });
+  Object.keys(groupList).forEach(function (g) {
+    var arr = groupList[g], gg = GROUPS[g];
+    var n = arr.length;
+    arr.forEach(function (node, i) {
+      var offset = n === 1 ? 0 : (i / (n - 1) - 0.5) * gg.spread;
+      var deg = gg.ang + offset;
+      var rad = (deg - 90) * Math.PI / 180;
+      // push outer rings slightly further for readability of the people cluster
+      var r = R + (g === "people" ? 40 : 0) + (i % 2) * 18;
+      node.x = CX + Math.cos(rad) * r;
+      node.y = CY + Math.sin(rad) * r;
+    });
+  });
+
+  var SVGNS = "http://www.w3.org/2000/svg";
+  function cssvar(v) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
+  function el(tag, attrs) { var e = document.createElementNS(SVGNS, tag); for (var k in attrs) e.setAttribute(k, attrs[k]); return e; }
+
+  var edgesG = document.getElementById("edges");
+  var nodesG = document.getElementById("nodes");
+  var edgeEls = [];
+
+  function addEdge(a, b, conf, key) {
+    var na = byId[a], nb = byId[b];
+    var mx = (na.x + nb.x) / 2, my = (na.y + nb.y) / 2;
+    // gentle bow toward centre for spokes
+    var path = el("path", {
+      d: "M " + na.x + " " + na.y + " Q " + (mx + (my - CY) * 0.05) + " " + (my - (mx - CX) * 0.05) + " " + nb.x + " " + nb.y,
+      class: "edge " + conf
+    });
+    path.dataset.a = a; path.dataset.b = b;
+    edgesG.appendChild(path);
+    edgeEls.push(path);
+  }
+
+  nodes.forEach(function (n) { if (!n.center) addEdge("tg", n.id, n.conf); });
+  cross.forEach(function (c) { addEdge(c.from, c.to, c.conf); });
+
+  function nodeRadius(n) { return n.center ? 30 : (n.kind === "participant" || n.kind === "payment" || n.kind === "document" ? 16 : 18); }
+
+  nodes.forEach(function (n) {
+    var g = el("g", { class: "node" + (n.center ? " center" : ""), tabindex: "0", role: "button" });
+    g.setAttribute("aria-label", n.title + (n.center ? "" : ", " + n.rel + " the trip group"));
+    g.dataset.id = n.id;
+    var r = nodeRadius(n);
+    g.appendChild(el("circle", { class: "ring", cx: n.x, cy: n.y, r: r + 5 }));
+    g.appendChild(el("circle", { cx: n.x, cy: n.y, r: r, fill: cssvar(KIND[n.kind].c) }));
+
+    var below = n.center ? true : n.y > CY - 10;
+    var ty = below ? n.y + r + 16 : n.y - r - 8;
+    var lab = el("text", { class: "lab", x: n.x, y: ty, "text-anchor": "middle" });
+    lab.textContent = n.title;
+    g.appendChild(lab);
+    var sub = el("text", { class: "sub", x: n.x, y: ty + (n.center ? 15 : 13), "text-anchor": "middle" });
+    sub.textContent = n.center ? "Trip group · the whole trip in one view" : n.sub;
+    g.appendChild(sub);
+
+    function pick() { select(n.id); }
+    g.addEventListener("click", pick);
+    g.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(); } });
+    nodesG.appendChild(g);
+    n._g = g;
+  });
+
+  var panel = document.getElementById("panel");
+
+  function confLabel(c) { return c === "confirmed" ? "Confirmed" : c === "probable" ? "Probable" : "Suggested"; }
+
+  function renderPanel(n) {
+    if (!n || n.center) {
+      panel.innerHTML =
+        '<div class="p-kind"><span class="kd" style="background:' + cssvar("--c-tg") + '"></span>Trip group</div>' +
+        '<h2>Durmitor e-Bike Multiday</h2>' +
+        '<p class="p-sub">18–22 Aug 2026 · 3 guests</p>' +
+        '<p class="rel">Everything around this circle is <b>one query</b> against the graph — the whole picture of a single trip, assembled from many systems.</p>' +
+        '<div class="p-hint">Tap any node to see how it connects, which system it comes from, and how sure we are.</div>';
+      return;
+    }
+    var k = KIND[n.kind];
+    panel.innerHTML =
+      '<div class="p-kind"><span class="kd" style="background:' + cssvar(k.c) + '"></span>' + k.label + '</div>' +
+      '<h2>' + n.title + '</h2>' +
+      '<p class="p-sub">' + n.sub + '</p>' +
+      '<p class="rel"><b>' + n.title + '</b> — ' + n.rel + ' → <b>Durmitor e-Bike Multiday</b></p>' +
+      '<div class="meta">' +
+        '<div class="row"><span class="k">Relationship</span><span class="v" style="font-family:var(--mono);font-size:0.68rem;font-weight:600">' + n.verb + '</span></div>' +
+        '<div class="row"><span class="k">Source</span><span class="v">' + n.src + '</span></div>' +
+        '<div class="row"><span class="k">Confidence</span><span class="v"><span class="conf ' + n.conf + '"><span class="cd"></span>' + confLabel(n.conf) + '</span></span></div>' +
+      '</div>' +
+      '<div class="p-hint">Nothing here is invented — if the source is unknown or the match is weak, the link is marked <em>suggested</em> and waits for a human, never shown as fact.</div>';
+  }
+
+  var current = null;
+  function select(id) {
+    current = id;
+    var n = byId[id];
+    // node states
+    nodes.forEach(function (m) {
+      var connected = id === "tg" || m.id === id || m.id === "tg";
+      // also connected if a cross-link joins them
+      cross.forEach(function (c) { if ((c.from === id && c.to === m.id) || (c.to === id && c.from === m.id)) connected = true; });
+      m._g.classList.toggle("dim", !(id === "tg") && !connected);
+      m._g.classList.toggle("sel", m.id === id);
+    });
+    // edge states
+    edgeEls.forEach(function (p) {
+      var touches = p.dataset.a === id || p.dataset.b === id;
+      p.classList.toggle("hot", touches && id !== "tg");
+      p.classList.toggle("dim", id !== "tg" && !touches);
+    });
+    renderPanel(n);
+  }
+
+  // background click clears
+  document.getElementById("graph").addEventListener("click", function (e) {
+    if (e.target.tagName === "svg") select("tg");
+  });
+
+  // kind legend
+  var kl = document.getElementById("kindLegend");
+  var seen = {};
+  nodes.forEach(function (n) {
+    if (n.center || seen[KIND[n.kind].label]) return;
+    seen[KIND[n.kind].label] = 1;
+    var it = document.createElement("span");
+    it.className = "it";
+    it.innerHTML = '<span class="sw" style="background:' + cssvar(KIND[n.kind].c) + '"></span>' + KIND[n.kind].label;
+    kl.appendChild(it);
+  });
+
+  // recolor swatches + node fills when theme toggles
+  new MutationObserver(function () {
+    nodes.forEach(function (n) {
+      var circ = n._g.querySelector("circle:not(.ring)");
+      if (circ) circ.setAttribute("fill", cssvar(KIND[n.kind].c));
+    });
+    kl.innerHTML = ""; seen = {};
+    nodes.forEach(function (n) {
+      if (n.center || seen[KIND[n.kind].label]) return;
+      seen[KIND[n.kind].label] = 1;
+      var it = document.createElement("span");
+      it.className = "it";
+      it.innerHTML = '<span class="sw" style="background:' + cssvar(KIND[n.kind].c) + '"></span>' + KIND[n.kind].label;
+      kl.appendChild(it);
+    });
+    if (current) renderPanel(byId[current]);
+  }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+  select("tg");
+})();
+</script>
+</body>
+</html>

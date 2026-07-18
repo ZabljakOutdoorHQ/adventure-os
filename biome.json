@@ -3,5 +3,12 @@
   "files": { "ignoreUnknown": false },
   "formatter": { "enabled": true, "indentStyle": "space" },
   "linter": { "enabled": true, "rules": { "recommended": true } },
-  "javascript": { "formatter": { "quoteStyle": "double" } }
+  "javascript": { "formatter": { "quoteStyle": "double" } },
+  "overrides": [
+    {
+      "includes": ["docs/visual/**"],
+      "linter": { "enabled": false },
+      "formatter": { "enabled": false }
+    }
+  ]
 }
