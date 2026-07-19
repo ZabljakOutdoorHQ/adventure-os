@@ -615,6 +615,12 @@ Multiday.
 
 ## Phase 1 — status
 
+> **Business knowledge extraction:** the durable rules hidden in the spreadsheets
+> are extracted and classified (Business Rule / Policy / Config / Calculation /
+> Convention / Historical Decision / Workaround / Spreadsheet Implementation) in
+> [`multiday-business-rules.md`](multiday-business-rules.md) — a reusable rulebook
+> meant to survive replacing Google Sheets. Draft; reviewed before §4 is updated.
+
 Phase 1 now covers **both** the Notion operational structure **and** the Google Drive /
 spreadsheet processes. Against the completion criteria, we can now explain end to end:
 
