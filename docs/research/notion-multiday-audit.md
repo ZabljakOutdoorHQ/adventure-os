@@ -2,13 +2,59 @@
 
 > **Mission.** The objective is **not** to optimize Notion. The objective is to
 > **document the business model** so that Notion becomes only *one*
-> implementation of that model, and Adventure OS can later become another.
+> implementation of that model — Notion today, and WeTravel or Adventure OS
+> tomorrow.
+>
+> **Guiding principle:** **Business first. Software second. Migration always
+> possible.** Every finding and recommendation describes the *business* first
+> and the *software* second, and must survive a change of platform.
 >
 > **Phase:** 1 — Audit. We are *not* migrating, merging, or modifying anything.
 > This document is read-only findings + a first draft of the canonical model.
 >
 > **Privacy:** no client/agency names, guide or supplier names, payment amounts,
 > or Notion IDs appear here. Only *structure* and *aggregate* counts.
+
+---
+
+## Design constraints
+
+These are the non-negotiable rules the whole effort (this cleanup *and* the
+eventual Adventure OS) must respect. They are written down deliberately, because
+they are exactly the things that save a project when the platform changes:
+
+1. **The 2026 season must continue uninterrupted.** Cleanup runs alongside live
+   operations; nothing may block day-to-day work.
+2. **Existing data must remain readable at every step.** No state where the team
+   can't find a tour, a rooming list, or a payment.
+3. **Every migration must be reversible.** Snapshot before each change; every
+   step has a rollback.
+4. **No vendor lock-in.** The business model is not owned by Notion, WeTravel, or
+   Adventure OS. Any of them is a replaceable implementation.
+5. **One business model, multiple implementations.** The model is defined once,
+   independent of tooling; each platform maps *onto* it.
+6. **The canonical schema lives in Git.** The repository — not any single Notion
+   page — is the source of truth for *structure* (schema, naming, relations,
+   rules). Notion holds the *operational data* for this season.
+7. **Production data is never modified without an approved migration plan.** All
+   experiments happen in the MCP Cleanup workspace.
+
+## Architectural notes
+
+- **WeTravel is a realistic future scenario.** Booking and tour management may
+  move to WeTravel — itinerary, booking, customer communication, payments,
+  expenses, and the booking widget could all become WeTravel's responsibility.
+  (A hint already exists: PAYMENTS has a `Hub link` payment method.) Therefore
+  the canonical model **must not be coupled to Notion**, and must be portable to
+  **Notion · WeTravel · Adventure OS · any future platform**.
+- **Separate the business model from the software implementation.** Every entity
+  in this audit is described as three layers: **Business concept** → **Current
+  implementation** (Notion database) → **Future implementations** (Notion /
+  WeTravel / Adventure OS). The business is described first; the software second.
+- **Do not over-design Notion.** The goal is not a perfect Notion workspace. The
+  goal is a workspace that is *easy to maintain during 2026* and *easy to migrate
+  later*. Avoid any structure that only makes sense inside Notion and would not
+  survive a move to another platform.
 
 ---
 
@@ -135,9 +181,19 @@ canonical model:
   (tour operator, DMC, direct, corporate).
 - **Entity / own company** — *our* legal entities that pay and get paid. Present
   as a select on Hotel Bookings (`Durmitor Adventure`, `Sampas`, `Other Trails`)
-  and as a relation table (`Company`) used by Payments and Expenses. **The
-  business runs under multiple own entities** — the model must be multi-entity.
+  and as a relation table used by Payments and Expenses. **The business runs
+  under multiple own entities** — the model must be multi-entity.
+- **Cash / account position** — the relation table wired to Payments and
+  Expenses is actually an **(unnamed) treasury ledger**: per account it rolls up
+  Cash / Bank / Wise totals from Payments, subtracts Cash / Bank expense totals,
+  and computes a `Current State` (running balance). So "own entity" and "cash
+  account balance" are currently the *same* fragmented, untitled table — a
+  business concept (money position per entity) hiding inside a Notion utility.
 - **Payer/account** — who physically paid an expense (`Expenses.Paid by`).
+
+The business concept here is **Entity** (an own company, with a money position);
+the current Notion implementation splits it across a hotel select and an unnamed
+ledger. Phase 2 should name and unify it.
 
 ### 1.6 Inconsistent relation naming (schema hygiene)
 
@@ -146,24 +202,60 @@ The *same* TOURS relation is named differently in every table: `GROUPS 1`
 Transfers), `Payments ` (trailing space, on TOURS), `👥 PARTICIPANTS` (emoji in
 the property name). Phase 2 must define **one naming convention**.
 
-### 1.7 Inbound pipeline
+### 1.7 Inbound pipeline: Inquiries → Offers → Tour (all disconnected)
 
-`2026 INQUIRES` is a **free-form page with a Markdown table** (~15 tour-operator
-leads: dates, pax range, program, calc link, prices), plus a few loose embedded
-mini-databases (a finance/dates grid, a calendar) and inline to-do checklists.
-It is **not a real database** and carries **no relation** to TOURS. `PONUDE`
-(offers) is a further, separate quote surface. Both are duplicated across the two
-universes.
+The business flow is **Lead → Offer → confirmed Tour**. In Notion today all
+three stages live in separate, unlinked surfaces:
 
-### 1.8 To finish the inventory (open)
+- **Inquiries** — `2026 INQUIRES` is a **free-form page with a Markdown table**
+  (~15 tour-operator leads: dates, pax range, program, calc link, prices), plus
+  a few loose embedded mini-databases (a finance/dates grid, a calendar) and
+  inline to-do checklists. **Not a real database; no relation to TOURS.**
+- **Offers** — `PONUDE` wraps a **thin, untitled database** with only `Name`,
+  `Brochure` (file), and `Calculation` (URL to the Google Sheet). It is really a
+  document holder, **not** a quote pipeline: no client, dates, price, or relation
+  to TOURS.
+- **Tour** — the TOURS row, created by hand.
 
-- The `Company` (68e8…) table contents — confirm it is the own-entity/account
-  register.
-- The INQUIRES embedded mini-DBs (finance/dates grid, calendar) and `PONUDE` —
-  schema + role.
-- Legacy-year databases (2023/24/25) — enough to define an archive boundary.
-- Per-group page anatomy — which of the 10 standard sections each page has, to
-  quantify inconsistency (P7).
+So a lead is re-typed at each stage; nothing carries a relation forward. In the
+business model this is a **single lifecycle** (`Inquiry → Offer → TripGroup`),
+and every implementation should preserve that thread. Both surfaces are also
+duplicated across the two universes.
+
+### 1.8 Group-page anatomy (the "standard" is half-structured)
+
+The `TEMPLATE - Tour Page` — the intended standard — mixes two incompatible
+styles:
+
+- **Database-backed views:** an embedded HOTEL BOOKINGS view and an embedded
+  EXPENSES view, filtered to the tour. ✅ good — reads from the real tables.
+- **Manual Markdown tables** for rooming/bikes (Room · Guest 1/2 · Transport ·
+  Bed type · Height · Frame size · Bike no.) and a "Bikes sum" table. ❌ these
+  **shadow the PARTICIPANTS database** (which already holds room type, rider
+  type, bike, bike size) — re-entering the same data as free text.
+
+So even the template perpetuates double-entry (P5): rooming exists both in
+PARTICIPANTS and as prose on the page. Real group pages are less consistent
+still ("group pages različite i zbrda-zdola"). Recommendation for Phase 2: the
+page should be a **thin view layer over the databases** (embedded, filtered
+views + Drive links), with **no** hand-maintained tables that duplicate a DB.
+
+### 1.9 Legacy boundary (2023–2025)
+
+Legacy years sit as **separate top-level pages/databases** at the workspace root
+(`2023 Scheduled tours / staro`, `2024 Scheduled tours`, `2025 Grupe` + backup,
+`Transferi - Etape 2025`), not relationally connected to the 2026 model. The
+archive boundary is therefore clean and low-risk: in Phase 4 they can be moved
+under a single `Archive` parent without touching any 2026 relation. They are
+**read-only history** — kept readable (constraint #2), not migrated.
+
+### 1.10 Inventory status: **complete**
+
+The Phase-1 inventory is closed. Every core database, the treasury ledger, the
+inquiries/offers surfaces, the group-page template, and the legacy boundary have
+been examined (read-only). Remaining detail (exact per-page section counts across
+all 14 group pages) is quantification, not discovery, and can be produced on
+demand.
 
 ---
 
@@ -277,34 +369,48 @@ TripGroup      PRICED_IN          GoogleSheet      (external system of record)
   cross-checking the model against accounting (Zoho) — kept, but modelled as an
   attribute of the money flow, not a parallel truth.
 
-### 4.4 How this maps to today and tomorrow
+### 4.4 Business concept → current → future implementations
 
-The same model expresses cleanly in both worlds — which is exactly why the
-business model, not the Notion layout, is the deliverable:
+**Business first, software second.** Each row reads left-to-right: the business
+concept is primary; Notion is merely its *current* implementation; WeTravel and
+Adventure OS are *possible future* ones. The concept does not change when the
+platform does.
 
-| Canonical entity | Notion (this season) | Adventure OS (later) |
+| Business concept | Current impl. (Notion) | Future impl. (Notion / WeTravel / Adventure OS) |
 |---|---|---|
-| TripGroup | TOURS row | TripGroup aggregate |
-| Partner | AGENCIES | Company/Partner |
-| Entity (own company) | `Company` table + Hotel `Entity/Company` select | Entity / org unit |
-| Participant | PARTICIPANTS (rooming inline) | Participant |
-| ItineraryDay (+ guide) | *Day-by-day table (to add)* | ItineraryDay |
-| Accommodation | HOTEL BOOKINGS | Accommodation |
-| Transfer | TRANSFERS | Logistics |
-| Payment / Expense | PAYMENTS / EXPENSES | Payment / Cost |
-| Asset | bikes | Asset |
-| Inquiry | INQUIRES *(promote to DB)* | Lead |
-| Document | *(to add: Drive link + status)* | Document |
-| *(dropped)* | ~~Room Allocations~~ | — (rooming lives on Participant) |
+| **Tour** (a sold multiday trip) | `TOURS` row | Notion DB · WeTravel *trip* · AOS `TripGroup` |
+| **Partner** (external client) | `AGENCIES` | Notion DB · WeTravel *contact/agent* · AOS `Company` |
+| **Entity** (own company + money position) | Hotel `Entity` select + unnamed treasury ledger | Notion DB · WeTravel *account* · AOS `Entity` |
+| **Traveller** | `PARTICIPANTS` (rooming inline) | Notion DB · WeTravel *booking/traveler* · AOS `Participant` |
+| **Itinerary day** (+ guide) | *day-by-day table (to add)* | Notion DB · WeTravel *itinerary* · AOS `ItineraryDay` |
+| **Accommodation** | `HOTEL BOOKINGS` | Notion DB · WeTravel *supplier booking* · AOS `Accommodation` |
+| **Transfer** | `TRANSFERS` | Notion DB · WeTravel *logistics* · AOS `Logistics` |
+| **Payment** (money in) | `PAYMENTS` | Notion DB · WeTravel *payments/widget* · AOS `Payment` |
+| **Expense** (money out) | `EXPENSES` | Notion DB · WeTravel *expenses* · AOS `Cost` |
+| **Asset** (bike) | bikes import | Notion DB · (n/a WeTravel) · AOS `Asset` |
+| **Inquiry / Offer** (lead lifecycle) | `INQUIRES` text + `PONUDE` doc DB | Notion DB · WeTravel *lead/widget* · AOS `Lead` |
+| **Document** | brochure/calc links (scattered) | Notion DB · WeTravel *files* · AOS `Document` |
+| *(dropped)* | ~~Room Allocations~~ | rooming lives on Traveller everywhere |
+
+The point of the table: **nothing in the middle column is essential.** If booking
+moves to WeTravel, the concepts survive unchanged; only the right-hand mapping is
+exercised. That is the portability the design constraints require.
 
 ---
 
-## What remains to complete Phase 1
+## Phase 1 — status: complete
 
-1. Finish the inventory (§1.8): confirm the `Company` table, the INQUIRES/PONUDE
-   mini-DBs, legacy-year DBs, and per-group page anatomy.
-2. Confirm the canonical model draft (§4) against how the business actually
-   operates — corrections welcome; this is a draft.
-3. Only then move to **Phase 2 — System Design** (canonical Notion schema,
-   naming/templates/rules, migration + rollback plan). No structural change
-   happens before that plan is approved.
+All four Phase-1 deliverables are done and captured above:
+
+- ✅ **Workspace Inventory** (§Deliverable 1) — both universes, all core DBs, the
+  treasury ledger, inquiries/offers, group-page template, legacy boundary.
+- ✅ **Relationship Map** (§Deliverable 2).
+- ✅ **Data Quality Report** (§Deliverable 3).
+- ✅ **Canonical Business Model, draft** (§Deliverable 4) — Notion-independent,
+  expressed as business concept → current → future.
+
+**One thing needed from you to close Phase 1:** confirm or correct the canonical
+business model in §4 — does it match how the business actually operates? Once you
+sign off on the model, Phase 1 is closed and we can open **Phase 2 — System
+Design** (canonical schema, naming/templates/rules, migration + rollback plan).
+No structural change happens in any workspace before that plan is approved.
