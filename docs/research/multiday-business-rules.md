@@ -155,6 +155,15 @@ relevant rules below. Still **not** applied to §4 — captured here for the rul
   and hotel information, **backed by central databases** (like Expenses today), so that
   everything a group needs is visible on **one page** while the data still lives in shared
   tables. (Design intent — recorded, not yet modelled.)
+- **Supplier price history is kept** (an archived rate card per supplier — hotels and all
+  others). Purpose: track how costs rise over time and **justify our own price
+  increases**. → supplier prices are **time-versioned** (each price has an effective
+  period), not overwritten.
+- **The glossary is defined now, company-wide.** The contested terms (Agency, Supplier,
+  Settlement, per-activity/VAT economics, Entity vs Brand) are given working definitions
+  **once for all of Adventure OS** — not Multiday-local — to prevent future confusion. A
+  draft glossary is in **Part D** for review; final adoption into the canon happens at the
+  model-update step.
 
 ### B1. Pricing & commercial
 
@@ -213,6 +222,7 @@ relevant rules below. Still **not** applied to §4 — captured here for the rul
 | FN-3 | Payments carry a **method** (cash / bank / Wise / Hub link) with per-method roll-ups. | Business Rule (+config) | Permanent | Model + config |
 | FN-4 | Cost categories (hotel, transfer, guide per-diem, meals, NP tickets, rafting…). | Configuration | Versioned | External reference |
 | FN-5 | Suppliers (hotels, transfer providers, activity providers, guides, bike vendors) are real economic counterparties. | Business Rule | Permanent | Domain model |
+| FN-6 | Supplier prices are **time-versioned** (rate card per effective period); history is retained to track cost growth and justify price increases. | Business Rule | Permanent | Domain model + external config |
 
 ### B6. Tour lifecycle
 
@@ -253,32 +263,48 @@ bake a number into structure.
 
 ---
 
+## Part D — Draft glossary of contested terms (company-wide, for review)
+
+Working definitions for the terms most likely to cause confusion, defined **once for all
+of Adventure OS** (not Multiday-only) per the owner decision. **Draft** — proposed for
+review; final adoption into `docs/DOMAIN_MODEL.md` happens at the model-update step, not
+here. Where the repo canon already has a position, it is noted.
+
+| Term | Draft company-wide definition | Note / canon status |
+|---|---|---|
+| **Agency (client)** | An **external** organisation that books groups from us (tour operator, DMC, corporate, direct). | Canon: role of `Organisation`. Keep this meaning for the word "Agency". |
+| **Agency layer / Operating Agency** | The **internal** shared-operating layer (Durmitor Adventure) that charges a per-participant fee to fund shared overhead. | Needs a **distinct name** from the client "Agency" (canon open question). Proposed: *Operating Agency* / *Shared-Services layer*. |
+| **Company fee** | The **operating margin** the Operating Agency charges per participant; funds shared overhead. **Not a cost.** | Owner-confirmed. |
+| **Supplier / Vendor** | An external organisation paid to provide a tour service/good: hotel, transfer provider, activity provider, external guide, bike vendor. Has **time-versioned rate cards**. | Canon: pending `Supplier` role on `Organisation`. Distinct from Agency (client) and from own Entities. |
+| **Legal Entity** | A registered company: Durmitor Adventure, Sampas, Other Trails. | Canon: `Organisation`. |
+| **Brand** | A public-facing identity (e.g. "Durmitor Adventure" as a brand), not automatically a legal entity. | Canon: `Brand` (explicitly distinct from Organisation). |
+| **Operating Unit** | A functional operation that collects revenue / pays costs; today maps closely to a Legal Entity, but the concepts are separate. | New; keep separate from Legal Entity. |
+| **Settlement participant / 4th share** | A share in the profit pool that is **not (yet) a legal entity** — currently the "4th share" (team / Kolašin collaborators / possibly investment). | New; a beneficiary of Settlement, not necessarily an Organisation. |
+| **Settlement** | The calculation + resulting obligations that distribute the pooled profit among participants: `entitlement − cash held → transfer`. | Canon: `Settlement`, `SETTLEMENT_BETWEEN_ORGANISATIONS`. It is a reconciliation, not the statutory accounting. |
+| **Allocation Rule** | A **versioned policy** governing distribution: profit split %, bike-fee reserve, per-pax fee. | New; policy-as-data with an effective date. |
+| **Financial Account** | A place money sits: cash / bank / Wise per entity, the **bike kasa**, a loan account. | New; not in canon yet. |
+| **Bike fee (Asset Usage Charge)** | A per-use charge (~half daily rent) recovering fleet investment + running costs. | New; extends `Asset`/`Bike` with a finance dimension. |
+| **Bike kasa** | The earmarked **fund** = sum of all bike-fees, custodied at DA, funding maintenance / loan / mechanic. | A `Financial Account`. |
+| **Estimated cost** | Forecast cost on the **offer/quote** (calc workbook). | Distinct from Actual cost. |
+| **Actual cost / Expense** | What was really spent, tagged by paying entity. | Canon: `Expense`. |
+| **Quoted vs Accepted vs Collected** | quoted price (calc) → accepted price (commercial fact / deposit) → collected revenue (payments). Three distinct values. | Accepted price has no structured home today. |
+| **Per-activity economics / VAT** | Each activity (multiday e-bike, canyoning, rafting…) is its own economic unit with its own revenue, costs, and output/input VAT; reconciled at legal-company level. | Canon: ADR-0002 (`Activity`, `VATEntry` pending). Multiday's activity = multiday e-bike touring. |
+
 ## Open questions for the rule review (before §4)
 
-**Resolved (owner, 2026-07)** — see §B0:
+All extraction questions are now **resolved** (owner, 2026-07):
 
-1. ~~Which split is authoritative?~~ → **25/25/25/25** (DA/OT/Sampas/4th).
-2. ~~Is the 4th share standing?~~ → **Yes, equal 25 %, shown separately; beneficiary
-   undecided** (DA team / Kolašin collaborators / possibly investment); cash at DA.
-3. ~~Estimated vs actual — one entity or two?~~ → **Two**: estimate on the offer/quote,
-   actual as spent.
-4. ~~Bike kasa — account or sub-ledger?~~ → **A dedicated earmarked fund** (sum of all
-   bike-fees) **custodied at DA**; funds maintenance/loan/mechanic.
-   Also confirmed: company fee = operating margin; day-by-day should surface transfer/
-   hotel from central DBs onto one page.
+1. ✅ Split → **25/25/25/25** (DA/OT/Sampas/4th).
+2. ✅ 4th share → **equal 25 %, shown separately**; beneficiary undecided (DA team /
+   Kolašin collaborators / possibly investment); cash at DA.
+3. ✅ Estimated vs actual → **two** representations (estimate on offer, actual as spent).
+4. ✅ Bike kasa → **dedicated earmarked fund** (sum of all bike-fees) custodied at DA.
+5. ✅ Supplier prices → **history kept** (time-versioned rate cards) to justify increases.
+6. ✅ Contested terms → **defined now, company-wide** (Part D glossary).
 
-**Still open (need your answer):**
+Plus confirmed: company fee = operating margin; single-page group operability over
+central DBs.
 
-5. **Supplier price history** — when a hotel/transfer price changes season to season
-   (e.g. the same hotel is priced differently in May vs September), do we need to **keep
-   the old prices** (a per-season rate-card history), or is only the **current price**
-   enough? This decides how heavy the Supplier / rate-card model is.
-6. **Global vs Multiday scope** — a few concepts (Supplier, Settlement, per-activity /
-   VAT economics, the two meanings of "Agency") affect **all of Adventure OS**, not just
-   Multiday. Do we settle them **now, for Multiday only**, or **park them as
-   company-wide decisions** to be made once for every activity? (Goal: avoid Multiday
-   locking in a rule that later doesn't fit the rest of the business.)
-
-**Next step:** your answers to 5–6, then your review of these extracted rules. Only after
-that do we update §4 — still not Phase 2, still no changes to any workspace, production
-or Drive data.
+**Next step:** your review of the extracted rules (Parts B–D). Only after that do we
+update §4 — still **not** Phase 2, still no changes to any workspace, production or Drive
+data.
