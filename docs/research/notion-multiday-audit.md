@@ -320,8 +320,20 @@ Findings:
 
 ## Deliverable 4 — Canonical Business Model (draft, Notion-independent)
 
+> ⚠️ **Not approved. Superseded pending reconciliation.** This section is a
+> *first draft built up from Notion*. A repository-wide check found that Adventure
+> OS **already defines** a mature canonical model covering these concepts — see
+> [`multiday-architecture-compatibility-review.md`](multiday-architecture-compatibility-review.md).
+> Several items below **conflict with the canon or inherit Notion limitations**
+> (e.g. `Group`→**TripGroup**, `Traveller`→**Participant**, `Guide` is a canonical
+> **GuideAssignment**, Inquiry converts via **Offer**, "Entity+treasury" splits
+> into **Organisation + Settlement**). Do **not** treat this §4 as the canonical
+> model; it will be reframed as a *bounded-context mapping* onto the existing
+> canon after review.
+
 This is the point of the whole exercise: describe the business, not the tool.
-Notion (today) and Adventure OS (later) are both just implementations of this.
+Notion (today), WeTravel and Adventure OS (later) are all just implementations of
+it — but the canonical definition lives in the repo's domain docs, not here.
 
 ### 4.1 Entities
 
@@ -409,8 +421,11 @@ All four Phase-1 deliverables are done and captured above:
 - ✅ **Canonical Business Model, draft** (§Deliverable 4) — Notion-independent,
   expressed as business concept → current → future.
 
-**One thing needed from you to close Phase 1:** confirm or correct the canonical
-business model in §4 — does it match how the business actually operates? Once you
-sign off on the model, Phase 1 is closed and we can open **Phase 2 — System
-Design** (canonical schema, naming/templates/rules, migration + rollback plan).
-No structural change happens in any workspace before that plan is approved.
+**Workspace discovery is accepted as complete.** The one remaining gate before
+Phase 2 is **not** sign-off on §4 (which is explicitly *not* approved). It is the
+**Architecture Compatibility Review** —
+[`multiday-architecture-compatibility-review.md`](multiday-architecture-compatibility-review.md)
+— which checks this bounded context against the canonical Adventure OS model
+already in Git. §4 will be reframed as a mapping onto that canon after the review
+is accepted. **Phase 2 — System Design does not start until then, and no
+workspace or production data is touched.**
