@@ -611,6 +611,14 @@ are already global open questions (Supplier, Settlement, Activity/VAT economics,
 for the economic "Agency"), they must be resolved at the Adventure OS level, not inside
 Multiday.
 
+> **Terminology note.** The precise, corrected vocabulary for these concepts lives in
+> [`multiday-business-rules.md`](multiday-business-rules.md) **v2** (post-review): e.g.
+> *Operating Fee* vs *Operating Margin*; *Fleet Contribution* (not "Asset Usage
+> Charge"); *Shared Allocation Pool* + *Custodian*; *Financial Account* / *Earmarked
+> Fund* / *Financing Obligation* separated; *Profit Sharing Policy*; *Supplier* as a
+> role with *PriceList* history; *Operating Unit* deferred. This §5.7 list is
+> superseded by that rulebook where they differ.
+
 ---
 
 ## Phase 1 — status
