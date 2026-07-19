@@ -410,22 +410,244 @@ exercised. That is the portability the design constraints require.
 
 ---
 
-## Phase 1 — status: complete
+## Deliverable 5 — Google Drive & Spreadsheet Operations (draft)
 
-All four Phase-1 deliverables are done and captured above:
+> Read-only audit of the operational layer that lives **outside** Notion — in
+> Google Sheets, Numbers and documents. This is where pricing, the multi-entity
+> settlement, and bike-fleet finance actually live. **No file was modified,
+> renamed, moved or created.**
+>
+> **Privacy:** no client names, guest/guide personal names, invoice numbers or
+> actual money balances appear here. Own-company names (Durmitor Adventure,
+> Sampas, Other Trails) are used because the repo canon (ADR-0002, DOMAIN_MODEL)
+> already names them. Business-rule *parameters* (split %, per-pax fee structure)
+> are included as model logic; **actual amounts and balances are not.**
 
-- ✅ **Workspace Inventory** (§Deliverable 1) — both universes, all core DBs, the
-  treasury ledger, inquiries/offers, group-page template, legacy boundary.
-- ✅ **Relationship Map** (§Deliverable 2).
-- ✅ **Data Quality Report** (§Deliverable 3).
-- ✅ **Canonical Business Model, draft** (§Deliverable 4) — Notion-independent,
-  expressed as business concept → current → future.
+### 5.1 Drive inventory (folders)
 
-**Workspace discovery is accepted as complete.** The one remaining gate before
-Phase 2 is **not** sign-off on §4 (which is explicitly *not* approved). It is the
-**Architecture Compatibility Review** —
-[`multiday-architecture-compatibility-review.md`](multiday-architecture-compatibility-review.md)
-— which checks this bounded context against the canonical Adventure OS model
-already in Git. §4 will be reframed as a mapping onto that canon after the review
-is accepted. **Phase 2 — System Design does not start until then, and no
-workspace or production data is touched.**
+| Folder | Purpose | Period | Owner(s) | State | Relation to Notion | Content type |
+|---|---|---|---|---|---|---|
+| **Multiday 2026** | Live season ops | 2026 | Boris + colleague | Active | Mirrors Notion group pages; holds the calc Notion links to | Source data + calc + offer docs + per-group folders + invoices + hotel rate cards |
+| **Multiday 2025** | Prior season + **multi-entity finance lab** | 2025 | Boris + colleague | Historical/reference | Not linked; the settlement model Notion lacks entirely | Settlement models (Bike_Flow v2–v5, Settlement template, Entity summary), cash/financials, per-group folders, calc backups |
+| **2024 archive** | 2024 season | 2024 | Boris + colleague | Historical | Not linked | 2024 calc, bike register, per-group folders, invoices, deposits |
+| **Bike master data** (segment) | Bike fleet register ↔ Notion sync | 2026 | Boris | Active | **Directly feeds** Notion bikes DB (export/import round-trip) | `bikes_master`, Notion export zip, `notion_bikes_import.csv/tsv` |
+| **Bike financing** (segment) | Fleet **capital / investment / amortization** | 2024→ | Boris | Active/reference | None | Amortization plan, **IRF loan**, supplier contract (Matija), Bike-Discount/Cube offers, customs, bank guarantee, tax docs |
+| **Multiday umbrella** (wider) | Parent of 2025/2026 | — | Boris | Container | — | Folders only |
+| **eBike parts** (wider) | Parts / maintenance | 2026 | Boris | Active | Feeds bike cost side | Parts receipts/spec |
+
+Nothing was inaccessible in the listed folders; deep-read focused on the two
+highest-value spreadsheets (pricing calculator, multi-entity settlement). Per-group
+sub-folders and per-group balance sheets were sampled, not exhaustively opened.
+
+### 5.2 Spreadsheet model analysis
+
+**A. Pricing calculator — `2026 multi-day kalkulacije.xlsx`** (the calc the Notion
+INQUIRES rows link to; **Google Sheets is authoritative for pricing**, per ADR-0002
+and the Notion decision).
+
+- **Reference tabs (rate cards):** a **Transfers** price list (route → price, in two
+  PAX bands ≤15 / >15) and a **Hotels** price list (hotel + season → single/double
+  rate). These are **supplier rate cards** — shared inputs.
+- **One tab per inquiry/group.** Each rebuilds: a day-by-day **itinerary** (date,
+  base, hotel, biking program); a **transfers** block (per-day legs priced from the
+  rate card, split biking/non-biking PAX); a **hotels** block (nights × rate); an
+  **additional services** block (rafting, lunch packets, dinners, gondola, boat —
+  each with an *Is included* flag); and a **Shared Expenses** cost build-up (guide,
+  supporting vehicles, logistics, **company fee**, local tax & insurance, NP tickets,
+  shared transfers, rafting, dinners).
+- **Business rule — cost→price:** `shared costs total ÷ PAX = shared cost per person`
+  → `+ room supplement (single/double)` → **Price PP**, computed separately for
+  **bikers vs non-bikers** and tiered by group size (6/10/14 PAX bands).
+- **Business rule — margin:** `Marza = Company fee + Bike rent`, where **Company fee ≈
+  €300/person** (this is the ADR-0002 **agency system fee**) and **Bike rent ≈ €55/day
+  × 5 days** (the **bike-usage charge** baked into price). Margin is *defined as* the
+  agency fee plus the bike charge — the whole profit engine is those two levers.
+- **Manual steps / risks:** the *quoted* price is frequently a **manual override** of
+  the computed price (cells like "price we sent to …" differ from the formula); several
+  tabs carry live `#REF!` / `#DIV/0!` / `#N/A` errors; rate cards are duplicated across
+  yearly calc files.
+
+**B. Multi-entity settlement — `Multientity_Bike_Flow_v5_summary.xlsx`** (the single
+place the whole multi-company economics is modelled; **nothing equivalent exists in
+Notion**). Tabs and roles:
+
+| Tab | Role |
+|---|---|
+| `Bike_Fee_PnL` | Annual **bike-fleet P&L**: fleet costs (parts, mechanic, imports, investments, staff) vs bike-fee inflows per entity → leftover reserve |
+| `Multiday_Costs` | Per-group **actual external costs**, each tagged `Paid_By_Entity` + `Cost_Category` + `Settled?` |
+| `Multiday_Revenue` | Per-group **revenue**, tagged with the collecting `Entity` |
+| `Intercompany_Transfers` | Cash/bank moves **between entities** (explicitly *not* group costs) |
+| `Multi_PnL` | Pool math: revenue − external costs − multiday bike-fee = **distributable profit** |
+| `Entity_Summary_v2` / `Settlement_Summary_v5` | **Settlement**: per entity entitlement − cash held = **delta (+receive / −pay)**, plus provisional transfer suggestions |
+| `Logic_Control_v5` | Controls: approved-revenue vs raw-row-sum, **revenue correction** that must reach zero before settlement is final |
+
+- **Business rule — settlement:** `gross pool = (approved multiday revenue − external
+  costs) + all bike-fee inflows − annual bike-fee costs`; split by fixed **profit-share
+  %** (v5: **DA 50 / Other Trails 25 / Sampas 25**; earlier versions used a flat 25 %
+  plus a 4th internal share); then **deduct the multiday bike-fee reserve** (retained
+  in the central **"bike kasa" at Durmitor Adventure**); the remainder is the final
+  distributable pool. Per entity, `entitlement − cash already held = settlement delta`,
+  settled by intercompany transfers.
+- **Cross-file dependencies:** revenue rows trace to Notion Payments and to per-group
+  balance sheets; costs trace to `Troskovi sumirano.numbers` and invoices in Drive;
+  bike-fee logic depends on the **bike-financing** folder (below). Links to Hub, Wise,
+  bank and Zoho are referenced by payment method (`cash / bank / Wise / Hub link`) but
+  not reconciled inside the workbook.
+- **Version risk:** the model exists as v2→v5 with **changing split rules** — no single
+  file is marked authoritative.
+
+### 5.3 Multi-entity operating model
+
+The files force a separation the Notion audit had collapsed into one "Entity". Ten
+distinct concepts are actually in play:
+
+| Concept | How the files express it |
+|---|---|
+| **Legal Entity** | Durmitor Adventure, Sampas, Other Trails (registered companies; invoices, tax/bank-guarantee docs sit under DA) |
+| **Operating Unit** | DA = agency + bike ops; Sampas = mountain/Kolašin ops; Other Trails = coast/Tivat logistics; **+ a 4th internal "ekipa" 25 % share** inside DA |
+| **Revenue Collector** | the entity that *collected* a given group's revenue (`Multiday_Revenue.Entity`) |
+| **Expense Payer** | `Paid_By_Entity` on each cost row |
+| **Supplier** | hotels, transfer providers, activity providers (rafting/jeep), guides (per-diem), bike suppliers (Matija, Bike-Discount, Cube), restaurants |
+| **Financial Account** | cash / bank / Wise positions per entity; the central **bike kasa** at DA; the **IRF loan** account |
+| **Settlement** | entitlement vs cash-held → delta; provisional intercompany transfers |
+| **Allocation Rule** | profit-share % (50/25/25); bike-fee reserve deduction; company-fee-per-PAX; bike-rent-per-day |
+| **Ledger / Transaction** | `Multiday_Costs`, `Multiday_Revenue`, `Intercompany_Transfers` rows; per-group balances |
+| **Derived Account Balance** | "cash held at DA/OT/Sampas", `Current State`, settlement delta |
+
+**Bike fee = Asset Usage Charge / fleet financing.** The bike-financing folder shows
+the fleet was **capitalised** (supplier contract, **IRF development loan**, customs
+import, bank guarantee) and **amortized** (an explicit amortization plan). The
+per-tour "bike rent" in pricing and the "bike fee" in settlement are the mechanism
+that **recovers that capital + running costs** into the central bike kasa. This is a
+genuine domain concept (asset usage charge + depreciation/loan servicing) **entirely
+absent from Notion**, and it is what ADR-0002 anticipated under "investment and
+depreciation references" and "equipment and maintenance".
+
+### 5.4 Pricing & quotation workflow (reconstructed)
+
+| Lifecycle step | Where it happens | Authoritative value |
+|---|---|---|
+| Inquiry | Notion INQUIRES (text) + Drive inquiry docs | first contact only |
+| Cost calculation | **Google Sheets** calc (per-group tab) | **estimated costs** ← authoritative |
+| Pricing decision | Sheets `Marza` + **manual override** | **quoted price** |
+| Offer / proposal | Drive PPTX/PDF brochures + thin Notion PONUDE | the sent document |
+| Accepted terms | Drive deposit PDFs + Notion status "deposit paid" | **accepted quote snapshot** (unstructured) |
+| Deposit | Notion Payments + Drive invoices | actual payment |
+| Operational planning | Notion group pages + Drive per-group folders | rooming/logistics |
+| Delivery | operational (guides/transfers) | — |
+| Final collection | Notion Payments + Drive invoices | **actual revenue** |
+| Cost confirmation | Drive `Multiday_Costs` / `Troskovi sumirano` | **actual expenses** |
+| Multi-entity settlement | **Drive settlement workbook only** | **entity settlement** ← authoritative |
+| Tour closeout | Drive Obracun draft + thin Notion Closeout | closeout |
+
+Value types that must stay distinct (the files prove they diverge): **estimated cost**
+(Sheets) ≠ **quoted price** (Sheets) ≠ **accepted-quote snapshot** (manual/deposit doc)
+≠ **actual revenue** (Payments) ≠ **actual expenses** (settlement) ≠ **gross margin**
+(Multi_PnL) ≠ **distributable profit** (after bike-fee reserve) ≠ **entity settlement**
+(delta).
+
+### 5.5 Source-of-truth matrix
+
+| Business information | Current source of truth | Secondary copies | Risk |
+|---|---|---|---|
+| Lead | Notion INQUIRES (text) | Drive inquiry docs, email | not structured; leads lost |
+| Quote calculation | **Google Sheets** calc | yearly calc backups, HTML export | fragile (`#REF!`), duplicated rate cards |
+| Accepted price | Deposit PDF / manual "price sent" | Notion `Accepted Quote Total` (mostly empty) | **no structured home** |
+| Participant list | Notion PARTICIPANTS | Drive per-group rooming sheets, group-page tables | triple-entry, drift |
+| Hotel costs | Sheets rate card + `Multiday_Costs` | Notion Hotel Bookings, Drive hotel price lists | three copies, no reconciliation |
+| Payments | Notion PAYMENTS | Drive `Uplate sumirano`, invoices, bank/Wise | split across systems |
+| Actual expenses | Drive `Multiday_Costs` | Notion Expenses, `Troskovi sumirano` | Notion Expenses incomplete |
+| Profit split | **Drive settlement workbook** | — | single fragile file, versioned, manual |
+| Intercompany balance | **Drive settlement workbook** | — | cash-based, provisional, no ledger |
+
+### 5.6 Notion ↔ Drive gap analysis
+
+**Concepts entirely missing from the Notion audit / model:**
+
+- **Multi-entity settlement** — revenue-collector & expense-payer per entity, profit
+  pool, split %, intercompany transfers, per-entity cash balances. *Zero* Notion
+  representation.
+- **Financial Account** — cash / bank / Wise / bike-kasa / loan positions.
+- **Allocation Rule** — the split and reserve logic is code-in-a-spreadsheet, nowhere
+  declared as data.
+- **Asset Usage Charge + fleet finance** — bike fee, amortization, IRF loan, customs.
+- **Cost Estimate vs Actual Expense** — Notion has only (partial) actuals; estimates
+  live in Sheets; the two are never compared.
+- **Accepted-quote snapshot** — a real value with no structured home (the Notion field
+  exists but is empty).
+- **Supplier / rate cards** — suppliers are real and priced in Drive; Notion has none.
+
+**Correctly external (should stay out of the canonical operational store):** the
+**pricing calculation engine** (Google Sheets is the right place per ADR-0002) — but
+its *inputs* (rate cards → Supplier prices) and *outputs* (quote, accepted snapshot)
+belong in the model.
+
+**Merely reports/views (not new entities):** the closeout dashboard, `Troskovi/Uplate
+sumirano`, HTML calc export — these are derived views over the ledgers above.
+
+### 5.7 Evidence-driven corrections to the draft model (§4)
+
+The Drive evidence **confirms** that the canonical model must include these concepts
+(most already exist in the Adventure OS canon — see the compatibility review):
+
+- **Offer/Quote** as a first-class entity, carrying a **calculation reference** and an
+  **accepted-quote snapshot** (canon: `Offer`). Confirmed.
+- **Supplier** as an Organisation role, with **rate cards** (canon: pending `Supplier`).
+  Confirmed.
+- **Financial Account** (cash/bank/Wise/bike-kasa/loan) — **new**; canon has no such
+  entity yet → route to global finance modelling.
+- **Settlement** + **Intercompany Transfer** (canon: `Settlement`,
+  `SETTLEMENT_BETWEEN_ORGANISATIONS`). Confirmed and now evidenced with real logic.
+- **Allocation Rule / Revenue Allocation** (profit-share %, reserve, per-pax fee) —
+  **new**; no canon entity → global open question.
+- **Cost Estimate vs Actual Expense** — the model must distinguish forecast from actual.
+- **Asset Usage Charge + depreciation/loan** on the Asset (bike) — **new**; extends the
+  canon Asset with a finance dimension (ADR-0002 already anticipates it).
+- **Trip Closeout** as a lifecycle state of TripGroup (revenue in, costs confirmed,
+  settled).
+
+These are recorded as **draft additions**; they are **not** finalized here. Where they
+are already global open questions (Supplier, Settlement, Activity/VAT economics, a term
+for the economic "Agency"), they must be resolved at the Adventure OS level, not inside
+Multiday.
+
+---
+
+## Phase 1 — status
+
+Phase 1 now covers **both** the Notion operational structure **and** the Google Drive /
+spreadsheet processes. Against the completion criteria, we can now explain end to end:
+
+1. **Inquiry → confirmed group** — INQUIRES/inquiry docs → Sheets calc → offer doc →
+   deposit → Notion status. ✅ (reconstructed; the thread is manual, not relational)
+2. **Price calculated & approved** — Sheets calc (cost build-up + agency fee + bike
+   rent), with a manual quoted-price override. ✅
+3. **Where accepted terms are stored** — deposit PDF + (mostly empty) Notion field;
+   **no structured home**. ✅ (identified as a gap)
+4. **How participants/rooms/bikes/hotels/transfers/guides are operated** — Notion DBs +
+   Drive per-group folders + group-page worksheets. ✅ (with duplication)
+5. **How revenue & expenses are recorded** — Notion Payments/Expenses (partial) + Drive
+   settlement ledgers (authoritative for costs). ✅
+6. **How internal entities share work/money/profit** — Drive settlement workbook: per-
+   entity revenue/cost, 50/25/25 pool, bike-fee reserve, intercompany transfers. ✅
+7. **How final settlement & closeout are calculated** — settlement delta = entitlement −
+   cash held; closeout via Drive obracun. ✅
+8. **Which system is authoritative for each fact** — see the source-of-truth matrix
+   (§5.5). ✅
+
+**All four deliverables + the Drive audit are complete** (Deliverables 1–5). Two gates
+remain before Phase 2, and neither is workspace cleanup:
+
+1. The **Architecture Compatibility Review**
+   ([`multiday-architecture-compatibility-review.md`](multiday-architecture-compatibility-review.md))
+   — already written; awaiting your acceptance.
+2. **Reconciling §4** with both the canon *and* the new Drive-evidenced concepts (§5.7).
+   §4 stays **draft / not approved**.
+
+**Can Phase 1 be closed?** Discovery is complete — there is no more current-state to
+find. But Phase 1's *modelling* output (§4) is not yet reconciled with (a) the existing
+Adventure OS canon and (b) the multi-entity/finance concepts Drive revealed. Recommend:
+close Phase 1 **discovery** now; keep Phase 1 **canonical-model** open for one
+reconciliation pass (compatibility review + §5.7), then close. **Phase 2 — System Design
+does not start, and no workspace, production or Drive data is modified, until you
+approve.**
