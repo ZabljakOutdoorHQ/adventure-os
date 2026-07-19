@@ -129,6 +129,33 @@ The reusable knowledge base. Each rule is tool-independent: it stays true whethe
 implementation is Google Sheets, Notion, WeTravel or Adventure OS. `Stability`:
 **Permanent** (rule), **Versioned** (policy/param), **Retire** (workaround).
 
+### B0 — Owner clarifications (confirmed 2026-07)
+
+Recorded as authoritative policy decisions from the business owner; they update the
+relevant rules below. Still **not** applied to §4 — captured here for the rule review.
+
+- **Profit split is 25 / 25 / 25 / 25** across **DA, Other Trails, Sampas, and a 4th
+  share** — supersedes both the earlier flat-25 %+4th and the v5 50/25/25. The **4th
+  share is shown separately** and its beneficiary is **not yet fixed**: currently "DA
+  team", but also intended to honour **Kolašin collaborators**, and possibly routed to
+  **investment** — to be decided. Its cash **sits at DA** (most revenue enters and most
+  costs are paid there).
+- **Company fee = operating margin** (the agency's operating margin per participant),
+  not a cost.
+- **Estimated cost lives on the offer/quote** (the multiday calc workbooks); **actual
+  cost** is what was really spent — the two are **separate representations**, not one
+  value.
+- **Bike kasa = the sum of all bike-fees**: multiday e-bike fee + DA daily (hub) e-bike
+  fee + Sampas daily + Other Trails daily bike fees (the latter two recorded **manually**
+  for now). It is a **dedicated (earmarked) fund custodied at DA**, funding bike
+  maintenance, **loan repayment**, and the mechanic — the fleet costs in the multi-entity
+  workbook (v4/v5). The **bike fee is about half the daily bike rent** (and nearly the
+  whole rent on multiday tours).
+- **Single-page operability:** a group's day-by-day itinerary should carry its transfer
+  and hotel information, **backed by central databases** (like Expenses today), so that
+  everything a group needs is visible on **one page** while the data still lives in shared
+  tables. (Design intent — recorded, not yet modelled.)
+
 ### B1. Pricing & commercial
 
 | ID | Statement | Type | Stability | Belongs in |
@@ -136,7 +163,7 @@ implementation is Google Sheets, Notion, WeTravel or Adventure OS. `Stability`:
 | PR-1 | Multiday tours are priced **per person**, by room type and rider type. | Business Rule | Permanent | Domain model |
 | PR-2 | **Non-bikers** are not charged the bike-usage component. | Business Rule | Permanent | Domain model |
 | PR-3 | Price = allocated shared costs + room supplement + margin. | Calculation | Versioned | Calc engine |
-| PR-4 | **Margin = agency company fee + bike rent** (the two profit levers). | Policy | Versioned | Config + model |
+| PR-4 | **Margin = company fee (operating margin) + bike rent** (the two profit levers). | Policy | Versioned | Config + model |
 | PR-5 | Company fee ≈ €300/pax; bike rent ≈ €55/day × 5; tax/ins ≈ €1.5/pax/day. | Configuration | Versioned | External config |
 | PR-6 | Transfer & hotel prices depend on a **PAX band** (≤15 / >15). | Business Rule (+config threshold) | Permanent (threshold Versioned) | Model + config |
 | PR-7 | The **accepted/quoted price is an independent commercial fact**, not the computed cost. | Business Rule | Permanent | Domain model |
@@ -155,8 +182,8 @@ implementation is Google Sheets, Notion, WeTravel or Adventure OS. `Stability`:
 | ID | Statement | Type | Stability | Belongs in |
 |---|---|---|---|---|
 | BK-1 | The bike fleet is a **capital asset**: financed, amortised, cost-recovered per use. | Business Rule | Permanent | Domain model |
-| BK-2 | The **"bike fee" is a fleet-investment-recovery policy**, not a formula. | Policy | Versioned | Config + model |
-| BK-3 | Bike-fee inflows accumulate in a **central fund ("bike kasa") at DA**; annual fleet costs are charged against it. | Business Rule | Permanent | Domain model |
+| BK-2 | The **"bike fee" is a fleet-investment-recovery policy**, not a formula; it is **≈ half the daily bike rent** (≈ whole rent on multiday). | Policy | Versioned | Config + model |
+| BK-3 | Bike-fee inflows accumulate in the **bike kasa** = sum of all bike-fees (multiday e-bike + DA daily hub + Sampas + OT daily); a **dedicated fund custodied at DA** that pays maintenance, **loan repayment** and mechanic. | Business Rule | Permanent | Domain model |
 | BK-4 | Fleet acquired via development loan (IRF) + supplier contract + import/customs. | Historical Decision | Fixed | Decision log |
 | BK-5 | Bike allocation to participants is operational; ADR-0002 keeps allocation authoritative in Adventure Hub, not Notion. | Historical Decision | Fixed | Model boundary |
 | BK-6 | Fleet register (sizes, quantities, IDs) is reference data, synced Notion↔Drive. | Configuration | Versioned | External reference |
@@ -168,11 +195,11 @@ implementation is Google Sheets, Notion, WeTravel or Adventure OS. `Stability`:
 | ME-1 | The business runs as **multiple legal entities sharing one economic operation**. | Business Rule | Permanent | Domain model |
 | ME-2 | Each tour has a **revenue-collecting entity**; each cost has a **paying entity**. | Business Rule | Permanent | Domain model |
 | ME-3 | Profit is **pooled**, then split by fixed percentages. | Business Rule | Permanent | Domain model |
-| ME-4 | Current split = **DA 50 / OT 25 / Sampas 25** (was flat 25 % + a 4th internal share). | Policy | Versioned | Config + governance |
-| ME-5 | A **bike-fee reserve** is deducted from the pool before distribution and retained centrally. | Policy | Versioned | Config + model |
+| ME-4 | Current split = **25 / 25 / 25 / 25** (DA / OT / Sampas / 4th share) — confirmed 2026-07, supersedes the v5 50/25/25. | Policy | Versioned | Config + governance |
+| ME-5 | A **bike-fee reserve** is deducted from the pool before distribution and retained centrally (in the bike kasa). | Policy | Versioned | Config + model |
 | ME-6 | **Settlement per entity = profit entitlement − cash already held → net transfer.** | Business Rule | Permanent | Domain model |
 | ME-7 | **Intercompany transfers are not tour costs** and must be excluded from tour P&L. | Business Rule | Permanent | Domain model |
-| ME-8 | The **4th internal "ekipa" 25 % share** is an internal DA distribution, outside intercompany transfers. | Policy / Historical Decision | Versioned | Config + governance |
+| ME-8 | The **4th share (25 %)** is shown **separately**; beneficiary undecided (DA team / Kolašin collaborators / possibly investment); cash custodied at DA. | Policy | Versioned (open) | Config + governance |
 | ME-9 | Settlement is **cash-based**, tracked as "cash held at entity", partly physical cash. | Operational Convention | Should evolve | Ops (not a rule) |
 | ME-10 | "Approved revenue" vs "raw row sum" with an unallocated correction that must reach zero. | Temporary Workaround | Retire | Nowhere |
 | ME-11 | Entity-name typos normalised only in summary formulas. | Spreadsheet Implementation | Retire | Nowhere |
@@ -181,7 +208,7 @@ implementation is Google Sheets, Notion, WeTravel or Adventure OS. `Stability`:
 
 | ID | Statement | Type | Stability | Belongs in |
 |---|---|---|---|---|
-| FN-1 | Distinguish **estimated cost** (quote) from **actual cost** (settlement). | Business Rule | Permanent | Domain model |
+| FN-1 | **Estimated cost lives on the offer/quote** (calc workbook); **actual cost** is what was really spent — two separate representations. | Business Rule | Permanent | Domain model |
 | FN-2 | Distinguish **quoted price → accepted price → collected revenue**. | Business Rule | Permanent | Domain model |
 | FN-3 | Payments carry a **method** (cash / bank / Wise / Hub link) with per-method roll-ups. | Business Rule (+config) | Permanent | Model + config |
 | FN-4 | Cost categories (hotel, transfer, guide per-diem, meals, NP tickets, rafting…). | Configuration | Versioned | External reference |
@@ -228,14 +255,30 @@ bake a number into structure.
 
 ## Open questions for the rule review (before §4)
 
-1. Is the **50/25/25 split** the current authoritative policy, superseding the earlier
-   flat-25 %-plus-4th-share model? Which file is canonical?
-2. Is the **4th "ekipa" share** a standing policy or a one-season arrangement?
-3. Should **estimated vs actual cost** be one entity with two states, or two?
-4. Is the **bike kasa** one Financial Account, or a sub-ledger of DA?
-5. Does **Supplier** need rate-card history (versioned prices), or only current rates?
-6. Which of these are **global Adventure OS** decisions (Supplier, Settlement, Activity/
-   VAT economics, the economic-"Agency" term) rather than Multiday-local?
+**Resolved (owner, 2026-07)** — see §B0:
 
-**Next step:** your review of these extracted rules. Only after that do we update §4 —
-still not Phase 2, still no changes to any workspace, production or Drive data.
+1. ~~Which split is authoritative?~~ → **25/25/25/25** (DA/OT/Sampas/4th).
+2. ~~Is the 4th share standing?~~ → **Yes, equal 25 %, shown separately; beneficiary
+   undecided** (DA team / Kolašin collaborators / possibly investment); cash at DA.
+3. ~~Estimated vs actual — one entity or two?~~ → **Two**: estimate on the offer/quote,
+   actual as spent.
+4. ~~Bike kasa — account or sub-ledger?~~ → **A dedicated earmarked fund** (sum of all
+   bike-fees) **custodied at DA**; funds maintenance/loan/mechanic.
+   Also confirmed: company fee = operating margin; day-by-day should surface transfer/
+   hotel from central DBs onto one page.
+
+**Still open (need your answer):**
+
+5. **Supplier price history** — when a hotel/transfer price changes season to season
+   (e.g. the same hotel is priced differently in May vs September), do we need to **keep
+   the old prices** (a per-season rate-card history), or is only the **current price**
+   enough? This decides how heavy the Supplier / rate-card model is.
+6. **Global vs Multiday scope** — a few concepts (Supplier, Settlement, per-activity /
+   VAT economics, the two meanings of "Agency") affect **all of Adventure OS**, not just
+   Multiday. Do we settle them **now, for Multiday only**, or **park them as
+   company-wide decisions** to be made once for every activity? (Goal: avoid Multiday
+   locking in a rule that later doesn't fit the rest of the business.)
+
+**Next step:** your answers to 5–6, then your review of these extracted rules. Only after
+that do we update §4 — still not Phase 2, still no changes to any workspace, production
+or Drive data.
