@@ -541,6 +541,72 @@ Open Questions:
 - AQ-027
 - AQ-028
 
+## IMP-0020
+
+Date: 2026-07-20
+
+Sprint: Multiday Data Hygiene Center
+
+Area: Data-quality control layer
+
+Decision: Add explainable, source-backed health fields and issue views to the
+existing Multiday reference databases. Use formulas and rollups for structural
+checks, explicit exception classifications for approved source cases, and
+manual Trip Group review fields for completeness and final sign-off.
+
+Reason: Missing fields and broken relations should disappear from issue views
+when the source record is corrected, while business judgments such as Company
+assignment, financial completeness and final verification must not be inferred
+by formulas.
+
+Reference Documents:
+
+- `docs/notion/DATA_HYGIENE_VALIDATION_SPEC.md`
+- `docs/notion/MULTIDAY_DATA_HYGIENE_CENTER.md`
+- `docs/notion/FULL_FINANCIAL_RECONCILIATION.md`
+- `docs/PROJECT_CONSTITUTION.md`
+
+Implementation Status: Implemented and re-fetched in
+`2026 Multiday - TEST / MCP CLEANUP`. All 14 Trip Groups were classified and
+none was marked ready for sign-off.
+
+Open Questions:
+
+- AQ-023
+- AQ-027
+- AQ-028
+
+## IMP-0021
+
+Date: 2026-07-20
+
+Sprint: Multiday Data Hygiene Center
+
+Area: Hotel Booking reconciliation
+
+Decision: Use a one-way `Hotel Bookings.Related Expense` relation and explicit
+reconciliation status as operational evidence only. Keep Expenses as the sole
+financial cost source.
+
+Reason: The control layer needs to expose missing and ambiguous hotel costs
+without converting Hotel Bookings into Expenses, copying estimates into
+financial totals or introducing a second expense source.
+
+Reference Documents:
+
+- `docs/CANONICAL_FINANCIAL_MODEL.md`
+- `docs/notion/DATA_HYGIENE_VALIDATION_SPEC.md`
+- `docs/notion/MULTIDAY_DATA_HYGIENE_CENTER.md`
+- `docs/notion/FULL_FINANCIAL_RECONCILIATION.md`
+
+Implementation Status: Implemented and re-fetched. Fourteen Hotel Bookings are
+matched to proven Expenses, four retain candidate Expenses while blocked for a
+business decision, and no Expense record or amount was created or changed.
+
+Open Questions:
+
+- AQ-027
+
 ## Architecture Questions
 
 ### AQ-001
