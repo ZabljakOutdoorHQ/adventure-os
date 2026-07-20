@@ -54,8 +54,8 @@ These are composed product blocks, not new UI primitives:
 - Entity summary
 - Relationship panel
 - Timeline item
-- Matrix cell
-- AI workspace panel
+- System Map / matrix cell
+- Contextual AI assistance panel (future; the legacy AI Workspace is not a current route)
 
 ## Deferred decision
 

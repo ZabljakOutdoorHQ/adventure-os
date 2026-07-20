@@ -30,7 +30,8 @@ Adventure Hub · Payload · GitHub · Apple Notes/Reminders
 - Next.js, React, TypeScript and Tailwind;
 - standard shadcn/ui components stored locally;
 - premium Shadcn Studio blocks used selectively after review;
-- spatial navigation across Today, Matrix, Projects, People, Operations and Graph;
+- routed navigation across Mission Control, Search, System Map, Operations,
+  Projects, Tasks, Knowledge, Documents, Communications and Calendar;
 - universal command/search interface;
 - contextual AI assistance without forcing all work into a chat timeline.
 
@@ -45,7 +46,7 @@ Responsibilities:
 - entity and relationship queries;
 - search and graph traversal;
 - source and freshness metadata;
-- Today briefing aggregation;
+- Mission Control briefing aggregation;
 - permissions and visibility filtering;
 - proposed actions and approval workflow;
 - integration health;
@@ -87,7 +88,7 @@ The event service:
 
 - stores immutable EventRecords;
 - drives incremental graph updates;
-- supports Today and Timeline views;
+- supports Mission Control briefings and chronological views;
 - triggers approved n8n workflows;
 - avoids repeatedly rescanning every source.
 

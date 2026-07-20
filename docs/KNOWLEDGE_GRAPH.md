@@ -12,7 +12,8 @@ The graph consists of:
 - **edges**: typed relationships between nodes, using the canonical catalogue in `RELATIONSHIPS.md`;
 - **source references**: evidence for nodes and edges;
 - **events**: time-stamped changes or observations;
-- **views**: Today, Matrix, Project, Person, TripGroup, Timeline and Search.
+- **projections**: Mission Control, System Map, entity context, chronological
+  context and Search. UI route ownership is defined in `MASTER.md`.
 
 ## Initial node types
 
@@ -120,17 +121,18 @@ A source reference should include:
 
 ## Graph views
 
-### Today
-A prioritised projection of events, tasks, bookings, deadlines, unresolved questions and alerts.
+### Mission Control
+A prioritised projection of events, tasks, bookings, deadlines, unresolved questions and alerts. This supersedes the prototype label `Today`.
 
-### Matrix
+### System Map
 A spatial projection across:
 
 - organisation or brand;
 - project, operation or theme;
 - status, urgency or time.
 
-Matrix is a graph view, not a separate data model.
+The earlier `Matrix` and `Graph` labels describe interaction patterns now
+owned by System Map. Neither is a separate data model or route.
 
 ### Entity workspace
 Opening any Person, Organisation, Project, TripGroup or Asset shows:

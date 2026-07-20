@@ -69,64 +69,46 @@ Unstructured:
 - email attachments
 - notes
 
-## Initial product views
+## Product and navigation vocabulary
 
-### Today
+This is the canonical mapping between product concepts, implemented routes and
+historical names. A concept may span more than one view; legacy labels do not
+create parallel routes or domain models.
 
-Current activities, meetings, important messages, deadlines, expected payments and operational warnings.
+| Product concept | Current UI name and route | Legacy or superseded name | Delivery status |
+|---|---|---|---|
+| Daily attention, priorities and briefings | Mission Control (`/`) | Today | Current route; real-source coverage remains partial |
+| Cross-source retrieval | Search (`/search`) | Command palette as the only search surface | Current demo route; semantic and live-source retrieval are planned |
+| Connected entities and relationship exploration | System Map (`/system-map`) | Matrix, Graph, People / People & graph | Current demo route; Matrix remains a possible interaction pattern, not a separate product area |
+| Daily activity, bookings and operational state | Operations (`/operations`) | Today operations panels | Current demo route; live Adventure Hub reporting is blocked on confirmed API scope |
+| Outcome-oriented bodies of work | Projects (`/projects`) | Projects | Current placeholder route |
+| Shared operational actions | Tasks (`/tasks`) | Tasks inside Today or Projects | Current demo route; Plane read-only service boundary exists |
+| Maintained procedures, explanations and decisions | Knowledge (`/knowledge`) | Knowledge inside the AI workspace | Current demo route |
+| Source files, agreements and signed outputs | Documents (`/documents`) | Documents inside entity views | Current demo route |
+| Email and message context | Communications (`/communications`) | Messages inside Today | Current demo route; no outbound action without approval |
+| Tours, meetings and deadlines | Calendar (`/calendar`) | Timeline / Today calendar | Current demo route; live calendar connection is planned |
+| Contextual assistance across the product | No standalone route | AI Workspace | Future capability; assistance belongs in context and search unless evidence justifies a dedicated route |
 
-### Matrix
-
-A navigable workspace across organisation/domain, project/topic and time/status. This should feel spatial and multi-directional rather than like a long chat scroll.
-
-### Projects
-
-Active projects, owners, next actions, deadlines, related documents, communication and risks.
-
-### People
-
-A consolidated view of a person and their relationships to organisations, projects, messages, bookings, payments and documents.
-
-### Graph
-
-An interactive relationship map between people, organisations, projects, documents, activities, events and financial records.
-
-### Timeline
-
-A chronological view of important events, decisions and changes.
-
-### Search
-
-Exact and semantic search across authorised sources.
-
-### AI Workspace
-
-An assistant that can find, explain, summarise, compare, draft and propose changes. Consequential actions require approval.
+Person and Organisation remain canonical entities, not top-level navigation
+requirements. Their connected context is reached through Search, System Map
+and contextual panels.
 
 ## Safety model
 
-AI may initially read, search, classify, summarise, detect duplicates and propose relationships.
+The non-negotiable safety and authority rules live in
+[`PROJECT_CONSTITUTION.md`](PROJECT_CONSTITUTION.md). Product work described
+here does not weaken those rules.
 
-AI may not initially delete or move files, alter financial or booking data, send messages, issue invoices, publish content or merge records without approval.
+## Delivery sequence
 
-Every future write action should record source, timestamp, actor, reason and rollback path.
+The maintained phase sequence, dependencies, exit criteria and stop conditions
+live in [`ROADMAP.md`](ROADMAP.md). Current work and blockers live only in
+[`STATUS.md`](STATUS.md).
 
-## Delivery phases
+## Historical first milestone
 
-1. Inventory
-2. Knowledge map
-3. Visual prototype with mock data
-4. Read-only dashboard
-5. Controlled write operations
-6. AI operations
-7. Stable automation through n8n and service APIs
-
-## First milestone
-
-Deliver a polished shell and three mock-data views:
-
-- Today
-- Matrix
-- Entity Graph
-
-No production integrations are required for the first milestone.
+The original milestone was a polished mock-data shell for Today, Matrix and
+Entity Graph without production integrations. It was completed and then
+superseded by the routed Mission Control foundation and the broader clickable
+prototype. The old view names are retained here only as historical context;
+the current product vocabulary is the mapping above.
