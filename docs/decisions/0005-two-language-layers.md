@@ -5,64 +5,43 @@ Accepted
 
 ## Context
 
-ADR-0004 established business-language-first for documentation. That is right, but it
-created a risk: collapsing **two different things** into one. Business language and the
-canonical software model are **not two versions of one model** — they are **two views of
-the same reality**.
+Business documentation and the canonical software model serve different audiences:
 
-- The **business model** describes *how people work*. Its audience is Boris, Anđa, the
-  guides and the accountant. It must be simple and in the team's own language.
-- The **canonical model** describes *how the system thinks*. Its audience is developers,
-  the database, the API, AI agents and MCP tools. It must be precise, consistent and
-  stable for a decade — not necessarily "easy to read".
+- the **business layer** explains how people work, using the team’s language;
+- the **canonical layer** gives software, integrations and agents stable English names and precise definitions.
 
-Both describe the same thing. The word may differ; the meaning must not.
+They are two views of the same business reality, not two competing models.
 
 ## Decision
 
-Adopt **two language layers**, added as Constitution principle 16.
+Adopt two coordinated language layers.
 
-**Layer 1 — Business language** (the team's own words). Used in: rulebooks, operational
-documentation, onboarding, procedures, staff instructions. Examples: *Cjenovnik,
-Dobavljač, Trošak, Ponuda, Prihvaćena ponuda, Obračun, Bike kasa.*
+### Business layer
 
-**Layer 2 — Canonical language** (stable international English). Used in:
-`DOMAIN_MODEL.md`, ADRs, API, code, database, AI agents, MCP tools. Examples:
-*PriceList, Supplier, Expense, Offer, AcceptedOffer, Settlement, EarmarkedFund, Payment,
-TripGroup.*
+Used in rulebooks, procedures, onboarding and staff instructions. It should be direct, local and operational: *Cjenovnik, Dobavljač, Trošak, Prihvaćena ponuda, Obračun, Bike kasa.*
 
-Rules:
+### Canonical layer
 
-1. **Do not translate the canonical model into the local language.** `DOMAIN_MODEL.md`
-   and code keep English names.
-2. **Do not simplify the canonical model merely for readability.** Its job is precision
-   and stability. An architecturally important term (e.g. `EarmarkedFund`, `Custodian`)
-   stays in the canon **even if no one in the company uses that word** — the business
-   doc simply says "bike kasa" or "novac je kod DA" instead.
-3. **The simplicity axe (ADR-0004) governs Layer 1, not Layer 2.** Complexity audits
-   simplify the *business* documents; they do not delete precise canonical concepts.
-4. **Every concept exists in both layers**, bridged by one document
-   ([`UBIQUITOUS_LANGUAGE.md`](../UBIQUITOUS_LANGUAGE.md)) — a business↔canonical
-   translation table with definition and example. This is a **bridge, not duplication**.
-5. **When a new concept appears**, give it a business phrasing *and* a canonical name,
-   and add a bridge row. Neither layer is authoritative over the other on wording; both
-   must point at the same meaning.
+Used in `DOMAIN_MODEL.md`, relationships, API contracts, database schemas, code, agents and MCP tools. It uses stable English names such as `PriceList`, `Supplier`, `Expense`, `AcceptedOffer`, `Settlement` and `EarmarkedFund`.
 
-## Relationship to ADR-0004
+### Rules
 
-ADR-0004 (simplicity + business language) and ADR-0005 (two layers) work together:
-ADR-0004 keeps **Layer 1** plain and in our language; ADR-0005 protects **Layer 2** from
-being translated or dumbed down. The "rejected abstractions" list in ADR-0004
-(Operating Unit, Settlement Pool, …) means *genuinely unnecessary in either layer* — it
-does **not** apply to precise canonical terms like `EarmarkedFund` or `Custodian`, which
-are kept in Layer 2.
+1. Canonical names remain in English.
+2. Business documents are not required to expose technical terminology.
+3. Both layers must describe the same meaning; wording may differ, semantics may not.
+4. Only terms that need translation or clarification are entered in the [Business ↔ Canonical Vocabulary](../UBIQUITOUS_LANGUAGE.md). Not every internal technical concept needs a staff-facing synonym.
+5. A vocabulary row does not adopt a canonical entity. Proposed names remain proposals until the canonical model is explicitly updated.
+6. Simplicity applies to both layers as defined by [ADR-0004](0004-simplicity-and-business-language.md): plain language in the business layer; the smallest accurate model in the canonical layer.
+7. Definitions have one primary home. The vocabulary maps names and gives a short orientation; authoritative entity definitions remain in `DOMAIN_MODEL.md`, while business rules remain in their rulebooks.
+
+## Naming of the bridge document
+
+The repository path remains `docs/UBIQUITOUS_LANGUAGE.md` to avoid unnecessary link churn, but its functional title is **Business ↔ Canonical Vocabulary / Poslovni rječnik**. It is a translation bridge, not a second domain model and not a place to repeat full rules.
 
 ## Consequences
 
-- A new bridge document, `docs/UBIQUITOUS_LANGUAGE.md`, is the single place that maps
-  business terms to canonical names.
-- Business docs (the Multiday rulebook) stay in the local language and may reference the
-  bridge for anyone who needs the canonical name.
-- The canonical model may keep terms the business never says, as long as the bridge
-  connects them.
-- This governs all of Adventure OS, not only Multiday.
+- Staff-facing documents remain understandable without technical training.
+- Developers and agents use stable canonical terminology.
+- The vocabulary prevents translation drift without duplicating the domain model.
+- Architecturally useful concepts may remain canonical even when staff never use their technical names.
+- This ADR governs all of Adventure OS.
