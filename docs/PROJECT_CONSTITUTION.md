@@ -30,6 +30,10 @@ A feature that does not materially improve understanding, retrieval, coordinatio
 12. **Every canonical entity has one primary domain.** If a concept does not clearly fit the existing Domain Landscape, review the model before introducing it.
 13. **No parallel models.** An AI agent may not introduce a parallel domain model or documentation hierarchy without an explicit reason and migration plan.
 14. **Improve or disprove.** Every model change must improve the existing model or demonstrate why the existing model is wrong.
+15. **Simplicity beats theoretical correctness.** Add only the concepts needed to describe a real business problem accurately. See [ADR-0004](decisions/0004-simplicity-and-business-language.md).
+16. **Two language layers.** Business documentation uses the team’s language; the canonical model and implementation use stable English names. Both describe the same reality and are connected through the [Business ↔ Canonical Vocabulary](UBIQUITOUS_LANGUAGE.md). See [ADR-0005](decisions/0005-two-language-layers.md).
+17. **Documentation follows implementation within one sprint.** Do not write documentation far ahead of the system it describes, and do not build what has no documentation — documentation trails development by at most one sprint. Canonical entities are added when a sprint actually needs them, not speculatively. This avoids both analysis paralysis (endless modelling, nothing shipped) and undocumented drift (code outgrowing its model). See [ADR-0006](decisions/0006-documentation-cadence.md).
+18. **Operational integrity is a first-class, cross-cutting service.** The system continuously answers *"what needs attention?"* instead of forcing people to search manually. Integrity is evaluated **outside** any single source system (Notion is a source, never the engine), computed as **derived signals** that appear and disappear with reality, and shared by every module (finance, fleet, CRM, website, guides, operations) rather than rebuilt per module. See [ADR-0007](decisions/0007-operational-integrity-engine.md) and [`OPERATIONAL_INTEGRITY.md`](OPERATIONAL_INTEGRITY.md).
 
 ## 4. Authoritative systems
 
@@ -84,7 +88,7 @@ Every knowledge record or relation should support:
 
 An AI summary is not a fact merely because it is written confidently.
 
-## 8. Development governance
+## 8. Development and documentation governance
 
 - Work is performed through focused branches and pull requests.
 - CI must pass before merge.
@@ -94,6 +98,9 @@ An AI summary is not a fact merely because it is written confidently.
 - A stable API or adapter boundary precedes UI coupling.
 - ChatDev or other agent teams may implement and test, but do not determine product truth.
 - Major decisions are recorded as ADRs in `docs/decisions/`.
+- **Every fact has one primary home.** Other documents link to that source instead of restating the same rule, definition or decision.
+- A new document must contain information that does not already have a clear home. If it only repeats existing material in different words, it is not created.
+- Contradictions are resolved in the primary document first; summaries and indexes are then updated to point to it.
 
 ## 9. Success criteria
 
