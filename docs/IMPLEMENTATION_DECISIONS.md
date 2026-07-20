@@ -181,6 +181,33 @@ Open Questions:
 - AQ-007
 - AQ-008
 
+## IMP-0008
+
+Date: 2026-07-20
+
+Sprint: Sprint 2 - Udi Ganani Golden Dataset Validation
+
+Area: Payments
+
+Decision: Populate the existing Notion Payments `Amount` field with transfer received amounts for the Udi Ganani validation dataset.
+
+Reason: The current Payments schema has only one editable amount field, and Trip Groups roll up `PAID Total` from linked Payment Amount values. Expected amounts, bank fees, payment status and payer distinctions were preserved in `docs/reference-data/UDI_GANANI_2026.md` and the validation report instead of being forced into unsupported fields.
+
+Reference Documents:
+
+- `docs/PROJECT_CONSTITUTION.md`
+- `docs/DOMAIN_MODEL.md`
+- `docs/RELATIONSHIPS.md`
+- `docs/reference-data/UDI_GANANI_2026.md`
+
+Implementation Status: Implemented
+
+Open Questions:
+
+- AQ-009
+- AQ-010
+- AQ-017
+
 ## Architecture Questions
 
 ### AQ-001
