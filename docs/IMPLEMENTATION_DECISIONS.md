@@ -208,6 +208,77 @@ Open Questions:
 - AQ-010
 - AQ-017
 
+## IMP-0009
+
+Date: 2026-07-20
+
+Sprint: Sprint 2.2 - Udi Trip Group Operational Page
+
+Area: Trip Group operational pages
+
+Decision: Use the existing Notion Trip Group database record as the operational hub page for the Udi Ganani validation case.
+
+Reason: The existing record already owns the canonical Trip Group properties and relations. Adding operational page content to that record keeps the team in one context without creating a duplicate Trip Group or a separate competing page.
+
+Reference Documents:
+
+- `docs/PROJECT_CONSTITUTION.md`
+- `docs/DOMAIN_MODEL.md`
+- `docs/RELATIONSHIPS.md`
+- `docs/reference-data/UDI_GANANI_2026.md`
+
+Implementation Status: Implemented
+
+Open Questions: None
+
+## IMP-0010
+
+Date: 2026-07-20
+
+Sprint: Sprint 2.2 - Udi Trip Group Operational Page
+
+Area: Operational page content
+
+Decision: Keep the Trip Snapshot, Payment Snapshot, group-level Bike Summary, Day-by-Day Operations, Accommodation Summary and Action Checklist as page content where the current Notion schema has no approved structured representation.
+
+Reason: The operational team needs these verified facts in one working page, while this sprint forbids schema changes, new entities and invented assignments. Page content preserves the facts without changing architecture.
+
+Reference Documents:
+
+- `docs/PROJECT_CONSTITUTION.md`
+- `docs/DOMAIN_MODEL.md`
+- `docs/reference-data/UDI_GANANI_2026.md`
+- `docs/notion/UDI_GANANI_VALIDATION_REPORT.md`
+
+Implementation Status: Implemented
+
+Open Questions:
+
+- AQ-019
+- AQ-020
+
+## IMP-0011
+
+Date: 2026-07-20
+
+Sprint: Sprint 2.2 - Udi Trip Group Operational Page
+
+Area: Related-record presentation
+
+Decision: Preserve existing Trip Group relations as the record boundary and use clear database links when the Notion connector cannot reliably create a linked view filtered by the current Trip Group.
+
+Reason: The connector created an inline Participants linked database block but returned an empty relation filter configuration. Presenting it as filtered would be misleading, and manually copying related records would duplicate data. Payments and Hotel Bookings remain linked through existing relations and clear database links.
+
+Reference Documents:
+
+- `docs/PROJECT_CONSTITUTION.md`
+- `docs/RELATIONSHIPS.md`
+- `docs/notion/UDI_GANANI_VALIDATION_REPORT.md`
+
+Implementation Status: Implemented with connector limitation documented
+
+Open Questions: None
+
 ## Architecture Questions
 
 ### AQ-001

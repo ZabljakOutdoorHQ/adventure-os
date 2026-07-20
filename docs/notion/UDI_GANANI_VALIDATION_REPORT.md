@@ -182,6 +182,14 @@ AQ-018
 
 How should guide requirements be represented before named Guide Assignments are confirmed?
 
+AQ-019
+
+Should Day-by-Day Operations remain Trip Group page content or become structured canonical data in a future architecture review?
+
+AQ-020
+
+Can a group-level bike requirement remain Trip Group page content until verified participant sizing and individual bike allocation exist?
+
 # Data Quality Corrections
 
 - Kochava Shulman is payer for Yoel Ben Yehuda and is not a participant.
@@ -202,3 +210,40 @@ How should guide requirements be represented before named Guide Assignments are 
 - Keep payer distinctions in reference data and validation reports until the architecture defines a structured representation.
 - Do not infer bike sizes from height in validation datasets unless the source explicitly provides individual sizes.
 - Do not create placeholder agencies, guides, or bike assignments to satisfy relations.
+
+# Operational Page Validation
+
+The existing `Udi Ganani - Montenegro eMTB September 2026` Trip Group database record now also serves as the operational hub page. It is usable for day-to-day preparation because the Trip Snapshot, verified payment reconciliation, bike summary, eight-day operating table, accommodation summary, rooming summary, key links and action checklist are visible together without creating another Trip Group record.
+
+Successfully added:
+
+- Trip Snapshot using canonical `Trip Group` and `Participant` terminology.
+- Payment Snapshot using the verified row-level totals: 4,260 EUR sent, 4,171 EUR received and 89 EUR bank fees.
+- Group-level Bike Summary without assigning sizes or bike IDs to individuals.
+- Eight-row Day-by-Day Operations table based only on the Commercial Proposal.
+- Accommodation Summary referencing the three existing Hotel Booking records.
+- Participants and rooming summary without Room Allocation records.
+- Action Checklist for unresolved operational work.
+- Repository links to the Golden Dataset and this validation report.
+
+Related-record presentation:
+
+- The connector created one inline Participants linked database block with operationally useful columns.
+- The connector did not apply the requested `Trip Group` relation filter; the returned view configuration contained an empty filter group.
+- The inline Participants view is therefore labelled `Udi - Participants (filter unavailable)` and is not represented as a filtered view.
+- Payments and Hotel Bookings linked views were not created after the filter limitation was confirmed.
+- Clear links to the existing Participants, Payments and Hotel Bookings databases were added instead.
+- The Trip Group's existing relations continue to identify the exact seven Participants, seven Payments and three Hotel Bookings.
+
+Manual page content:
+
+- Trip Snapshot, Payment Snapshot, Bike Summary, Day-by-Day Operations, Accommodation Summary, rooming summary and checklist are manual page content because the current schema does not structurally represent those complete operational facts.
+- Day-by-Day Operations may be useful as structured data in a future implementation, but deciding that is outside this sprint and remains AQ-019.
+- The group-level bike requirement is safe to retain as page content for this validation because no individual assignment was inferred; whether this is the canonical long-term representation remains AQ-020.
+
+Template review:
+
+- Generic candidates for a future Trip Group template: Trip Snapshot, Day-by-Day Operations, Accommodation Summary, Key Links, Action Checklist and related-record links/views.
+- Cycling-specific sections: Bike Summary, bike fitting, bike transfer and bike allocation checklist items.
+- Udi-specific content: verified commercial terms, payer reconciliation, no-singletrack route constraint, the named eight-day program and its hotel itinerary.
+- Linked views could be safely parameterized only if the connector or Notion template supports a reliable current-Trip-Group relation filter. The current connector did not provide that behavior, so the existing template was not changed.
