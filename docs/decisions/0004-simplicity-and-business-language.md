@@ -77,3 +77,9 @@ name may appear only in implementation):
 - The Multiday business rulebook is revised to plain business language (v3) and carries
   an explicit complexity audit.
 - This ADR governs all of Adventure OS, not only Multiday.
+- **Scope clarified by [ADR-0005](0005-two-language-layers.md):** the simplicity and
+  business-language rules here govern the **business layer**. The **canonical model**
+  keeps stable English names and is not translated or dumbed down. The "rejected
+  abstractions" list above means *genuinely unnecessary* concepts — it does **not** apply
+  to precise canonical terms (e.g. `EarmarkedFund`, `Custodian`), which live in the canon
+  and are bridged to plain business phrasing via [`UBIQUITOUS_LANGUAGE.md`](../UBIQUITOUS_LANGUAGE.md).

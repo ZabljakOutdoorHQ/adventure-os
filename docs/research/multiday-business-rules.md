@@ -17,6 +17,12 @@
 >
 > **v3 (2026-07):** prevedeno na poslovni jezik + revizija složenosti. Ranije verzije
 > (engleski, detaljnije) su u git istoriji.
+>
+> **Dva sloja jezika** ([ADR-0005](../decisions/0005-two-language-layers.md), Ustav
+> §3.16). Ovaj dokument je **poslovni sloj** — naš jezik. Kanonski (softverski) nazivi
+> žive u [`UBIQUITOUS_LANGUAGE.md`](../UBIQUITOUS_LANGUAGE.md), koji spaja svaki naš
+> pojam sa nazivom u modelu/kodu. Engleski u zagradama ovdje je samo pokazivač na taj
+> most.
 
 ---
 
