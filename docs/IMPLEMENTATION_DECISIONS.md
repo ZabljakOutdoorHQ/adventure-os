@@ -328,6 +328,42 @@ Open Questions:
 
 - AQ-021
 
+## IMP-0014
+
+Date: 2026-07-20
+
+Sprint: Sprint 2.4 - Financial Connection and Rollup Health Audit
+
+Area: Expense-to-Trip-Group financial connection
+
+Decision: Use the existing `Expenses.Trip Group` relation as a reciprocal
+relation to `Trip Groups.Expenses`, and make the existing
+`Trip Groups.Expenses total` rollup sum `Expenses.Amount` through that
+canonical relation.
+
+Reason: The previous rollup referenced a non-exposed legacy relation and did
+not receive records from the existing canonical Expense-to-Trip-Group
+relation. This repair restores the already intended
+`EXPENSE_APPLIES_TO_TRIP_GROUP` connection without introducing a new entity,
+financial concept, formula or business rule.
+
+Reference Documents:
+
+- `docs/PROJECT_CONSTITUTION.md`
+- `docs/DOMAIN_MODEL.md`
+- `docs/RELATIONSHIPS.md`
+- `docs/FINANCE_PROCUREMENT_INVESTMENTS.md`
+- `docs/notion/FINANCIAL_CONNECTION_HEALTH_AUDIT.md`
+
+Implementation Status: Implemented and verified against all 86 active Expense
+records and all 11 affected Trip Groups
+
+Open Questions:
+
+- AQ-022
+- AQ-023
+- AQ-027
+
 ## Architecture Questions
 
 ### AQ-001
