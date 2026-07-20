@@ -25,6 +25,24 @@ The authoritative conceptual path is:
 
 Read [`docs/domain/DOMAIN_LANDSCAPE.md`](domain/DOMAIN_LANDSCAPE.md) before extending the canonical model. Source systems never define the domain.
 
+## Documentation contract
+
+Each kind of truth has one primary home:
+
+| Question | Primary document |
+|---|---|
+| Why does Adventure OS exist and what is non-negotiable? | [`PROJECT_CONSTITUTION.md`](PROJECT_CONSTITUTION.md) |
+| What domains exist and where does a concept belong? | [`domain/DOMAIN_LANDSCAPE.md`](domain/DOMAIN_LANDSCAPE.md) |
+| What are the canonical entities and definitions? | [`DOMAIN_MODEL.md`](DOMAIN_MODEL.md) |
+| How are canonical entities related? | [`RELATIONSHIPS.md`](RELATIONSHIPS.md) |
+| How does business language map to canonical names? | [`UBIQUITOUS_LANGUAGE.md`](UBIQUITOUS_LANGUAGE.md) |
+| Why was an architectural choice made? | `docs/decisions/` |
+| How does one business area actually operate? | Its business rulebook in `docs/research/` until promoted |
+| What is true about one external system or integration? | Its document in `docs/integrations/` |
+| What is the current source inventory or audit finding? | Audit/research documents, explicitly marked as current-state evidence |
+
+Other documents should link to the primary source instead of repeating its rules or definitions. A summary may orient the reader, but it must not become a second authority.
+
 ## Domains
 
 - Durmitor Adventure
