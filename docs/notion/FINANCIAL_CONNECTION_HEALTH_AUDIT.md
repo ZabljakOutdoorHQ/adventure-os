@@ -4,6 +4,12 @@ Date: 2026-07-20
 
 Workspace: MCP Cleanup Notion reference implementation
 
+Current reconciliation: See
+`docs/notion/FULL_FINANCIAL_RECONCILIATION.md` for the 77-Payment,
+86-Expense, 14-Trip-Group audit performed after the TALAS cash reconciliation.
+The counts and Company limitations below preserve the earlier Sprint 2.4 audit
+state and are not the latest workspace totals.
+
 # Executive Summary
 
 Overall status: **PARTIALLY HEALTHY**
