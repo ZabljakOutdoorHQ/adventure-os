@@ -20,13 +20,15 @@ Do not introduce another UI framework without an approved architecture decision.
 
 ## Product rules
 
-1. Existing systems remain authoritative until explicitly migrated.
-2. Start with mock data, then read-only integrations, then controlled writes.
-3. Never delete, move, merge or overwrite business data automatically.
-4. Display source, freshness and confidence for aggregated information.
-5. Mark inferred relationships as `confirmed`, `probable` or `suggested`.
-6. Consequential actions require explicit human approval.
-7. Personal data, finance and booking data need least-privilege access and audit logs.
+`docs/PROJECT_CONSTITUTION.md` is the canonical owner of product principles,
+authority and safety boundaries. Before changing vocabulary or relationships,
+read `docs/DOMAIN_MODEL.md` and `docs/RELATIONSHIPS.md`. Before changing an
+integration assumption, read its `docs/integrations/` document and
+`docs/SOURCE-MAP.md`.
+
+Agent execution must stay within those boundaries: begin with the least
+privileged read scope, preserve source/freshness/confidence, and require human
+approval plus an audit path for consequential changes.
 
 ## UI rules
 
@@ -34,7 +36,7 @@ Do not introduce another UI framework without an approved architecture decision.
 2. Reuse design tokens; do not hard-code colors when a semantic token exists.
 3. Prefer composition over duplicated variants.
 4. Do not copy arbitrary components from the internet.
-5. Keep the shell spatial: persistent navigation, movable context, drill-down views and a separate AI panel.
+5. Keep the shell spatial: persistent navigation, movable context, drill-down views and contextual AI assistance.
 6. Avoid a long single-column chat experience as the primary navigation model.
 7. Every primary view must work on desktop and degrade clearly on tablet.
 

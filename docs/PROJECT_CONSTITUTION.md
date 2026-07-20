@@ -30,6 +30,9 @@ A feature that does not materially improve understanding, retrieval, coordinatio
 12. **Every canonical entity has one primary domain.** If a concept does not clearly fit the existing Domain Landscape, review the model before introducing it.
 13. **No parallel models.** An AI agent may not introduce a parallel domain model or documentation hierarchy without an explicit reason and migration plan.
 14. **Improve or disprove.** Every model change must improve the existing model or demonstrate why the existing model is wrong.
+15. **One home for each kind of truth.** Canonical rules, vocabulary, current
+    status and implementation evidence must be maintained in their designated
+    owner. The ownership map is in [`MASTER.md`](MASTER.md#documentation-ownership).
 
 ## 4. Authoritative systems
 
@@ -94,6 +97,9 @@ An AI summary is not a fact merely because it is written confidently.
 - A stable API or adapter boundary precedes UI coupling.
 - ChatDev or other agent teams may implement and test, but do not determine product truth.
 - Major decisions are recorded as ADRs in `docs/decisions/`.
+- New documents require a distinct maintenance responsibility. If an existing
+  canonical owner can express the information cleanly, update it and link to it
+  instead of creating another layer.
 
 ## 9. Success criteria
 

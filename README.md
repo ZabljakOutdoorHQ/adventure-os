@@ -4,13 +4,12 @@ Internal command centre for Durmitor Adventure, Wild Collective and connected pr
 
 Adventure OS is being built as a visual, AI-assisted operating layer above existing tools and data sources. The first releases use mock data and read-only integrations. Existing operational systems remain authoritative until explicitly migrated.
 
-## Project principles
+## Documentation entry points
 
-- Preserve existing workflows before replacing them.
-- Read-only before write access.
-- One source must be identified as authoritative for every business entity.
-- AI proposes; humans approve consequential changes.
-- Reuse approved design tokens and components.
-- Keep an audit trail for data and agent actions.
+- [`docs/MASTER.md`](docs/MASTER.md) — product brief, current navigation vocabulary and documentation ownership
+- [`docs/PROJECT_CONSTITUTION.md`](docs/PROJECT_CONSTITUTION.md) — principles, authority and non-negotiable rules
+- [`docs/STATUS.md`](docs/STATUS.md) — the only current operational snapshot
+- [`docs/ROADMAP.md`](docs/ROADMAP.md) — delivery sequence, dependencies and stop conditions
 
-See [`docs/MASTER.md`](docs/MASTER.md) for the product and architecture brief.
+Canonical vocabulary, relationships, memory policy and technical architecture
+are linked from the ownership table in `MASTER.md`.

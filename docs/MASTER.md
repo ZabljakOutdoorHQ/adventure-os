@@ -25,6 +25,30 @@ The authoritative conceptual path is:
 
 Read [`docs/domain/DOMAIN_LANDSCAPE.md`](domain/DOMAIN_LANDSCAPE.md) before extending the canonical model. Source systems never define the domain.
 
+## Documentation ownership
+
+Each kind of durable truth has one canonical owner. Other documents may
+summarise for orientation, but must link back instead of restating a competing
+rule or model.
+
+| Question | Canonical owner |
+|---|---|
+| Why does Adventure OS exist, who has authority and what is non-negotiable? | [`PROJECT_CONSTITUTION.md`](PROJECT_CONSTITUTION.md) |
+| Which conceptual domain owns a concept? | [`domain/DOMAIN_LANDSCAPE.md`](domain/DOMAIN_LANDSCAPE.md) |
+| What are the canonical entities and vocabulary? | [`DOMAIN_MODEL.md`](DOMAIN_MODEL.md) |
+| Which canonical relationship types exist? | [`RELATIONSHIPS.md`](RELATIONSHIPS.md) |
+| What may become durable knowledge or memory? | [`MEMORY_POLICY.md`](MEMORY_POLICY.md) |
+| How is the system technically structured? | [`SYSTEM_ARCHITECTURE.md`](SYSTEM_ARCHITECTURE.md) |
+| In what sequence is the system delivered? | [`ROADMAP.md`](ROADMAP.md) |
+| What is true and active now? | [`STATUS.md`](STATUS.md) |
+| Why was an architectural choice made? | [`decisions/`](decisions/) |
+| Which concrete implementation choice was made? | [`IMPLEMENTATION_DECISIONS.md`](IMPLEMENTATION_DECISIONS.md) |
+| What is confirmed about a source integration? | The source document in [`integrations/`](integrations/) and the inventory in [`SOURCE-MAP.md`](SOURCE-MAP.md) |
+
+Agent instructions constrain execution; they do not own product vocabulary,
+authority or architecture. Research, audit and working documents remain
+evidence until their accepted conclusions are reconciled into the owner above.
+
 ## Domains
 
 - Durmitor Adventure
