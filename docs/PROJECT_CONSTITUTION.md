@@ -30,6 +30,7 @@ A feature that does not materially improve understanding, retrieval, coordinatio
 12. **Every canonical entity has one primary domain.** If a concept does not clearly fit the existing Domain Landscape, review the model before introducing it.
 13. **No parallel models.** An AI agent may not introduce a parallel domain model or documentation hierarchy without an explicit reason and migration plan.
 14. **Improve or disprove.** Every model change must improve the existing model or demonstrate why the existing model is wrong.
+15. **Simplicity beats theoretical correctness.** When two models describe the same business process equally well, choose the simpler one. Use the team's own business language; reach for a technical or English term only when there is no good local word or it is an international standard. A new concept must justify itself — name the concrete problem it solves and what cannot be described without it — or it is not added. See [ADR-0004](decisions/0004-simplicity-and-business-language.md).
 
 ## 4. Authoritative systems
 
