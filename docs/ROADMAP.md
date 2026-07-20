@@ -1,5 +1,9 @@
 # Adventure OS — Roadmap
 
+This document owns delivery sequence, phase dependencies, exit criteria and
+stop conditions. It is not a current task list. The only current operational
+snapshot is [`STATUS.md`](STATUS.md).
+
 ## Delivery principle
 
 Each phase must produce visible relief or trustworthy knowledge before the next layer of complexity is added.
@@ -7,6 +11,8 @@ Each phase must produce visible relief or trustworthy knowledge before the next 
 No phase may depend on hidden chat context. Decisions and acceptance criteria live in GitHub.
 
 ## Phase 0 — Foundation
+
+**Status:** Completed.
 
 **Goal:** establish a safe project and a shared mental model.
 
@@ -31,13 +37,16 @@ Exit criteria:
 
 ## Phase 1 — Visual prototype and design system
 
+**Status:** Substantially completed. The routed prototype and design-system
+foundation are implemented; a shared preview deployment is still unconfirmed.
+
 **Goal:** make the spatial interaction model tangible.
 
 Deliverables:
 
 - standard shadcn/ui foundation;
 - selective Shadcn Studio blocks where they save work;
-- Today, Matrix, Projects, People/Graph and AI context panel;
+- Mission Control, Projects, System Map and contextual AI/search foundations;
 - command palette/search interaction;
 - responsive desktop/tablet shell;
 - preview deployment.
@@ -49,6 +58,11 @@ Exit criteria:
 - no live data is required to evaluate the UX.
 
 ## Phase 2 — Source discovery
+
+**Status:** Active. Plane and Adventure Hub discovery are documented. The
+Notion Multiday reference audit and Data Hygiene Center have been implemented
+in the active validation workstream; Drive WORK and Docmost discovery remain
+incomplete. See [`STATUS.md`](STATUS.md) for merge and review state.
 
 **Goal:** understand current information before building integrations.
 
@@ -75,6 +89,9 @@ Exit criteria:
 
 ## Phase 3 — Adventure Graph core
 
+**Status:** Not started. This phase depends on enough Phase 2 evidence to avoid
+inventing source contracts or canonical mappings.
+
 **Goal:** create the minimum internal knowledge service.
 
 Deliverables:
@@ -93,6 +110,10 @@ Exit criteria:
 - suggested relations require review.
 
 ## Phase 4 — First read-only connectors
+
+**Status:** Partially started. Plane has a read-only adapter and canonical task
+service boundary. The reference-workspace Notion audit is source discovery and
+data-quality work, not yet a live Adventure OS connector.
 
 **Goal:** prove unified context without creating operational risk.
 
@@ -114,13 +135,17 @@ Exit criteria:
 - no source writes exist;
 - the result saves real search time.
 
-## Phase 5 — Today and operational briefings
+## Phase 5 — Mission Control and operational briefings
+
+**Status:** Prototype only. Mission Control expresses the intended daily
+attention experience, but most panels still use demo or explicit disconnected
+states.
 
 **Goal:** reduce daily cognitive load.
 
 Deliverables:
 
-- Today view from Plane, Calendar and graph events;
+- Mission Control briefing from Plane, Calendar and graph events;
 - unresolved decisions and stale-data warnings;
 - concise AI briefing with citations;
 - connector health and failed-sync visibility;
@@ -133,6 +158,10 @@ Exit criteria:
 - false urgency and duplicate alerts are controlled.
 
 ## Phase 6 — Adventure Hub reporting
+
+**Status:** Discovery completed; implementation blocked. The confirmed API
+surface supports the public booking flow, but does not establish the internal
+reporting, capacity, payment-status or operational contract required here.
 
 **Goal:** provide trustworthy operational and commercial reporting from the actual booking source.
 
@@ -157,6 +186,9 @@ Exit criteria:
 
 ## Phase 7 — Controlled task and knowledge writes
 
+**Status:** Planned. No general write phase begins before the relevant
+read-only contracts and approval/audit path satisfy their exit criteria.
+
 **Goal:** remove repetitive entry while keeping human authority.
 
 Candidate writes:
@@ -178,6 +210,8 @@ Every write requires:
 
 ## Phase 8 — Apple input channels
 
+**Status:** Deferred.
+
 **Goal:** turn existing personal capture habits into controlled inputs.
 
 Deliverables:
@@ -195,6 +229,8 @@ Exit criteria:
 
 ## Phase 9 — Event-driven automation
 
+**Status:** Planned after stable read and controlled-write contracts exist.
+
 **Goal:** automate stable repeatable processes.
 
 Candidate events:
@@ -210,6 +246,9 @@ Candidate events:
 n8n executes deterministic flows; Adventure OS records and explains them.
 
 ## Phase 10 — Agent operations and ChatDev
+
+**Status:** Planned. Development agents may already work through GitHub under
+repository controls; production business-agent operations remain future work.
 
 **Goal:** use agents as a controlled development and operations workforce.
 
@@ -228,19 +267,12 @@ Business-agent scope:
 - proposed tasks and links;
 - controlled writes under explicit policies.
 
-## Immediate next actions
+## Current work
 
-Current status is tracked in [`docs/STATUS.md`](STATUS.md).
-
-1. Finish review for PR #21.
-2. Confirm the Phase 1 preview deployment.
-3. Inventory the Drive WORK folder in read-only mode.
-4. Audit Notion Multiday databases and relationships.
-5. Inventory Docmost spaces/pages and decide the first maintainable integration path.
-6. Select the first real TripGroup validation case.
-7. Continue the Plane read-only pilot without expanding write scope.
-8. Confirm the Adventure Hub internal/reporting API scope with its developers.
-9. Document Documenso Docker/Dokploy deployment and ownership.
+Current tasks, active reviews and immediate blockers live only in
+[`STATUS.md`](STATUS.md). Completed implementation decisions remain in
+[`IMPLEMENTATION_DECISIONS.md`](IMPLEMENTATION_DECISIONS.md); architectural
+decisions remain in [`decisions/`](decisions/).
 
 ## Stop conditions
 
