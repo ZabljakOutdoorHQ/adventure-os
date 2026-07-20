@@ -62,28 +62,85 @@ only in the connector's unavailable-property metadata; they are absent from the
 configurable Trip Groups schema and the `All Trip Groups` view. No Hotel Booking
 property was deleted.
 
-Live Notion property renames and formula replacements were not applied in this
-update. The connector rejected the combined schema rewrite because of its broad
-downstream impact. The target migration therefore remains explicit and
-reversible:
+The Trip Groups naming migration was partially approved and applied without
+changing any property type, relation, rollup target, formula code or record
+value. Profit and Company formula changes remain on hold:
 
 | Database | Current property | Canonical target | Migration status |
 |---|---|---|---|
-| Trip Groups | `Program price total` | `Program Price` | Pending explicit live-schema approval |
-| Trip Groups | `PAID Total` | `Collected Revenue` | Pending explicit live-schema approval |
-| Trip Groups | `Expenses total` | `Recorded Expenses` | Pending explicit live-schema approval |
-| Trip Groups | `PROFIT` | `Profit` | Pending explicit live-schema approval and formula verification |
-| Trip Groups | `Revenue Source` | `Program Price Source` | Pending explicit live-schema approval |
-| Trip Groups | `Revenue Status` | `Program Price Status` | Pending explicit live-schema approval |
-| Trip Groups | `Revenue Notes` | `Program Price Notes` | Pending explicit live-schema approval |
-| Companies | `Payments TOTAL` | `Received Cash` | Pending direct all-Payment rollup verification |
-| Companies | `Expence TOTAL` | `Recorded Expenses` | Pending direct all-Expense rollup verification |
+| Trip Groups | `Program price total` | `Program Price` | Implemented; rollup definition unchanged |
+| Trip Groups | `PAID Total` | `Collected Revenue` | Implemented; rollup definition unchanged |
+| Trip Groups | `Expenses total` | `Recorded Expenses` | Implemented; rollup definition unchanged |
+| Trip Groups | `PROFIT` | `Profit` | Name implemented; formula unchanged and unverified |
+| Trip Groups | `Revenue Source` | `Program Price Source` | Implemented; values unchanged |
+| Trip Groups | `Revenue Status` | `Program Price Status` | Implemented; values unchanged |
+| Trip Groups | `Revenue Notes` | `Program Price Notes` | Implemented; values unchanged |
+| Companies | `Payments TOTAL` | `Received Cash` | On hold after completed-group proof |
+| Companies | `Expence TOTAL` | `Recorded Expenses` | On hold after completed-group proof |
 | Companies | `Current State` | Historical helper; not `Settlement` | Preserve until its formula is readable and verified |
 
 `Accepted Quote Total` is preserved as historical/supporting evidence. It is not
 a parallel canonical revenue value. Method-specific Company totals remain
 implementation helpers and must not override `Received Cash` or `Recorded
 Expenses`.
+
+# Completed-Trip-Group Proof
+
+Proof case:
+
+[MENDY: 24.05 - 31.05 (7 PAX)](https://app.notion.com/p/759814d0e14183f1bd7781da7c4ba3f6)
+
+Selection basis:
+
+- Trip dates ended on 31 May 2026.
+- Status includes `Naplaćeno sve`.
+- Program Price status is `Confirmed`.
+- The Trip Group has 12 Payments, 8 Expenses and 3 Hotel Bookings.
+
+Independent source reconciliation:
+
+| Measure | Source records | Amount |
+|---|---:|---:|
+| Program Price | 7 Participant lines | 12,590.00 EUR |
+| Collected Revenue | 12 Payments | 12,592.00 EUR |
+| Cash Payments | 6 Payments | 8,815.00 EUR |
+| Bank Payments | 1 Payment | 573.00 EUR |
+| Hub link Payments | 5 Payments | 3,204.00 EUR |
+| Recorded Expenses | 8 Expenses | 4,802.00 EUR |
+| Cash Expenses | 6 Expenses | 988.00 EUR |
+| Bank Expenses | 2 Expenses | 3,814.00 EUR |
+| Provisional source result | 12,592.00 - 4,802.00 | 7,790.00 EUR |
+
+All 12 Payments and all 8 Expenses relate to Durmitor Adventure as Company.
+
+Hotel evidence:
+
+| Hotel Booking | Booking state | Matching Hotel Expense evidence |
+|---|---|---|
+| Aleksandar, 24-26 May | Confirmed; Fully Paid | `Hotel Aleksandar`, 2,463.00 EUR |
+| Wulfenia, 26-29 May | Confirmed; Not Paid | No matching Expense record |
+| Splendido, 29-31 May | Confirmed; Not Paid | `Hotel Splendido TV`, 1,351.00 EUR |
+
+The Hotel Booking records have no populated `Total Cost` value. Their
+operational values do not contribute to the Trip Group financial chain; only
+the two Hotel-category Expense records contribute.
+
+Proof result:
+
+| Criterion | Result | Evidence |
+|---|---|---|
+| All hotel costs are represented through Expenses | **FAIL / UNPROVEN** | Wulfenia has no matching Expense |
+| Hotel Booking values do not contribute to financial totals | **PASS** | Active rollups use only `Expenses.Amount` |
+| Company rollups reconcile to source Payments | **FAIL** | 3,204.00 EUR of Hub link Payments has no Company rollup branch |
+| Company expense relations cover this Trip Group | **STRUCTURAL PASS** | All 4,802.00 EUR is Cash or Bank and linked to Durmitor Adventure |
+| Company displayed formulas reconcile | **UNPROVEN** | Formula values remain opaque to the connector |
+| Program Price, Collected Revenue and Recorded Expenses are independently reproducible | **PASS** | Direct source-record sums above |
+| Profit is safe to present as final | **FAIL** | Hotel expense completeness is not established |
+
+Conclusion: the canonical Profit formula and replacement Company financial
+formulas must not be activated. This completed-group proof demonstrates the
+intended arithmetic but does not establish complete source data or correct
+Company totals.
 
 # Scope
 
@@ -212,7 +269,7 @@ than connector-returned formula values.
 | Trip Group | Program Price | Source Payments | Displayed Paid | Source Expenses | Displayed Expenses | Provisional cash margin | Result |
 |---|---:|---:|---:|---:|---:|---:|---|
 | Udi Ganani - Montenegro eMTB September 2026 | 13,970.00 | 4,171.00 | structurally 4,171.00 | 0.00 | zero from no records | 4,171.00, incomplete | MISSING DATA |
-| MENDY 24.05-31.05 | 12,590.00 | 12,592.00 | structurally 12,592.00 | 4,802.00 | repaired to source set | 7,790.00 | PASS after repair |
+| MENDY 24.05-31.05 | 12,590.00 | 12,592.00 | structurally 12,592.00 | 4,802.00 | repaired to source set | 7,790.00 | STRUCTURAL PASS / COMPLETENESS UNPROVEN |
 | ELI 24.05-31.05 | 31,765.00 | 34,595.40 | structurally 34,595.40 | 15,327.60 | repaired to source set | 19,267.80 | MISLEADING LABEL |
 | ELI 31.05-05.06 | 29,516.00 | 8,855.00 | structurally 8,855.00 | 1,887.60 | repaired to source set | 6,967.40 | MISSING DATA |
 | ELI 01.06-08.06 | 9,900.00 | 9,900.00 | structurally 9,900.00 | 2,685.50 | repaired to source set | 7,214.50 | PASS after repair |
@@ -346,9 +403,9 @@ Workspace-level gaps:
 Sprint 2.5 semantic resolution:
 
 - Finding 2 now has an approved business name: `Program Price`.
-- Finding 5 is resolved at model level: `Profit = Collected Revenue - Recorded
-  Expenses`. The current Notion formula remains unverified until the live schema
-  migration is explicitly approved and re-fetched.
+- Finding 5 is resolved at definition level: `Profit = Collected Revenue -
+  Recorded Expenses`. The current Notion formula remains unchanged and
+  unverified after the MENDY proof failed the completeness requirement.
 - Profit remains provisional wherever expense completeness is unknown.
 - Company `Current State` is not promoted to `Settlement`; the full Settlement
   Engine remains future scope.
@@ -485,7 +542,7 @@ Recommended generic layout:
 | Commercial Summary | generic; structured plus source notes | Standard, pending revenue semantics |
 | Payments Summary | generic; database-backed | Standard |
 | Expenses Summary | generic; database-backed | Standard after this repair |
-| Financial Status | generic; derived | Do not standardize until AQ-022/023/026 |
+| Financial Status | generic; derived | Do not standardize until expense completeness and Company collection gaps are resolved |
 | Bike Summary | cycling-specific | Conditional |
 | Accommodation Summary | generic when applicable | Conditional |
 | Day-by-Day Operations | generic operational static summary | Standard page section; AQ-019 remains |
@@ -510,12 +567,15 @@ Implementation repair:
 
 - Verify Company displayed values in an authenticated Notion UI or connector
   that exposes formula results.
-- After Architecture Review, repair Company method coverage without
-  reclassifying Hub link as Cash, Bank or Wise.
+- Define and verify how Hub link contributes to Company received-cash totals
+  without reclassifying it as Cash, Bank or Wise.
+- Enter or reconcile missing completed-trip hotel Expenses from authoritative
+  evidence before activating Profit.
 
 Architecture review:
 
-- Resolve AQ-022 through AQ-028 before changing formula semantics or labels.
+- Keep AQ-023, AQ-025, AQ-027 and AQ-028 open before changing formula
+  semantics.
 - Keep AQ-003 and AQ-021 active.
 
 Future operational work:

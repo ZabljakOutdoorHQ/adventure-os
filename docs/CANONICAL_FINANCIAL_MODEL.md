@@ -1,6 +1,7 @@
 # Canonical Financial Model
 
-Status: Canonical model boundary for Adventure OS v0.1
+Status: Consolidation candidate. Runtime activation and v1.0 freeze remain
+pending completed-Trip-Group proof.
 
 ## Revenue
 

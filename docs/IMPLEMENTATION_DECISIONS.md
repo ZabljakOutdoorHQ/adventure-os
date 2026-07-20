@@ -379,8 +379,10 @@ until their live-schema migration is separately approved and verified.
 
 Reason: The reference implementation needs one name for each financial concept
 without deleting evidence or changing historical data. The migration map is
-recorded in `docs/notion/FINANCIAL_CONNECTION_HEALTH_AUDIT.md`; no live Notion
-rename was forced after the connector rejected the combined schema rewrite.
+recorded in `docs/notion/FINANCIAL_CONNECTION_HEALTH_AUDIT.md`. The approved
+Trip Groups names were applied without changing property types, formulas,
+relations, rollups or record values. Company naming remains pending because its
+financial formulas are not yet verified.
 
 Reference Documents:
 
@@ -389,8 +391,8 @@ Reference Documents:
 - `docs/FINANCE_PROCUREMENT_INVESTMENTS.md`
 - `docs/notion/FINANCIAL_CONNECTION_HEALTH_AUDIT.md`
 
-Implementation Status: Documented; live Notion property migration pending
-explicit approval
+Implementation Status: Implemented for seven Trip Groups properties; Company
+formula/property migration remains on hold
 
 Open Questions:
 
@@ -454,12 +456,50 @@ Reference Documents:
 - `docs/notion/FINANCIAL_CONNECTION_HEALTH_AUDIT.md`
 
 Implementation Status: Model boundary documented; live Profit formula migration
-pending explicit approval
+on hold after completed-group proof
 
 Open Questions:
 
 - AQ-023
 - AQ-025
+- AQ-028
+
+## IMP-0018
+
+Date: 2026-07-20
+
+Sprint: Sprint 2.5 - Canonical Financial Consolidation
+
+Area: Trip Groups financial presentation
+
+Decision: Apply only the approved semantic-neutral Trip Groups renames:
+`Program Price`, `Collected Revenue`, `Recorded Expenses`, `Profit`, `Program
+Price Source`, `Program Price Status` and `Program Price Notes`. Preserve
+`Accepted Quote Total`, the existing Profit formula and all Company properties
+and formulas unchanged.
+
+Reason: The names align the active Trip Group presentation with the approved
+financial vocabulary. The MENDY completed-group proof did not establish complete
+hotel Expenses and showed that 3,204.00 EUR of Hub link Payments has no Company
+rollup branch, so formula activation would present unverified financial results
+as authoritative.
+
+Reference Documents:
+
+- `docs/CANONICAL_FINANCIAL_MODEL.md`
+- `docs/DOMAIN_MODEL.md`
+- `docs/RELATIONSHIPS.md`
+- `docs/notion/FINANCIAL_CONNECTION_HEALTH_AUDIT.md`
+
+Implementation Status: Implemented and re-fetched. Property types, relation and
+rollup targets, formula code identifiers and existing record values were
+preserved.
+
+Open Questions:
+
+- AQ-023
+- AQ-025
+- AQ-027
 - AQ-028
 
 ## Architecture Questions
