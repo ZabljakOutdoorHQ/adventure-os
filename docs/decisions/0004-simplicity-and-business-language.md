@@ -5,81 +5,38 @@ Accepted
 
 ## Context
 
-Adventure OS is an operational system for one outdoor company — not an ERP, not
-an accounting system, not a domain-driven-design showcase. During the Multiday
-knowledge extraction, the model started drifting toward enterprise abstractions
-(Operating Unit, Operating Agency, Asset Usage Charge, Settlement Pool, …) that
-are theoretically defensible but not how the business actually talks or works.
+Adventure OS is an operational system for a real outdoor business. During Multiday knowledge extraction, theoretically defensible abstractions began to appear before a concrete need had been demonstrated.
 
-The company's real logic is simple: **there is revenue, there are costs, and what
-is left over is shared.** The model should look like that.
-
-If the system uses words nobody in the company uses, people route around it. If it
-uses the team's language, it becomes part of daily work. The goal is that in five
-years Anđa opens the system and says *"of course — this is literally how we work."*
+The business logic is intentionally simple: **there is revenue, there are costs, and what remains is shared.** The system must preserve that clarity without sacrificing precision where precision is actually required.
 
 ## Decision
 
-**Principle 1 — Simplicity beats theoretical correctness.** When two models
-describe the same business process equally well, always choose the simpler one.
-This sharpens Constitution principles 8 (technology subordinate), 9 (progressive
-complexity) and 14 (improve or disprove), and is added as Constitution principle 15.
+**Simplicity beats theoretical correctness when both describe the business equally well.**
 
-Concretely:
+This applies to both language layers, but differently:
 
-1. **Business language first.** In business documentation, use the team's own words.
-   Reach for a technical or English term only when (a) there is no good local word,
-   or (b) it is an international standard (e.g. PAX, VAT). An English class name may
-   exist in *implementation*, but not in the business docs.
-2. **New concepts must justify themselves.** Before adding a term or object, answer:
-   *What concrete problem does it solve? What can we not describe today without it?*
-   No convincing answer → it is not added.
-3. **One business term = one meaning.** A word must mean the same thing to Boris,
-   Anđa, the guides and the accountant.
-4. **Do not pre-build complexity.** Add a more complex model only when a real problem
-   requires it — not in advance.
-5. **A complexity audit follows every correctness pass.** For each term ask: is it
-   really needed? can it be explained more simply? can it merge with an existing
-   term? does a real person in the company use it? If not convincing — simplify.
+- **Business documentation** must use the team’s own words and remain understandable to staff without technical training.
+- **The canonical model** may use precise technical concepts, but every concept must still justify its existence through a real requirement. Precision is not permission for speculative complexity.
 
-**Rejected as unnecessary abstraction** (unless a concrete need later appears):
-Contribution Margin, Allocated Entitlement, Settlement Obligation, Settlement Pool,
-Operating Function, Operating Layer, Operating Agency, Operating Unit, Asset Usage
-Charge.
+Rules:
 
-**Business-language mapping** (business docs use the left column; an English class
-name may appear only in implementation):
+1. **A new concept must solve a concrete problem.** State what cannot be represented correctly without it. If there is no convincing answer, do not add it.
+2. **Prefer the smallest accurate model.** Do not pre-build structures for imagined future needs.
+3. **One term has one meaning within its layer.** Synonyms may be mapped across layers, but definitions may not drift.
+4. **Complexity must be earned.** Add detail only when operations, reporting, safety, integration or governance require it.
+5. **Run a simplification pass after every correctness pass.** Remove repetition, unused distinctions and concepts that merely rename existing ones.
+6. **Do not simplify away necessary precision.** A concept such as `EarmarkedFund` or `Custodian` remains valid when it prevents a real ambiguity, even if the business document expresses it in plain language.
 
-| Business term (use this) | Technical/EN (implementation only) |
-|---|---|
-| Cjenovnik | PriceList / RateCard |
-| Stavka cjenovnika | PriceListItem |
-| Dobavljač | Supplier |
-| Račun (Finansijski račun) | Financial Account |
-| Namjenski fond | Earmarked Fund |
-| Bike kasa | Bike Fund |
-| Procjena troškova | CostEstimate |
-| Prihvaćena ponuda (ne mijenja se) | AcceptedOfferSnapshot |
-| Naknada za organizaciju (company fee) | Operating Fee |
-| Marža (ono što ostane) | Operating Margin |
-| Obračun / poravnanje | Settlement |
-| Dogovor o podjeli | Profit-sharing policy |
-| Zajednički dio (4. dio) | Shared allocation pool |
-| Izdvajanje za bicikle | Fleet contribution |
+Concepts rejected during the Multiday review because no current requirement justified them include: `OperatingUnit`, `OperatingAgency`, `OperatingLayer`, `AssetUsageCharge`, `SettlementPool`, `ContributionMargin` and `AllocatedEntitlement`. They may be reconsidered only when a concrete use case appears.
+
+## Documentation rule
+
+Definitions and term mappings do not live in this ADR. They belong in the [Business ↔ Canonical Vocabulary](../UBIQUITOUS_LANGUAGE.md). Multiday-specific rules belong in the [Multiday business rulebook](../research/multiday-business-rules.md).
 
 ## Consequences
 
-- Business documentation (the Multiday rulebook, future business docs) is written in
-  the team's language; the canonical technical docs (`DOMAIN_MODEL.md`,
-  `RELATIONSHIPS.md`) may keep English entity names as the implementation layer.
-- Every future model or terminology proposal must pass the "justify itself" test and a
-  complexity audit before adoption.
-- The Multiday business rulebook is revised to plain business language (v3) and carries
-  an explicit complexity audit.
-- This ADR governs all of Adventure OS, not only Multiday.
-- **Scope clarified by [ADR-0005](0005-two-language-layers.md):** the simplicity and
-  business-language rules here govern the **business layer**. The **canonical model**
-  keeps stable English names and is not translated or dumbed down. The "rejected
-  abstractions" list above means *genuinely unnecessary* concepts — it does **not** apply
-  to precise canonical terms (e.g. `EarmarkedFund`, `Custodian`), which live in the canon
-  and are bridged to plain business phrasing via [`UBIQUITOUS_LANGUAGE.md`](../UBIQUITOUS_LANGUAGE.md).
+- New concepts require a documented business or technical need.
+- Business documents remain plain and operational.
+- Canonical documents remain precise but avoid speculative entities.
+- Documentation audits remove repetition and contradictions before adding more material.
+- This ADR governs all of Adventure OS.
