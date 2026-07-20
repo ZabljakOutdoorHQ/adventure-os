@@ -30,8 +30,8 @@ A feature that does not materially improve understanding, retrieval, coordinatio
 12. **Every canonical entity has one primary domain.** If a concept does not clearly fit the existing Domain Landscape, review the model before introducing it.
 13. **No parallel models.** An AI agent may not introduce a parallel domain model or documentation hierarchy without an explicit reason and migration plan.
 14. **Improve or disprove.** Every model change must improve the existing model or demonstrate why the existing model is wrong.
-15. **Simplicity beats theoretical correctness.** When two models describe the same business process equally well, choose the simpler one. Use the team's own business language; reach for a technical or English term only when there is no good local word or it is an international standard. A new concept must justify itself — name the concrete problem it solves and what cannot be described without it — or it is not added. See [ADR-0004](decisions/0004-simplicity-and-business-language.md).
-16. **Two language layers.** Business documentation and the canonical model are two *views* of the same reality, not two models. Business docs (rulebooks, procedures, onboarding) use the team's own language; the canonical model, ADRs, API, database, code, agents and MCP tools use stable international English names. We do not translate the canonical model into the local language, and we do not simplify it merely to be readable — its job is to stay precise, consistent and stable for a decade. Architecturally important terms (e.g. `EarmarkedFund`, `Custodian`) stay in the canon even if staff never say them; the business doc just says "bike kasa" or "novac je kod Durmitor Adventure". The two layers are bridged by the [Ubiquitous Language](UBIQUITOUS_LANGUAGE.md) document. See [ADR-0005](decisions/0005-two-language-layers.md).
+15. **Simplicity beats theoretical correctness.** Add only the concepts needed to describe a real business problem accurately. See [ADR-0004](decisions/0004-simplicity-and-business-language.md).
+16. **Two language layers.** Business documentation uses the team’s language; the canonical model and implementation use stable English names. Both describe the same reality and are connected through the [Business ↔ Canonical Vocabulary](UBIQUITOUS_LANGUAGE.md). See [ADR-0005](decisions/0005-two-language-layers.md).
 
 ## 4. Authoritative systems
 
@@ -86,7 +86,7 @@ Every knowledge record or relation should support:
 
 An AI summary is not a fact merely because it is written confidently.
 
-## 8. Development governance
+## 8. Development and documentation governance
 
 - Work is performed through focused branches and pull requests.
 - CI must pass before merge.
@@ -96,6 +96,9 @@ An AI summary is not a fact merely because it is written confidently.
 - A stable API or adapter boundary precedes UI coupling.
 - ChatDev or other agent teams may implement and test, but do not determine product truth.
 - Major decisions are recorded as ADRs in `docs/decisions/`.
+- **Every fact has one primary home.** Other documents link to that source instead of restating the same rule, definition or decision.
+- A new document must contain information that does not already have a clear home. If it only repeats existing material in different words, it is not created.
+- Contradictions are resolved in the primary document first; summaries and indexes are then updated to point to it.
 
 ## 9. Success criteria
 
