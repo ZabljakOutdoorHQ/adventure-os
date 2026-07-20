@@ -58,5 +58,7 @@ A task is complete only when:
 - the implementation uses approved components and tokens;
 - empty, loading and error states exist where relevant;
 - tests cover the critical path;
-- documentation is updated;
+- any implementation or architectural change that alters system behavior,
+  vocabulary, authority, workflow or product structure updates the relevant
+  canonical documentation before merge;
 - no production data or credentials were introduced.
