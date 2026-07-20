@@ -179,7 +179,12 @@ unless the more specific legal, operational, commercial or evidentiary meaning i
 | `TRANSFER_FROM_LOCATION` | Transfer | Location | A transfer starts at a location. |
 | `TRANSFER_TO_LOCATION` | Transfer | Location | A transfer ends at a location. |
 
-TODO: resolve Asset subtype treatment before implementation. `Bike` and `Vehicle` are currently specialised Assets, while `EquipmentItem` may be either an individually tracked Asset-like item or stock/countable equipment depending on source evidence. `Device` appears in `DOMAIN_LANDSCAPE.md` but is not yet defined in `DOMAIN_MODEL.md`. Do not redesign the Asset model or add subtype-specific service behaviour until this boundary is resolved.
+`Bike` and `Vehicle` are specialised Assets. `EquipmentItem` represents
+operational inventory or countable stock; an individually tracked durable unit
+belongs in Asset and must not be duplicated as an independent EquipmentItem.
+The precise subtype/classification implementation, including `Device`, remains
+open and must be resolved from a real use case before subtype-specific service
+behaviour is added.
 
 ### Commercial and finance
 
@@ -260,9 +265,9 @@ Contextual roles are represented as relationships unless the role needs its own 
 
 Examples:
 
-- Customer is usually a role of Person or Organisation in relation to Booking, Offer, Payment or TripGroup.
-- Participant is a contextual role and may be an entity when it carries participant-specific fields such as room, waiver, dietary note or segment participation.
-- GuideAssignment is an entity because it can have time, segment, responsibility, source and review status.
+- Customer is a role of Person or Organisation in relation to Booking, Offer, Payment or TripGroup.
+- Participant is a contextual role and may be a contextual record when it carries participant-specific fields such as room, waiver, dietary note or segment participation. It references Person when identity is known.
+- Guide is a role of Person. GuideAssignment is an entity because it can have time, segment, responsibility, source and review status.
 
 Do not duplicate Person records for participant, customer, guide, employee or partner roles.
 

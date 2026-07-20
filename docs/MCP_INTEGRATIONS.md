@@ -116,6 +116,10 @@ Write tools are introduced only with explicit approval objects and audit.
 
 ### Adventure Hub
 
+**Authority boundary:** Adventure Hub remains the business source of truth for
+bookings. That business authority is broader than the surface Adventure OS can
+currently read. Integration claims are limited to the confirmed contract below.
+
 **Known public/modal API capabilities:**
 
 - token issuance;
@@ -123,7 +127,7 @@ Write tools are introduced only with explicit approval objects and audit.
 - total-price calculation;
 - booking creation and optional WSPay redirect.
 
-**Current limitation:** supplied documentation is mainly booking-modal oriented. It does not yet establish a safe internal reporting contract for booking lifecycle, capacity, revenue or operational reports.
+**Current limitation:** supplied documentation is mainly booking-modal oriented. It does not yet establish a safe internal reporting contract for booking lifecycle, capacity, payment status, revenue, guide assignment or operational reports.
 
 **Mode:** no production writes from Adventure OS. Build a typed read adapter only after approved report endpoints and authentication are confirmed.
 

@@ -54,6 +54,10 @@ A scheduled or completed interaction with participants, notes, decisions and fol
 #### Event
 A time-bounded organised occurrence such as a race, festival, workshop or gathering. An Event can itself contain Projects and Tasks.
 
+An Event is a domain object that is planned, scheduled or operated. It is not
+the same as an `EventRecord`, which records that something happened in the
+system or a source.
+
 ### Outdoor operations
 
 #### ActivityType
@@ -66,7 +70,10 @@ A sellable or bookable product configuration in Adventure Hub, with price, meeti
 An operational delivery of an activity or itinerary. A Tour may be private, guided, self-guided, daily or multiday.
 
 #### Booking
-A commercial reservation request or confirmed reservation. Adventure Hub is authoritative for daily activity bookings available through its API.
+A commercial reservation request or confirmed reservation. Adventure Hub is
+the business source of truth for daily activity bookings. Adventure OS can read
+only the booking fields and lifecycle operations established by a confirmed API
+contract; broader reporting capabilities remain unknown.
 
 #### BookingItem
 One dated activity selection within a Booking. A Booking may contain multiple BookingItems.
@@ -77,7 +84,11 @@ A multiday group operated as a coherent unit, commonly linked to an agency, part
 `TripGroup` is preferred over the ambiguous standalone term `Group` in technical schemas.
 
 #### Participant
-A Person participating in a TripGroup, Tour or Event. Participant is a contextual role, not a duplicate person record.
+A Person participating in a TripGroup, Tour or Event. Participant is a
+contextual role, not a duplicate identity. A Participant may still be stored as
+a contextual record when it carries role-specific fields such as room,
+waiver, dietary note, price or segment participation; it must reference the
+Person when identity is known.
 
 #### Agency
 An Organisation acting as a travel intermediary or group client. Agency is a role/type of Organisation.
@@ -86,6 +97,10 @@ This meaning must remain distinct from the internal economic or cost-recovery co
 
 #### GuideAssignment
 The relationship between a Person acting as guide and a Tour, BookingItem, Event or TripGroup segment.
+
+Guide is a role of Person. `GuideAssignment` is the canonical contextual record
+when the assignment has its own time, segment, responsibility or source
+metadata; a separate Guide identity must not be created.
 
 #### Location
 A physical or logical place: office, meeting point, trailhead, lake, hotel, storage location or region.
@@ -102,7 +117,11 @@ A specialised Asset with fleet code, type, size, ownership, location and service
 A specialised Asset used for transport.
 
 #### EquipmentItem
-A specific physical item or countable stock unit used in operations.
+An equipment inventory concept used for countable stock or operational items.
+If a durable physical unit is individually identified, owned, serviced or
+allocated, model it as an Asset (or an approved Asset subtype) rather than a
+duplicate EquipmentItem record. Quantity-based stock can remain an
+EquipmentItem.
 
 #### ServiceRecord
 A maintenance, inspection or repair event for an Asset.
@@ -125,7 +144,10 @@ Money received or expected, with payer, recipient, amount, currency, method, sta
 Money spent or owed, with payer, supplier, category and related Project, TripGroup, Tour or Organisation.
 
 #### Transaction
-A broader financial movement. Use Payment and Expense when direction and business meaning are known.
+A direction-neutral financial movement used only when the source does not yet
+establish whether money is received or spent. Map to Payment or Expense when
+direction and business meaning become known; do not retain both as independent
+canonical facts for the same movement.
 
 #### Invoice
 A formal incoming or outgoing financial document with lines and status.
@@ -173,6 +195,9 @@ A proposed or executed AI operation, including requested permissions, evidence, 
 #### EventRecord
 An immutable description of something that happened: booking created, payment received, task completed, document signed, asset serviced.
 
+An EventRecord is system evidence and may reference an Event or any other
+entity. It does not replace the planned or operated Event entity.
+
 #### AuditRecord
 A trace of who or what read, proposed or changed data.
 
@@ -182,10 +207,19 @@ A trace of who or what read, proposed or changed data.
 - **Project vs TripGroup:** Project creates an outcome; TripGroup delivers a customer itinerary.
 - **ActivityType vs Adventure vs Tour:** type/category → sellable product → actual delivery.
 - **Booking vs BookingItem:** reservation container → one selected activity/date.
-- **Person vs Participant/Customer/Guide:** Person is identity; the others are roles in context.
+- **Person vs Participant/Customer/Guide:** Person is identity; the others are
+  roles in context. Participant and GuideAssignment may carry contextual fields
+  without becoming duplicate Person records.
 - **Document vs KnowledgeRecord:** Document is a source object; KnowledgeRecord is curated meaning.
 - **Task vs Reminder:** Task belongs to shared work; Reminder may remain personal and lightweight.
-- **Asset vs EquipmentItem:** Asset is individually tracked; EquipmentItem may be stock or inventory quantity.
+- **Asset vs Bike/Vehicle/EquipmentItem:** Bike and Vehicle are specialised
+  Assets. Individually tracked durable equipment is also an Asset;
+  EquipmentItem is reserved for operational inventory or countable stock.
+- **Event vs EventRecord:** Event is planned or operated business reality;
+  EventRecord is immutable evidence that a change or occurrence was observed.
+- **Payment/Expense vs Transaction:** Payment and Expense express known
+  direction and business meaning; Transaction is the temporary neutral form
+  when those semantics are not established.
 
 ## Relationship confidence
 

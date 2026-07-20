@@ -6,8 +6,8 @@ Source systems do not define the canonical domain. They expose, store or execute
 
 | Source | Typical content | Initial mode | Authority status | Notes |
 |---|---|---:|---|---|
-| Adventure Hub | daily operations, bookings, adventure catalogue, guests, guides, pricing | Read-only | Operational authority within confirmed API scope | Do not infer unsupported booking, capacity, payment or reporting endpoints |
-| Plane | operational tasks | Read/write through approved integration | Task authority | Live integration; whether Plane should also own Projects and Ideas remains open |
+| Adventure Hub | adventure catalogue and booking transaction data exposed by the confirmed public/modal API | Read-only | Business source of truth for bookings; Adventure OS read authority is limited to the confirmed API contract | Internal reporting, capacity, payment-status and guide-assignment APIs remain unconfirmed and must not be inferred |
+| Plane | operational tasks | Read-only adapter; controlled writes remain future work | Task authority once work is accepted into Plane | Adapter and TaskService boundary exist; runtime configuration is optional and the default product remains demo/disconnected |
 | Notion | multiday groups, participants, payments, expenses, allocations | Read-only | Transitional authority | Audit duplicate relations before integration or migration |
 | Google Drive | documents, spreadsheets, Excel/Numbers exports, offers, contracts, media references, PDFs and legacy files | Search/read | Mixed | File-level source and freshness must be shown |
 | Gmail | client and partner communication, attachments | Search/read | Communication record | Never send without approval |
@@ -23,7 +23,7 @@ Source systems do not define the canonical domain. They expose, store or execute
 | ChatGPT history | decisions, drafts and project context | Curated import | Context only | Convert confirmed decisions into durable records |
 | WhatsApp / Viber | operational and guest conversations | Manual/approved import until channel integration exists | Communication record | Privacy and consent review required |
 | WSPay / Monri and banking | payment processor and bank records | Discovery/read-only | Financial source, scope to confirm | Canonical finance ownership and fiscalisation boundaries remain open |
-| Outdooractive | routes, activity content and maps | Discovery/read-only | External route/content source | Map into canonical Experience and Resource entities |
+| Outdooractive | routes, activity content and maps | Discovery/read-only | External route/content source | Canonical mapping is unresolved; do not introduce Experience or Resource entities without a domain decision |
 
 ## Inventory fields
 

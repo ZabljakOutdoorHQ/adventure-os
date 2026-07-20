@@ -38,7 +38,11 @@ A feature that does not materially improve understanding, retrieval, coordinatio
 
 Until changed by an approved architecture decision:
 
-- Adventure Hub is authoritative for daily activity catalogue, booking and booking lifecycle data available through its API.
+- Adventure Hub is the business source of truth for bookings and their
+  lifecycle. Adventure OS may treat only fields and operations exposed through
+  a confirmed, approved API contract as available integration data. The
+  currently documented public/modal surface does not prove internal reporting,
+  capacity, payment-status or guide-assignment capabilities.
 - Plane is authoritative for operational tasks once a task is accepted into the shared task system.
 - Docmost is authoritative for maintained internal wiki content.
 - Documenso is authoritative for document-signing state and signed outputs.

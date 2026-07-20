@@ -200,7 +200,7 @@ Source systems are not domains. They are authoritative or transitional systems t
 
 | Source system | Current or proposed responsibility | Status |
 |---|---|---|
-| Adventure Hub | Daily operations, bookings, adventure catalogue and pricing | Current authoritative source within confirmed API scope |
+| Adventure Hub | Business source of truth for bookings; Adventure OS currently sees only confirmed public/modal catalogue and booking fields | Authority is broader than the exposed integration contract; internal reporting, capacity, payment status and guide assignments remain unconfirmed |
 | Notion | Multiday operations | Transitional authoritative source |
 | Plane | Operational tasks | Current authoritative task source; Project scope remains open |
 | Docmost | Maintained internal wiki and documentation | Current intended knowledge source; adoption details remain subject to source audit |
