@@ -364,6 +364,104 @@ Open Questions:
 - AQ-023
 - AQ-027
 
+## IMP-0015
+
+Date: 2026-07-20
+
+Sprint: Sprint 2.5 - Canonical Financial Consolidation
+
+Area: Financial vocabulary
+
+Decision: Adopt `Program Price`, `Collected Revenue`, `Received Cash`,
+`Recorded Expenses`, `Profit` and `Settlement` as the reference implementation
+financial vocabulary, while preserving historical and supporting properties
+until their live-schema migration is separately approved and verified.
+
+Reason: The reference implementation needs one name for each financial concept
+without deleting evidence or changing historical data. The migration map is
+recorded in `docs/notion/FINANCIAL_CONNECTION_HEALTH_AUDIT.md`; no live Notion
+rename was forced after the connector rejected the combined schema rewrite.
+
+Reference Documents:
+
+- `docs/CANONICAL_FINANCIAL_MODEL.md`
+- `docs/DOMAIN_MODEL.md`
+- `docs/FINANCE_PROCUREMENT_INVESTMENTS.md`
+- `docs/notion/FINANCIAL_CONNECTION_HEALTH_AUDIT.md`
+
+Implementation Status: Documented; live Notion property migration pending
+explicit approval
+
+Open Questions:
+
+- AQ-023
+- AQ-025
+- AQ-028
+
+## IMP-0016
+
+Date: 2026-07-20
+
+Sprint: Sprint 2.5 - Canonical Financial Consolidation
+
+Area: Revenue and expense source boundaries
+
+Decision: Treat `Program Price` as the sole canonical Trip Group revenue amount,
+Expenses as the sole source of `Recorded Expenses`, and Hotel Bookings as
+operational records outside the financial calculation chain.
+
+Reason: Program and hotel operations must not create parallel financial sources
+of truth. The active Notion chain already rolls Expense amounts into Trip Groups
+without using Hotel Booking costs, so no Hotel Booking schema or data change was
+required.
+
+Reference Documents:
+
+- `docs/CANONICAL_FINANCIAL_MODEL.md`
+- `docs/DOMAIN_MODEL.md`
+- `docs/RELATIONSHIPS.md`
+- `docs/notion/FINANCIAL_CONNECTION_HEALTH_AUDIT.md`
+
+Implementation Status: Boundary verified; no Notion schema change required
+
+Open Questions:
+
+- AQ-023
+- AQ-027
+
+## IMP-0017
+
+Date: 2026-07-20
+
+Sprint: Sprint 2.5 - Canonical Financial Consolidation
+
+Area: Companies and profit
+
+Decision: Keep legal-entity, operational-entity and cash-holder responsibilities
+within the existing Company concept. Define Trip Group Profit as `Collected
+Revenue - Recorded Expenses`, provisional until expense completeness is
+confirmed. Do not reinterpret Company `Current State` as Settlement.
+
+Reason: This applies the approved consolidation boundary without adding
+treasury, accounting or settlement entities and without pretending the current
+opaque Company formula is a verified settlement calculation.
+
+Reference Documents:
+
+- `docs/CANONICAL_FINANCIAL_MODEL.md`
+- `docs/DOMAIN_MODEL.md`
+- `docs/RELATIONSHIPS.md`
+- `docs/notion/FINANCIAL_CONNECTION_HEALTH_AUDIT.md`
+
+Implementation Status: Model boundary documented; live Profit formula migration
+pending explicit approval
+
+Open Questions:
+
+- AQ-023
+- AQ-025
+- AQ-028
+
 ## Architecture Questions
 
 ### AQ-001

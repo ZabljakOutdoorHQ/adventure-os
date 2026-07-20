@@ -31,6 +31,60 @@ exposed by the connector, and canonical documentation does not define which
 profit or margin concept the field represents. It must be treated as unreliable
 until Architecture Review resolves its semantics.
 
+# Sprint 2.5 Consolidation Update
+
+The audit above records the state observed during Sprint 2.4. The following
+model decisions now supersede its unresolved semantic findings without changing
+the historical source counts or reconciliation results:
+
+- `Program Price` is the only canonical Trip Group revenue amount.
+- `Collected Revenue` is the sum of related Payment amounts.
+- `Recorded Expenses` is the sum of related Expense amounts.
+- `Profit = Collected Revenue - Recorded Expenses`.
+- Profit remains provisional until expense completeness is confirmed.
+- Companies continue to represent legal entities, operational entities and cash
+  holders in one existing concept.
+- Hotel Bookings are operational records and do not provide financial source
+  data. Hotel costs enter the financial chain only through Expenses.
+
+The active Trip Group expense chain already satisfies the Hotel Booking
+boundary:
+
+`Expenses.Amount`
+-> `Expenses.Trip Group`
+-> `Trip Groups.Expenses`
+-> Trip Group recorded-expense rollup
+-> Profit
+
+`Hotel Bookings.Total Cost` has no active relation, rollup or formula in this
+chain. Legacy `Total Hotel Costs` and `Total Hotel Nights` names are returned
+only in the connector's unavailable-property metadata; they are absent from the
+configurable Trip Groups schema and the `All Trip Groups` view. No Hotel Booking
+property was deleted.
+
+Live Notion property renames and formula replacements were not applied in this
+update. The connector rejected the combined schema rewrite because of its broad
+downstream impact. The target migration therefore remains explicit and
+reversible:
+
+| Database | Current property | Canonical target | Migration status |
+|---|---|---|---|
+| Trip Groups | `Program price total` | `Program Price` | Pending explicit live-schema approval |
+| Trip Groups | `PAID Total` | `Collected Revenue` | Pending explicit live-schema approval |
+| Trip Groups | `Expenses total` | `Recorded Expenses` | Pending explicit live-schema approval |
+| Trip Groups | `PROFIT` | `Profit` | Pending explicit live-schema approval and formula verification |
+| Trip Groups | `Revenue Source` | `Program Price Source` | Pending explicit live-schema approval |
+| Trip Groups | `Revenue Status` | `Program Price Status` | Pending explicit live-schema approval |
+| Trip Groups | `Revenue Notes` | `Program Price Notes` | Pending explicit live-schema approval |
+| Companies | `Payments TOTAL` | `Received Cash` | Pending direct all-Payment rollup verification |
+| Companies | `Expence TOTAL` | `Recorded Expenses` | Pending direct all-Expense rollup verification |
+| Companies | `Current State` | Historical helper; not `Settlement` | Preserve until its formula is readable and verified |
+
+`Accepted Quote Total` is preserved as historical/supporting evidence. It is not
+a parallel canonical revenue value. Method-specific Company totals remain
+implementation helpers and must not override `Received Cash` or `Recorded
+Expenses`.
+
 # Scope
 
 Audited data sources:
@@ -289,6 +343,16 @@ Workspace-level gaps:
 6. Company formula values are opaque to the connector. Their visible method
    dependencies are incomplete for Hub link payments and Wise expenses.
 
+Sprint 2.5 semantic resolution:
+
+- Finding 2 now has an approved business name: `Program Price`.
+- Finding 5 is resolved at model level: `Profit = Collected Revenue - Recorded
+  Expenses`. The current Notion formula remains unverified until the live schema
+  migration is explicitly approved and re-fetched.
+- Profit remains provisional wherever expense completeness is unknown.
+- Company `Current State` is not promoted to `Settlement`; the full Settlement
+  Engine remains future scope.
+
 # Zero vs Unknown Findings
 
 The current interface can render zero in at least these incomplete states:
@@ -362,6 +426,9 @@ collected cash minus recorded expenses, contracted revenue minus recorded
 expenses, gross margin, provisional margin, settled profit or another defined
 measure?
 
+Status: Resolved by Sprint 2.5. The canonical definition is `Collected Revenue
+- Recorded Expenses`; reliability still depends on AQ-023.
+
 ## AQ-023
 
 How should a financial total distinguish confirmed zero from unknown or
@@ -371,6 +438,10 @@ incomplete because no source records have been entered?
 
 How should the model distinguish holder of funds, owner of funds, paying
 Company, receiving Company and intercompany settlement obligations?
+
+Status: Partially resolved by Sprint 2.5. Companies remain one concept covering
+legal, operational and cash-holder responsibilities. Detailed intercompany
+settlement obligations remain future scope.
 
 ## AQ-025
 
@@ -382,6 +453,10 @@ a payment method, processor, account or another source-system classification?
 Which source controls Trip Group contracted revenue when Participant Line Total
 and Accepted Quote Total differ, and which source should `Remaining to collect`
 use?
+
+Status: Resolved by Sprint 2.5. `Program Price` is the canonical revenue source.
+Accepted quote values remain historical/supporting evidence and conflicts remain
+data-quality work.
 
 ## AQ-027
 
@@ -449,3 +524,16 @@ Future operational work:
   section has approved semantics.
 - Continue using central Payments and Expenses records as structured sources,
   with Trip Group pages as operational summaries.
+
+# Scope Separation
+
+| Current Scope | Future Scope |
+|---|---|
+| Trip Groups | Suppliers |
+| Participants | Invoices |
+| Payments | VAT |
+| Expenses | Attachments |
+| Companies | Accounting integration |
+| Hotel Operations | General Ledger |
+|  | Bank reconciliation |
+|  | Full Settlement Engine |
