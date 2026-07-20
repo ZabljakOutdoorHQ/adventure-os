@@ -190,6 +190,10 @@ AQ-020
 
 Can a group-level bike requirement remain Trip Group page content until verified participant sizing and individual bike allocation exist?
 
+AQ-021
+
+Should Expense distinguish planned or estimated costs from incurred or actual costs, and which states are canonical?
+
 # Data Quality Corrections
 
 - Kochava Shulman is payer for Yoel Ben Yehuda and is not a participant.
@@ -247,3 +251,37 @@ Template review:
 - Cycling-specific sections: Bike Summary, bike fitting, bike transfer and bike allocation checklist items.
 - Udi-specific content: verified commercial terms, payer reconciliation, no-singletrack route constraint, the named eight-day program and its hotel itinerary.
 - Linked views could be safely parameterized only if the connector or Notion template supports a reliable current-Trip-Group relation filter. The current connector did not provide that behavior, so the existing template was not changed.
+
+# Hotel Booking Validation
+
+The three Hotel Booking records existed in the central Hotel Bookings database before Sprint 2.3. This sprint did not create or duplicate them.
+
+Verified central records:
+
+- Hotel Alexandar, Zabljak: 1-3 September 2026, 2 nights, 7 single rooms, PAX 7.
+- Wulfenia, Kolasin: 3-6 September 2026, 3 nights, 7 single rooms, PAX 7.
+- Hotel Palma, Tivat: 6-8 September 2026, 2 nights, 7 single rooms, PAX 7.
+
+All three records relate to `Udi Ganani - Montenegro eMTB September 2026`. Status, Payment Status, Confirmation Number and Total Cost remain empty because the authoritative dataset does not verify those facts.
+
+The Accommodation Summary now matches the central records and identifies each row as a linked central Hotel Booking record with confirmation status pending. The page also states that the central Hotel Bookings database is the structured source of truth and the table is an operational summary.
+
+No filtered Hotel Bookings linked view was created. The connector had already failed to apply a reliable `Trip Group` relation filter during the operational-page sprint, so the page retains a clear direct link to the central database and the exact Trip Group relations were re-fetched.
+
+# Expense Validation
+
+Verified Udi Expense records entered: 0.
+
+No existing Udi Expense records were found in the central Expenses data source. The itinerary identifies possible future categories such as hotels, transfers, guides, meals, tickets and logistics, but it does not provide verified incurred amounts, expense dates, payment methods or paying companies for those costs.
+
+The existing schema can represent an actual Expense with an amount, category, date, payment method, paying company and Trip Group relation. It does not provide an approved distinction between planned or estimated costs and incurred or actual costs. Planned or estimated Udi costs were therefore not entered.
+
+This is primarily a data gap for actual expenses: authoritative expense evidence is not yet available. Treatment of planned or estimated expenses remains AQ-021 and requires architecture review before implementation.
+
+The operational page now contains an Expenses section with a zero-record status and a direct link to the central Expenses database. No dummy or estimated Expense records were created.
+
+# Structured vs Operational Data
+
+Central databases are the structured source of truth for Participants, Payments, Hotel Bookings and Expenses.
+
+The Trip Group database record is the operational hub. Its Trip Snapshot, Payment Snapshot, Bike Summary, Day-by-Day Operations, Accommodation Summary, Expenses status and Action Checklist are working summaries. Static tables do not create canonical duplicates and do not replace the related central records.

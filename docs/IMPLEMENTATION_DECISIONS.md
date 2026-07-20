@@ -279,6 +279,55 @@ Implementation Status: Implemented with connector limitation documented
 
 Open Questions: None
 
+## IMP-0012
+
+Date: 2026-07-20
+
+Sprint: Sprint 2.3 - Complete Udi Structured Relations
+
+Area: Hotel Bookings
+
+Decision: Treat the existing central Hotel Booking records as authoritative structured records and the Trip Group Accommodation Summary as an operational summary.
+
+Reason: The three hotel stays already exist in the central Hotel Bookings database and relate to the Udi Trip Group. Keeping the page table as a summary provides operational readability without creating duplicate accommodation records or making the page the only source of truth.
+
+Reference Documents:
+
+- `docs/PROJECT_CONSTITUTION.md`
+- `docs/DOMAIN_MODEL.md`
+- `docs/RELATIONSHIPS.md`
+- `docs/reference-data/UDI_GANANI_2026.md`
+- `docs/notion/UDI_GANANI_VALIDATION_REPORT.md`
+
+Implementation Status: Implemented
+
+Open Questions: None
+
+## IMP-0013
+
+Date: 2026-07-20
+
+Sprint: Sprint 2.3 - Complete Udi Structured Relations
+
+Area: Expenses
+
+Decision: Do not create a central Expense record without a verified amount and authoritative source evidence.
+
+Reason: The Udi itinerary indicates possible expense categories but does not verify incurred amounts, dates, payment methods or paying companies. Creating placeholder or estimated records would introduce unsupported business facts and could contaminate Trip Group expense rollups.
+
+Reference Documents:
+
+- `docs/PROJECT_CONSTITUTION.md`
+- `docs/DOMAIN_MODEL.md`
+- `docs/RELATIONSHIPS.md`
+- `docs/reference-data/UDI_GANANI_2026.md`
+
+Implementation Status: Implemented by creating zero Expense records
+
+Open Questions:
+
+- AQ-021
+
 ## Architecture Questions
 
 ### AQ-001
