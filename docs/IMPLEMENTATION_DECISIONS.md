@@ -502,6 +502,45 @@ Open Questions:
 - AQ-027
 - AQ-028
 
+## IMP-0019
+
+Date: 2026-07-20
+
+Sprint: Full Financial Reconciliation Audit and Repair
+
+Area: Company financial aggregation
+
+Decision: Calculate Company `Payments TOTAL` as a direct sum of every related
+Payment `Amount`, calculate `Expence TOTAL` as a direct sum of every related
+Expense `Amount`, and calculate `Current State` as `Payments TOTAL - Expence
+TOTAL`. Keep Cash, Bank and Wise rollups as method-specific supporting fields.
+Keep `Hub link` as its own Payment Method and include it in the all-method total
+without reclassifying it.
+
+Reason: Direct source rollups preserve all payment methods, remove dependence on
+incomplete method branches, and avoid double counting. `Current State` is the
+Company's recorded cash position under the existing model; it is not Settlement
+or final Profit. The change was explicitly approved after the all-group
+reconciliation demonstrated the remaining expense-completeness limits.
+
+Reference Documents:
+
+- `docs/CANONICAL_FINANCIAL_MODEL.md`
+- `docs/DOMAIN_MODEL.md`
+- `docs/RELATIONSHIPS.md`
+- `docs/notion/FINANCIAL_CONNECTION_HEALTH_AUDIT.md`
+- `docs/notion/FULL_FINANCIAL_RECONCILIATION.md`
+
+Implementation Status: Implemented and re-fetched. Company rollup definitions
+are verified, 77 Payments and 86 Expenses remain present, and source-record
+totals reconcile. Computed numeric values remain opaque through the connector.
+
+Open Questions:
+
+- AQ-023
+- AQ-027
+- AQ-028
+
 ## Architecture Questions
 
 ### AQ-001

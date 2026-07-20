@@ -45,10 +45,10 @@ read is classified as unverified, not as a confirmed empty value.
 | Remaining to Collect | Program Price and Collected Revenue | Trip Group properties | opaque formula | Independently calculated; negative values need business interpretation |
 | Recorded Expenses | Expenses.`Amount` | Expenses.`Trip Group` / Trip Groups.`Expenses` | sum of Expense Amount | Structurally healthy, but five Expenses relate to two Trip Groups |
 | Profit | Collected Revenue and Recorded Expenses | Trip Group properties | opaque formula | Not activated as canonical; expense completeness is unproven |
-| Company method totals | Payment/Expense method formulas | Company reciprocal relations | method-specific rollups | Cash, Bank and Wise only; Hub link has no method branch |
-| Company Payments TOTAL | Payments.`Amount` | Companies.`PAYMENTS` | current opaque formula | Misleading/incomplete because Hub link is omitted by method branches |
-| Company Expence TOTAL | Expenses.`Amount` | Companies.`EXPENSES` | current opaque formula | Observed blank and not independently readable |
-| Company Current State | Company payment and expense totals | Company properties | current opaque formula | Misleading; observed to ignore Expenses |
+| Company method totals | Payment/Expense method formulas | Company reciprocal relations | method-specific rollups | Cash, Bank and Wise supporting branches; Hub link remains a distinct method |
+| Company Payments TOTAL | Payments.`Amount` | Companies.`PAYMENTS` | direct sum rollup | Repaired; includes every method, including Hub link |
+| Company Expence TOTAL | Expenses.`Amount` | Companies.`EXPENSES` | direct sum rollup | Repaired; independent of method branches |
+| Company Current State | Company payment and expense totals | Company properties | Payments TOTAL - Expence TOTAL | Repaired as recorded cash position, not Settlement or final Profit |
 
 ## Complete Trip Group Reconciliation Matrix
 
@@ -212,13 +212,14 @@ The formulas cannot be accepted as reconciled because the displayed Company
 results are not exposed through the connector and the known Hub link branch is
 absent.
 
-## Proposed Minimal Company Repair
+## Safe Company Repairs Applied
 
-No live Company schema change was applied. The Notion connector rejected the
-mutation because the previous implementation decision explicitly held Company
-formula changes pending completed-trip proof.
+The user explicitly approved the minimal Company repair after reviewing the
+completed-group limitations. The initial combined DDL request failed formula
+type validation and made no partial change. The rollups were then applied first,
+followed by the formula after their numeric types were available.
 
-The smallest reversible repair prepared for explicit approval is:
+Applied definitions:
 
 ```sql
 ALTER COLUMN "Expence Cash"
@@ -236,7 +237,7 @@ ALTER COLUMN "Current State"
 The actual relation names include the existing emoji prefixes. This report
 omits them from the illustrative SQL for readability.
 
-This repair would:
+The repair:
 
 - preserve all raw Payments, Expenses and relations;
 - include Hub link without reclassifying it;
@@ -248,6 +249,32 @@ This repair would:
 `Wise Total` remains an existing method-specific helper. It is not a canonical
 Company total. It currently returns zero where Wise Payments have no Company
 relation; no Company was inferred and the field was not deleted.
+
+Post-change verification:
+
+- `Expence Cash`: rollup through `EXPENSES` to `Amount - Cash`, aggregation
+  `sum`;
+- `Expense Bank`: rollup through `EXPENSES` to `Amount - Bank`, aggregation
+  `sum`;
+- `Expence TOTAL`: direct rollup through `EXPENSES` to numeric `Amount`,
+  aggregation `sum`;
+- `Payments TOTAL`: direct rollup through `PAYMENTS` to numeric `Amount`,
+  aggregation `sum`;
+- `Current State`: formula using `Payments TOTAL - Expence TOTAL`;
+- 77 Payment records remained present;
+- 86 Expense records remained present; and
+- reciprocal Company relation counts still match the independently audited
+  source records.
+
+The connector continues to return computed rollup values as `<omitted />` and
+formula values as formula-result references. The expected post-change values
+are therefore verified from the unchanged source records:
+
+| Company | Payments TOTAL | Expence TOTAL | Current State |
+|---|---:|---:|---:|
+| Durmitor Adventure | 70,395.40 | 59,588.13 | 10,807.27 |
+| Sampas | 12,705.00 | 0 | 12,705.00 |
+| Other Trails | 0 | 530.00 | -530.00 |
 
 ## Proof Groups
 
@@ -312,8 +339,11 @@ financial totals.
   opaque through the connector.
 - Negative Remaining values for MENDY and TALAS are real source arithmetic,
   not proven formula errors.
-- Company `Payments TOTAL`, `Expence TOTAL` and `Current State` remain
-  unverified and unchanged after the connector rejected activation.
+- Company `Payments TOTAL` and `Expence TOTAL` are now direct numeric source
+  rollups.
+- Company `Current State` now calculates recorded Payments minus recorded
+  Expenses. Its schema is verified; its displayed numeric result remains
+  opaque through the connector and is independently reconciled above.
 - Company method helpers are supporting fields, not canonical totals.
 - `Hub link` remains a distinct Payment Method and must contribute to the
   all-method Company Payment total.
@@ -364,4 +394,3 @@ All 14 Trip Groups remain not ready for final financial sign-off:
 
 No completed group proves that all operational hotel costs are present in
 Expenses. The Adventure OS canonical financial model must not be marked frozen.
-
