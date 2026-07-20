@@ -70,7 +70,7 @@ Write tools are introduced only with explicit approval objects and audit.
 
 **Mode:** read-only initially.
 
-**Purpose:** Today view, meetings, deadlines, tours and event context.
+**Purpose:** Mission Control and Calendar context for meetings, deadlines, tours and events.
 
 ### Notion — Multiday
 
@@ -160,7 +160,7 @@ currently read. Integration claims are limited to the confirmed contract below.
 
 **Likely implementation paths:** Shortcuts, EventKit-based local helper, or export into a controlled inbox.
 
-**Purpose:** personal reminders visible in Today and optionally linked to projects.
+**Purpose:** personal reminders visible in Mission Control and optionally linked to projects.
 
 **Boundary:** Reminders remain authoritative until an explicit task-conversion action occurs.
 
