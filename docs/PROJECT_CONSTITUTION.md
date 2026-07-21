@@ -31,6 +31,7 @@ A feature that does not materially improve understanding, retrieval, coordinatio
 13. **No parallel models.** An AI agent may not introduce a parallel domain model or documentation hierarchy without an explicit reason and migration plan.
 14. **Improve or disprove.** Every model change must improve the existing model or demonstrate why the existing model is wrong.
 15. **Canonical documentation must remain true.** A change that alters system behavior, vocabulary, authority, workflow or product structure is incomplete until the relevant canonical documents are reconciled.
+16. **Operational integrity is deterministic.** Canonical Signals are derived from explicit rules and current source-backed reality, clear when that reality changes, and never originate from AI. Readiness is derived from blocking Signals; persistent Signal storage remains optional until operationally proven.
 
 ## 4. Authoritative systems
 
@@ -84,6 +85,7 @@ Each durable concern has one primary owner:
 - `RELATIONSHIPS.md` — canonical relationship types and relation semantics;
 - `MEMORY_POLICY.md` — memory classes and promotion into durable knowledge;
 - `SYSTEM_ARCHITECTURE.md` — technical architecture and service boundaries;
+- `OPERATIONAL_INTEGRITY.md` — deterministic Rules, Signals, Rule Packs, readiness and Attention boundaries;
 - `ROADMAP.md` — delivery phases, sequence and stop conditions;
 - `STATUS.md` — current operational truth and active dependencies;
 - `decisions/` — approved architectural decisions;

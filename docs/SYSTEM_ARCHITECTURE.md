@@ -15,6 +15,8 @@ Adventure API / MCP gateway
       │
 Knowledge service ─ Search service ─ Event service ─ Audit service
       │
+Operational Integrity Engine ─ Rule Packs ─ Attention
+      │
 PostgreSQL + pgvector
       │
 Connector adapters and n8n workflows
@@ -53,7 +55,31 @@ Responsibilities:
 
 The API should be available both to the web app and to the Adventure OS MCP server.
 
-## 3. Knowledge service
+## 3. Operational Integrity
+
+Operational Integrity evaluates canonical data against deterministic, versioned Rules
+and exposes active Signals and derived readiness to Attention surfaces. It is a
+cross-cutting service rather than a business domain or source-system feature.
+
+The current reference implementation evaluates the Financial Integrity Rule Pack in
+the Notion Multiday test workspace and presents results through filtered Notion views.
+That implementation remains valid while adapters and canonical storage mature.
+
+The portable target is:
+
+```text
+Sources -> Adapters -> Canonical Model -> Operational Integrity Engine
+        -> Rule Packs -> Attention / Mission Control
+```
+
+AI may explain, group, prioritize and recommend from Signals. It cannot generate the
+canonical Signal set. A persistent Signal Store is deliberately deferred and is not a
+prerequisite for the current reference implementation.
+
+The canonical contract is defined in
+[`OPERATIONAL_INTEGRITY.md`](OPERATIONAL_INTEGRITY.md).
+
+## 4. Knowledge service
 
 Responsibilities:
 
@@ -67,7 +93,7 @@ Responsibilities:
 
 It does not own source-system business state.
 
-## 4. Search service
+## 5. Search service
 
 Search combines:
 
@@ -79,7 +105,7 @@ Search combines:
 
 Embeddings assist retrieval. They do not determine identity or overwrite structured facts.
 
-## 5. Event service
+## 6. Event service
 
 Events describe changes detected from connectors or user actions.
 
@@ -93,7 +119,7 @@ The event service:
 
 Initial implementation may use PostgreSQL tables and scheduled polling. A separate message broker is unnecessary until volume justifies it.
 
-## 6. Integration layer
+## 7. Integration layer
 
 Each source uses an adapter with a common contract:
 
@@ -112,7 +138,7 @@ interface SourceAdapter {
 
 Every adapter begins with only the minimum permissions required.
 
-## 7. Data layer
+## 8. Data layer
 
 Initial recommendation:
 
@@ -125,7 +151,7 @@ Initial recommendation:
 
 A dedicated graph database, Redis or queue is deferred until a measured need exists.
 
-## 8. Automation layer
+## 9. Automation layer
 
 n8n handles stable, explicit workflows such as:
 
@@ -138,7 +164,7 @@ n8n handles stable, explicit workflows such as:
 
 AI reasoning must not be hidden inside large untraceable n8n workflows. Agent proposals and deterministic workflow execution remain distinguishable.
 
-## 9. Agent layer
+## 10. Agent layer
 
 ChatGPT, coding agents and ChatDev can interact through:
 
@@ -148,7 +174,7 @@ ChatGPT, coding agents and ChatDev can interact through:
 
 Adventure OS MCP is the preferred business abstraction. Agents should not need to understand each source API independently for common operations.
 
-## 10. Authentication and permissions
+## 11. Authentication and permissions
 
 Initial internal deployment should use:
 
@@ -161,7 +187,7 @@ Initial internal deployment should use:
 
 Cloudflare Access alone is not sufficient for record-level permissions.
 
-## 11. Deployment
+## 12. Deployment
 
 Target platform:
 
@@ -174,7 +200,7 @@ Target platform:
 
 The web UI may initially use a managed preview service if that is faster, but production architecture should remain portable.
 
-## 12. Reliability and observability
+## 13. Reliability and observability
 
 - CI: lint, typecheck, build and tests;
 - structured application logs;
@@ -182,9 +208,9 @@ The web UI may initially use a managed preview service if that is faster, but pr
 - failed-sync queue visible in the UI;
 - audit records for reads and writes as appropriate;
 - Grafana for technical infrastructure monitoring;
-- business health visible inside Adventure OS.
+- business integrity and active Signals visible through Attention surfaces.
 
-## 13. Phased write model
+## 14. Phased write model
 
 1. **Mock:** no source access.
 2. **Read-only:** display and search real data.
@@ -193,7 +219,7 @@ The web UI may initially use a managed preview service if that is faster, but pr
 5. **Deterministic automation:** repeatable low-risk workflow runs under explicit rules.
 6. **Conditional autonomy:** only for narrowly defined cases with audit and rollback.
 
-## 14. Explicit deferrals
+## 15. Explicit deferrals
 
 Not in the initial architecture:
 
@@ -202,4 +228,5 @@ Not in the initial architecture:
 - mass migration of historical files;
 - a separate graph database;
 - autonomous booking or financial modifications;
+- a persistent Operational Integrity Signal Store before the reference Rule Pack proves the need;
 - generic external SaaS tenancy.
