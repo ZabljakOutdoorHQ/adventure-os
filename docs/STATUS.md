@@ -22,13 +22,13 @@ Last updated: 2026-07-21
 - The Multiday Data Hygiene Center has been implemented in the MCP Cleanup test workspace with 34 Signal and reconciliation Attention views. It is retained as the first Financial Integrity Rule Pack reference implementation.
 - Company rollups and the Expense-to-Trip-Group financial connection have been repaired and documented in the test workspace.
 - Canonical financial vocabulary and boundaries are documented.
-- Operational Integrity, deterministic Signals, derived readiness and the Rule Pack extension boundary are documented; no Signal Store or additional Rule Pack is implemented.
+- PR #28 proposes Operational Integrity, deterministic Signals, derived readiness and the Rule Pack extension boundary; no Signal Store, Mission Control integration or additional Rule Pack is implemented.
 
 ## In review
 
 - PR #24 is open, ready for review and mergeable. It contains the Multiday validation, financial reconciliation, Company repair, Data Hygiene Center documentation and implementation decisions through IMP-0021.
 - PR #26 is open on top of PR #24 and reconciles the canonical documentation with the implemented state.
-- Operational Integrity reconciliation is prepared on a focused branch stacked on PR #26 so its diff remains architecture- and documentation-only.
+- PR #28 is a draft on top of PR #26. It keeps the existing Financial Integrity implementation and proposes the Operational Integrity architecture in a documentation-only diff.
 
 ## Current Multiday data state
 
@@ -44,7 +44,7 @@ Last updated: 2026-07-21
 
 ## Active next work
 
-- Review PR #24, PR #26 and the focused Operational Integrity reconciliation in dependency order.
+- Review PR #24, PR #26 and PR #28 in dependency order.
 - Resolve the remaining Multiday business decisions and evidence gaps before any Trip Group sign-off.
 - Confirm the Phase 1 preview deployment.
 - Complete the Google Drive WORK inventory in read-only mode.

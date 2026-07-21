@@ -55,15 +55,21 @@ Responsibilities:
 
 The API should be available both to the web app and to the Adventure OS MCP server.
 
-## 3. Operational Integrity
+## 3. Operational Integrity service
 
-Operational Integrity evaluates canonical data against deterministic, versioned Rules
-and exposes active Signals and derived readiness to Attention surfaces. It is a
-cross-cutting service rather than a business domain or source-system feature.
+Operational Integrity is the platform capability that evaluates canonical data against
+deterministic, versioned Rules and exposes active Signals and derived readiness to
+Attention surfaces. The Operational Integrity Engine is the service that implements
+that capability outside source systems. Neither is a business domain or source-system
+feature.
 
 The current reference implementation evaluates the Financial Integrity Rule Pack in
 the Notion Multiday test workspace and presents results through filtered Notion views.
 That implementation remains valid while adapters and canonical storage mature.
+
+The evaluator moves out of Notion only when Operational Integrity must evaluate
+multiple independent systems of record. That architectural tripwire is future work,
+not part of the current reference implementation.
 
 The portable target is:
 

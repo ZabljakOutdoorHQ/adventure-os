@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted
+Proposed
 
 ## Context
 
@@ -15,9 +15,11 @@ durable platform capability. The same evaluation pattern may later apply to othe
 operational concerns. Replacing the working implementation would add risk without
 adding evidence.
 
-## Decision
+## Proposed Decision
 
-Adopt **Operational Integrity** as a cross-cutting Adventure OS capability.
+Adopt **Operational Integrity** as a cross-cutting Adventure OS platform capability.
+The **Operational Integrity Engine** is the service that implements that capability
+outside source systems when the extraction tripwire is reached.
 
 1. The existing Multiday Data Hygiene implementation is retained as the reference
    implementation of the **Financial Integrity Rule Pack**.
@@ -35,9 +37,16 @@ Adopt **Operational Integrity** as a cross-cutting Adventure OS capability.
 7. The current implementation may evaluate Financial Integrity rules inside the
    Notion test workspace. Portable extraction through adapters and the canonical model
    is the target architecture.
-8. A persistent Signal Store is explicitly deferred until the reference implementation
+8. The evaluator should move out of Notion when Operational Integrity must evaluate
+   multiple independent systems of record. That extraction is future work and requires
+   separate review.
+9. A persistent Signal Store is explicitly deferred until the reference implementation
    proves the operational contract. This ADR does not authorize its schema or build.
-9. No additional Rule Pack is implemented by this decision.
+10. No additional Rule Pack is implemented by this decision.
+
+The terminology transition is `Data Hygiene` -> `Financial Integrity Rule Pack` ->
+`Operational Integrity`. Existing Notion behavior remains valid while legacy names are
+retired gradually through separately verified compatibility changes.
 
 The detailed contract is defined in
 [`OPERATIONAL_INTEGRITY.md`](../OPERATIONAL_INTEGRITY.md).
@@ -52,7 +61,7 @@ The detailed contract is defined in
   the owner of a separate issue system.
 - Mission Control Attention is the future primary presentation surface for Signals.
 - Extraction from Notion can happen incrementally after adapter and canonical-data
-  boundaries exist.
+  boundaries exist and the multiple-systems-of-record tripwire is reached.
 - Signal persistence, acknowledgements, waivers and cross-run history remain future
   architecture work.
 
@@ -71,3 +80,9 @@ Rejected because it couples a general evaluation capability to one business conc
 
 Rejected because canonical integrity observations must be reproducible, explainable
 and available without model inference.
+
+## Canonical Ownership
+
+[`OPERATIONAL_INTEGRITY.md`](../OPERATIONAL_INTEGRITY.md) is the single canonical
+specification. This ADR records the proposal and rationale. The Project Constitution
+contains the governing principle only; it does not duplicate the specification.

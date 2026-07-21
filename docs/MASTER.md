@@ -77,10 +77,11 @@ The product structure is defined by the implemented routes and validated design 
 
 The primary operational overview: current activities, meetings, important messages, deadlines, expected payments, unresolved decisions and warnings.
 
-Its Attention surface consumes deterministic Operational Integrity Signals. Mission
-Control may prioritize and explain those Signals, but it does not determine their
-truth. The current Multiday Data Hygiene implementation is the first Financial
-Integrity Rule Pack reference implementation; it is not a separate product area.
+Its Attention surface is intended to consume deterministic Operational Integrity
+Signals. Mission Control may prioritize and explain those Signals, but it does not
+determine their truth. The current Multiday Data Hygiene implementation is the first
+Financial Integrity Rule Pack reference implementation; it is not a separate product
+area or a Mission Control implementation.
 
 Historical concept name: `Today`.
 

@@ -1,14 +1,16 @@
 # Adventure OS - Operational Integrity
 
-Status: Accepted architecture direction; Financial Integrity reference implementation active in Notion
+Status: Proposed architecture; Financial Integrity reference implementation active in Notion
 
-Decision: [`ADR-0007`](decisions/0007-operational-integrity-engine.md)
+Proposal: [`ADR-0007`](decisions/0007-operational-integrity-engine.md)
 
 ## Purpose
 
-Operational Integrity is the cross-cutting Adventure OS capability that evaluates
-canonical business reality against explicit rules and surfaces what needs attention.
-It is not a separate product area, a finance feature or a source-system database.
+Operational Integrity is the cross-cutting Adventure OS platform capability that
+evaluates canonical business reality against explicit rules and surfaces what needs
+attention. The Operational Integrity Engine is the service that will implement that
+capability when evaluation is extracted from a source system. The capability is not a
+separate product area, a finance feature or a source-system database.
 
 The durable flow is:
 
@@ -30,6 +32,7 @@ architecture rather than replaced.
 | Term | Meaning |
 |---|---|
 | Operational Integrity | The platform capability that evaluates operational reality against deterministic rules. |
+| Operational Integrity Engine | The service that implements the Operational Integrity capability outside source systems when the extraction tripwire is reached. |
 | Rule Pack | A bounded, versioned set of rules for one concern, such as Financial Integrity. |
 | Rule | A deterministic test over canonical data, with stable identity, severity, evidence and provenance. |
 | Signal | An automatically derived observation emitted while a Rule's condition is true. |
@@ -39,6 +42,27 @@ architecture rather than replaced.
 Legacy implementation terms such as `Data Hygiene Center`, `Health Issues` and
 `Ready for Sign-off` may remain where they are exact Notion property, view or
 historical project names. They do not define parallel platform concepts.
+
+## Terminology Transition
+
+The terminology evolves without invalidating the working implementation:
+
+```text
+Data Hygiene
+  -> Financial Integrity Rule Pack
+  -> Operational Integrity
+```
+
+- `Data Hygiene` is the historical name of the first Notion control implementation.
+- `Financial Integrity Rule Pack` is the current name for its deterministic financial
+  Rules and Signals.
+- `Operational Integrity` is the broader platform capability into which that Rule Pack
+  fits.
+
+Existing Notion formulas, rollups, fields and linked views remain valid. Legacy names
+may stay where renaming would break the reference implementation. They should disappear
+gradually after dependent formulas, views and documentation are migrated and verified;
+this proposal does not perform that migration.
 
 ## Signal
 
@@ -180,8 +204,12 @@ The Signal Store is intentionally postponed. The current Rule Pack must first pr
 its operational value and portable contract. No Signal Store schema, persistence
 model or migration is authorized by this document.
 
-When extraction becomes justified, evaluation moves behind adapters without changing
-Financial Integrity semantics or forcing Notion to become the long-term engine.
+The extraction tripwire is explicit: evaluation should move out of Notion when
+Operational Integrity must evaluate multiple independent systems of record. Until that
+condition exists, the current Notion evaluator remains the valid reference
+implementation. Crossing the tripwire requires a separately reviewed implementation;
+it must preserve Financial Integrity semantics and use the approved adapter and
+canonical-model boundaries.
 
 ## Boundaries
 
@@ -196,8 +224,12 @@ Financial Integrity semantics or forcing Notion to become the long-term engine.
 
 ## Architecture Reconciliation
 
-This document owns the Operational Integrity contract. Related documents retain their
-existing responsibilities:
+This file is the only canonical Operational Integrity specification. ADR-0007 records
+the proposed architecture decision; the Constitution records only the governing
+principle. Architecture-review drafts and historical implementation documents are
+noncanonical and must link here rather than restating a competing specification.
+
+Related documents retain their existing responsibilities:
 
 - [`PROJECT_CONSTITUTION.md`](PROJECT_CONSTITUTION.md) owns authority and AI safety;
 - [`DOMAIN_MODEL.md`](DOMAIN_MODEL.md) owns canonical business entities;
