@@ -1,6 +1,6 @@
 # Adventure OS — Status
 
-Last updated: 2026-07-20
+Last updated: 2026-07-21
 
 `STATUS.md` is the current operational snapshot. Long-term sequencing belongs in [`ROADMAP.md`](ROADMAP.md); completed implementation detail belongs in [`IMPLEMENTATION_DECISIONS.md`](IMPLEMENTATION_DECISIONS.md) and supporting validation documents.
 
@@ -19,14 +19,16 @@ Last updated: 2026-07-20
 - Adventure Hub public booking-surface discovery and read-only adapter groundwork exist.
 - Notion Multiday schema, relations and financial connections have been audited in the MCP Cleanup test workspace.
 - The Udi Ganani reference case and all 14 Trip Groups have been reconciled at structural and financial-evidence level.
-- The Multiday Data Hygiene Center has been implemented in the MCP Cleanup test workspace with 34 issue and reconciliation views.
+- The Multiday Data Hygiene Center has been implemented in the MCP Cleanup test workspace with 34 Signal and reconciliation Attention views. It is retained as the first Financial Integrity Rule Pack reference implementation.
 - Company rollups and the Expense-to-Trip-Group financial connection have been repaired and documented in the test workspace.
 - Canonical financial vocabulary and boundaries are documented.
+- Operational Integrity, deterministic Signals, derived readiness and the Rule Pack extension boundary are documented; no Signal Store or additional Rule Pack is implemented.
 
 ## In review
 
 - PR #24 is open, ready for review and mergeable. It contains the Multiday validation, financial reconciliation, Company repair, Data Hygiene Center documentation and implementation decisions through IMP-0021.
-- Documentation reconciliation is being prepared on top of PR #24 so that canonical documents reflect the implemented state before merge.
+- PR #26 is open on top of PR #24 and reconciles the canonical documentation with the implemented state.
+- Operational Integrity reconciliation is prepared on a focused branch stacked on PR #26 so its diff remains architecture- and documentation-only.
 
 ## Current Multiday data state
 
@@ -37,12 +39,12 @@ Last updated: 2026-07-20
 - 5 Expenses linked to two Trip Groups remain unresolved and unchanged.
 - 14 Hotel Bookings are linked to proven Expenses.
 - 11 Hotel Bookings are missing proven Expenses.
-- Automatic structural issues disappear from issue views after the source record is corrected.
-- `VERIFIED` and final sign-off remain manual business confirmations.
+- Automatic structural Signals disappear from Attention views after the source record is corrected.
+- Financial readiness is canonically derived from the absence of blocker Signals. The existing Notion `Ready for Sign-off` checkbox is transitional and cannot override blockers; the human sign-off action remains manual.
 
 ## Active next work
 
-- Review and merge PR #24 after architectural and documentation reconciliation.
+- Review PR #24, PR #26 and the focused Operational Integrity reconciliation in dependency order.
 - Resolve the remaining Multiday business decisions and evidence gaps before any Trip Group sign-off.
 - Confirm the Phase 1 preview deployment.
 - Complete the Google Drive WORK inventory in read-only mode.
