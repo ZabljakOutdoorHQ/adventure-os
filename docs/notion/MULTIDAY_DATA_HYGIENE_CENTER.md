@@ -1,4 +1,4 @@
-# Multiday Data Hygiene Center
+# Financial Integrity Rule Pack - Notion Reference Implementation
 
 Date: 2026-07-20
 
@@ -6,14 +6,18 @@ Status: Implemented in the reference workspace
 
 Workspace: `2026 Multiday - TEST / MCP CLEANUP`
 
+Historical implementation name: Multiday Data Hygiene Center
+
 Notion page:
-[DATA HYGIENE CENTER - MULTIDAY](https://app.notion.com/p/3a3814d0e14181b69c17ec149c0da89b)
+[FINANCIAL INTEGRITY - MULTIDAY](https://app.notion.com/p/3a3814d0e14181b69c17ec149c0da89b)
 
 ## Executive Summary
 
-The Multiday workspace now has an explainable data-quality control layer over
-the existing operational databases. It does not replace the databases, change
-financial semantics or create financial records.
+The Multiday workspace has an explainable Financial Integrity control layer over
+the existing operational databases. The successful Data Hygiene implementation
+is retained as the first reference Rule Pack for Operational Integrity. It does
+not replace the databases, change financial semantics or create financial
+records.
 
 The implementation:
 
@@ -21,25 +25,46 @@ The implementation:
 - exposes source records through filtered linked views;
 - preserves approved exceptions explicitly;
 - separates automatic structural checks from manual business review;
-- keeps all 14 Trip Groups out of final sign-off until their issues are
+- keeps all 14 Trip Groups out of financial readiness while blocker Signals are
   resolved; and
 - leaves Company financial formulas and all financial source values unchanged.
 
-The canonical rules are defined in
-`docs/notion/DATA_HYGIENE_VALIDATION_SPEC.md`.
+The Financial Integrity Rules are defined in
+[`DATA_HYGIENE_VALIDATION_SPEC.md`](DATA_HYGIENE_VALIDATION_SPEC.md). The
+platform contract is defined in
+[`OPERATIONAL_INTEGRITY.md`](../OPERATIONAL_INTEGRITY.md).
+
+## Architecture Mapping
+
+| Existing implementation | Operational Integrity meaning |
+|---|---|
+| Notion formulas, rollups and reviewed classifications | Deterministic Financial Integrity Rules |
+| A matching validation condition | Signal |
+| `Health Issues` and related exact property names | Legacy Signal presentation fields |
+| Filtered linked issue views | Attention views |
+| Blocker and warning counts | Signal aggregation |
+| `Ready for Sign-off` checkbox | Transitional display field; not canonical readiness |
+
+No Signal Store exists. Evaluation and Attention both remain in Notion for this
+reference implementation.
+
+The existing page was renamed to `FINANCIAL INTEGRITY - MULTIDAY`, and its
+Payment, Expense and Participant section headings now use `Signals`. Database
+schemas, formulas, rollups, linked views, filters and source records were not
+changed.
 
 ## Before and After
 
 | Area | Before | After |
 |---|---|---|
 | Overall control | Audit findings existed only in reports | One central Notion control page links directly to source records |
-| Trip Group health | No consistent row-level status or reason | All 14 rows have Data Health Status, Health Issues, audit date and sign-off state |
+| Trip Group health | No consistent row-level status or reason | All 14 rows have Data Health Status, active Signal reasons, audit date and readiness display state |
 | Payments | Missing relations required an external scan | Missing Company, Participant, Trip Group, method and amount views update from source fields |
 | Payment exceptions | Empty Participant could not be distinguished from an error | Six group-level payments, one cancellation payment and one adjustment are explicitly classified |
 | Expenses | Five ambiguous cross-group records were known only from audit | Relation-count formulas and a Multiple Trip Groups view expose all five records |
-| Participants | Missing group membership and suspicious rows were not centralized | Source formulas and issue views expose missing Trip Group, pricing and manual-review records |
+| Participants | Missing group membership and suspicious rows were not centralized | Source formulas and Attention views expose missing Trip Group, pricing and manual-review records |
 | Hotels | No explicit operational-to-financial reconciliation | Hotel Bookings can reference existing Expenses without becoming a financial source |
-| Final sign-off | Zero and missing input could appear equivalent | No group is ready; sign-off requires explicit completeness review |
+| Financial readiness | Zero and missing input could appear equivalent | No group is ready while blocker Signals or missing completeness evidence remain |
 
 ## Verified Baseline
 
@@ -75,13 +100,14 @@ The row-level status vocabulary is:
 - `FUTURE / NOT YET DUE`
 
 Payments, Expenses, Participants and Hotel Bookings use formula-backed
-structural checks. Their issue views clear automatically when the underlying
-field or relation is corrected.
+deterministic Rules. Their Signals clear automatically when the underlying field
+or relation is corrected.
 
 Trip Group source blocker and warning counts update through formulas and
-rollups. Final Trip Group status and `Ready for Sign-off` remain controlled
-review fields because expense completeness and business approval cannot be
-inferred safely.
+rollups. Canonical financial readiness is derived from the absence of blocker
+Signals. `Data Health Status` and `Ready for Sign-off` remain transitional Notion
+review/display fields and cannot override an active blocker. Human final sign-off
+remains a separate business action.
 
 ## Properties Added
 
@@ -170,7 +196,11 @@ operational cost into the financial chain.
 No new Company property or formula was added. The existing direct source
 rollups and `Current State` formula remain unchanged.
 
-## Linked Views
+## Attention Views
+
+The exact Notion view names below are preserved for compatibility. Where a
+heading says `Issues`, it is a historical implementation label for active
+Signals, not a separate authored issue system.
 
 ### Trip Group Health
 
@@ -183,7 +213,7 @@ rollups and `Current State` formula remain unchanged.
 - Verified
 - Completed Groups Only
 
-### Payment Issues
+### Payment Signals (`Payment Issues` in Notion)
 
 - Missing Company
 - Missing Participant
@@ -198,7 +228,7 @@ rollups and `Current State` formula remain unchanged.
 `Adjustments` and `Ancillary Revenue` are separate views so each classification
 remains explicit.
 
-### Expense Issues
+### Expense Signals (`Expense Issues` in Notion)
 
 - Multiple Trip Groups
 - Missing Company
@@ -208,7 +238,7 @@ remains explicit.
 - Bank Expenses
 - Cash Expenses
 
-### Participant Issues
+### Participant Signals (`Participant Issues` in Notion)
 
 - Participant Not Linked to Trip Group
 - Participant Without Valid Price
@@ -314,7 +344,8 @@ Safe next controls:
 - daily views for newly created incomplete records;
 - controlled Payment exception types;
 - controlled Hotel reconciliation states; and
-- manual final sign-off only after source completeness review.
+- a derived readiness display after all blocker Rules are proven against the
+  existing Notion outputs.
 
 Manual judgment remains required for:
 
@@ -323,7 +354,7 @@ Manual judgment remains required for:
 - cancellation, fee and ancillary-revenue classification;
 - Hotel Booking to Expense matching;
 - shared Expense allocation; and
-- final financial completeness.
+- final financial completeness and the human sign-off action.
 
 No automation was activated.
 
@@ -335,6 +366,6 @@ so the source databases were re-fetched through their existing database views.
 That path confirmed the persisted classifications and counts.
 
 Notion returns several formula and rollup values as opaque references through
-the connector. The control layer therefore does not claim connector-level
-numeric verification for those values; source records and stored status fields
-remain the verification basis.
+the connector. The Rule Pack therefore does not claim connector-level numeric
+verification for those values; source records and stored status fields remain
+the verification basis.

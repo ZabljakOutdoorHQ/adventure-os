@@ -74,3 +74,7 @@ Hotel Bookings are not a financial source of truth. A hotel cost contributes to
 Future scope extends this model. It does not redefine the current meanings of
 Program Price, Collected Revenue, Received Cash, Recorded Expenses, Profit,
 Company or Hotel Booking.
+
+Deterministic validation of these semantics belongs to the Financial Integrity
+Rule Pack defined by [`OPERATIONAL_INTEGRITY.md`](OPERATIONAL_INTEGRITY.md). It
+does not create a second financial model.

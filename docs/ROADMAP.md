@@ -67,7 +67,7 @@ Workstreams:
 
 1. Plane inventory and read-only discovery.
 2. Google Drive WORK folder inventory.
-3. Notion Multiday schema, relation and data-quality audit.
+3. Notion Multiday schema, relation and Financial Integrity reference validation.
 4. Existing Docmost structure inventory.
 5. Adventure Hub API/reporting capability audit.
 6. Existing server deployment documentation inventory.
@@ -79,6 +79,14 @@ Outputs:
 - connector-specific acceptance criteria;
 - list of unresolved business questions;
 - source-specific validation and reconciliation specifications where required.
+- first Operational Integrity Rule Pack reference implementation in Notion.
+
+Operational validation checkpoint after architecture closure:
+
+1. repair the existing 14 Multiday Trip Groups using Financial Integrity Signals;
+2. achieve the first `VERIFIED` Trip Group without bypassing blockers;
+3. validate Financial Integrity in daily operation; and
+4. expand Adventure OS only after that evidence exists.
 
 Exit criteria:
 
@@ -99,6 +107,11 @@ Deliverables:
 - identity-resolution suggestions;
 - confidence and lifecycle model;
 - mock and fixture adapters.
+- Operational Integrity Rule Pack contract at the canonical adapter boundary.
+
+The Financial Integrity reference implementation remains in Notion. The evaluator
+moves out only when Operational Integrity must evaluate multiple independent systems
+of record. A persistent Signal Store remains explicitly deferred.
 
 Exit criteria:
 
@@ -135,7 +148,8 @@ Exit criteria:
 Deliverables:
 
 - Mission Control view from Plane, Calendar and graph events;
-- unresolved decisions and stale-data warnings;
+- Attention feed for deterministic Operational Integrity Signals;
+- unresolved decisions and stale-data warnings derived from those Signals;
 - concise AI briefing with citations;
 - connector health and failed-sync visibility;
 - personal/private visibility boundary.

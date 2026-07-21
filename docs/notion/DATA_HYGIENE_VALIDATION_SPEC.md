@@ -1,4 +1,4 @@
-# Multiday Data Hygiene Validation Specification
+# Financial Integrity Validation Specification
 
 Date: 2026-07-20
 
@@ -6,16 +6,23 @@ Status: Reference implementation specification
 
 Scope: `2026 Multiday - TEST / MCP CLEANUP` in the WORK Notion workspace
 
+Historical implementation name: Multiday Data Hygiene Center
+
 ## Purpose
 
-This specification defines the explainable validation rules used by the
-Multiday Data Hygiene Center. It is a control layer over the existing Notion
-reference implementation. It does not define new canonical entities, financial
-semantics or operational workflows.
+This specification defines the Financial Integrity Rules used by the existing
+Multiday Data Hygiene Center. That implementation is the first reference Rule
+Pack for the Operational Integrity architecture. It is a control layer over the
+existing Notion reference implementation and does not define new canonical
+entities, financial semantics or operational workflows.
 
-The underlying Notion record remains the source to repair. A detected issue
-must disappear when that source record satisfies the rule. Manual business
+The underlying Notion record remains the source to repair. A detected Signal
+must disappear when that source record satisfies the Rule. Manual business
 judgment remains explicit and must not be replaced by inferred values.
+
+The canonical Rule, Signal, Rule Pack, Readiness and Attention contract is
+defined in [`OPERATIONAL_INTEGRITY.md`](../OPERATIONAL_INTEGRITY.md). Exact
+Notion field and view names in this document remain implementation details.
 
 ## Severity
 
@@ -36,9 +43,9 @@ unconfirmed or likely to need attention before the next lifecycle stage.
 The condition is expected, approved or not yet due. It remains visible so that
 an exception is not mistaken for silently complete data.
 
-## Health Status
+## Signal Aggregation And Health Status
 
-The row-level status vocabulary is:
+The row-level status vocabulary summarizes active Financial Integrity Signals:
 
 - `VERIFIED`: no blocking or warning issues remain and sign-off was explicitly
   reviewed.
@@ -63,18 +70,21 @@ Status precedence when several issues exist:
 6. `PROVISIONALLY RECONCILED`
 7. `VERIFIED`
 
-`Ready for Sign-off` is true only when:
+Canonical financial readiness is derived:
 
-- blocking issue count is zero;
-- warning count is zero;
-- required financial inputs have been explicitly reviewed as complete; and
-- the health status is `VERIFIED`.
+`Ready for financial sign-off := no active blocker Signals`
 
-An arithmetic result alone cannot set `Ready for Sign-off`.
+Required completeness reviews must therefore contribute a deterministic blocker
+Signal while incomplete. Warnings remain visible but do not author readiness. An
+arithmetic result alone cannot prove that required source inputs are complete.
+
+The existing Notion `Ready for Sign-off` checkbox is a transitional display
+field. It may mirror the derived result but must not override an active blocker.
+The human act of final sign-off remains separate from readiness.
 
 ## Common Audit Fields
 
-The control layer may use these fields where needed:
+The current Notion implementation uses these legacy field names where needed:
 
 - `Data Health Status`
 - `Health Issues`
@@ -84,7 +94,7 @@ The control layer may use these fields where needed:
 - `Last Audited`
 - `Audit Notes`
 
-Automatically detectable issues should use formulas or rollups. Business
+Automatically detectable Signals should use formulas or rollups. Business
 exceptions, completeness decisions and source explanations belong in
 `Audit Notes` or a dedicated audit record. A manual note must not override an
 active automatic blocker without an explicit approved exception.
@@ -359,7 +369,7 @@ active automatic blocker without an explicit approved exception.
 - `Current State` is recorded cash position, not Settlement or final Profit;
 - Cash, Bank and Wise totals are supporting method views.
 
-## Automatic Versus Manual Validation
+## Deterministic Rules Versus Manual Business Input
 
 Safe automatic checks:
 
@@ -384,5 +394,7 @@ Manual business review:
 - duplicate or suspicious Participant identity;
 - final financial sign-off.
 
-No automatic rule may create financial data, infer a Company, assign a
-Participant, allocate a shared Expense or mark a Trip Group verified.
+No automatic Rule may create financial data, infer a Company, assign a
+Participant or allocate a shared Expense. Rules may derive Signals, aggregate
+health and derive readiness only from explicit source-backed inputs. AI does not
+generate or suppress canonical Signals.

@@ -77,6 +77,12 @@ The product structure is defined by the implemented routes and validated design 
 
 The primary operational overview: current activities, meetings, important messages, deadlines, expected payments, unresolved decisions and warnings.
 
+Its Attention surface is intended to consume deterministic Operational Integrity
+Signals. Mission Control may prioritize and explain those Signals, but it does not
+determine their truth. The current Multiday Data Hygiene implementation is the first
+Financial Integrity Rule Pack reference implementation; it is not a separate product
+area or a Mission Control implementation.
+
 Historical concept name: `Today`.
 
 ### Communications
@@ -108,6 +114,9 @@ Direct working surfaces for source-linked documents, scheduled events and accept
 ### Search and AI assistance
 
 Exact and semantic search across authorised sources, with contextual AI assistance that can find, explain, summarise, compare, draft and propose changes. Consequential actions require approval.
+
+AI may explain, group, prioritize and recommend from Operational Integrity Signals. It
+must not generate the canonical Signal set.
 
 Historical concept name: `AI Workspace`.
 

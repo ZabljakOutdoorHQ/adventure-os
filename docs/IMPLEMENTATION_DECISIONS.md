@@ -607,6 +607,42 @@ Open Questions:
 
 - AQ-027
 
+## IMP-0022
+
+Date: 2026-07-21
+
+Sprint: Operational Integrity promotion
+
+Area: Financial Integrity reference implementation
+
+Decision: Retain the implemented Multiday Data Hygiene formulas, rollups,
+classifications and filtered views as the first Financial Integrity Rule Pack.
+Map their behavior to deterministic Rules, Signals, Attention and derived
+readiness while preserving exact legacy Notion property and view names where a
+rename could break the reference implementation.
+
+Reason: The existing behavior is useful and already validated. Promoting it
+through an explicit compatibility mapping reduces coupling to Notion vocabulary
+without replacing working formulas or introducing another source of truth. The
+existing `Ready for Sign-off` checkbox becomes a transitional display field; it
+cannot override active blocker Signals.
+
+Reference Documents:
+
+- `docs/OPERATIONAL_INTEGRITY.md`
+- `docs/decisions/0007-operational-integrity-engine.md`
+- `docs/notion/DATA_HYGIENE_VALIDATION_SPEC.md`
+- `docs/notion/MULTIDAY_DATA_HYGIENE_CENTER.md`
+- `docs/PROJECT_CONSTITUTION.md`
+
+Implementation Status: Documented. Existing Notion behavior is preserved; no
+schema, source data, formula, rollup, Signal Store or additional Rule Pack was
+created by this decision. The existing control page was renamed to `FINANCIAL
+INTEGRITY - MULTIDAY`, and three presentation headings were changed from
+`Issues` to `Signals`; all linked views and their filters remain unchanged.
+
+Open Questions: None.
+
 ## Architecture Questions
 
 ### AQ-001
