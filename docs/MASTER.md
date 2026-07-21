@@ -4,7 +4,7 @@
 
 Adventure OS is a central visual command centre for Boris Stijepovic and the connected organisations, brands and projects around Durmitor Adventure.
 
-It is not an immediate replacement for existing tools. Its first purpose is to:
+It is not an immediate replacement for existing tools. Its purpose is to:
 
 - reveal where information lives;
 - connect information that belongs to the same subject;
@@ -15,9 +15,9 @@ It is not an immediate replacement for existing tools. Its first purpose is to:
 
 ## Core principle
 
-The first phase is read-only. Existing systems are not moved, deleted or reorganised automatically.
+Integration begins read-only. Existing systems are not moved, deleted or reorganised automatically.
 
-Initial work is limited to inventory, classification, relationship discovery, duplicate detection and proposed future structure.
+Initial work is limited to inventory, classification, relationship discovery, duplicate detection and proposed future structure. Any approved repair or write scope must be explicit, testable, auditable and isolated from production where required.
 
 The authoritative conceptual path is:
 
@@ -69,64 +69,62 @@ Unstructured:
 - email attachments
 - notes
 
-## Initial product views
+## Current product structure
 
-### Today
+The product structure is defined by the implemented routes and validated design direction. Concept names do not create separate product areas unless they are explicitly implemented.
 
-Current activities, meetings, important messages, deadlines, expected payments and operational warnings.
+### Mission Control
 
-### Matrix
+The primary operational overview: current activities, meetings, important messages, deadlines, expected payments, unresolved decisions and warnings.
 
-A navigable workspace across organisation/domain, project/topic and time/status. This should feel spatial and multi-directional rather than like a long chat scroll.
+Historical concept name: `Today`.
+
+### Communications
+
+Messages and communication context across authorised sources.
+
+### Operations
+
+Operational delivery, bookings, Trip Groups, allocations, logistics, finance visibility and source health.
 
 ### Projects
 
 Active projects, owners, next actions, deadlines, related documents, communication and risks.
 
-### People
+### Knowledge
 
-A consolidated view of a person and their relationships to organisations, projects, messages, bookings, payments and documents.
+Curated knowledge, source-grounded explanations, domain context and maintained documentation.
 
-### Graph
+### System Map
 
-An interactive relationship map between people, organisations, projects, documents, activities, events and financial records.
+The navigable relationship and system view across people, organisations, projects, documents, activities, events and financial records.
 
-### Timeline
+Historical concept names: `Matrix`, `People/Graph`, `Graph`.
 
-A chronological view of important events, decisions and changes.
+### Documents, Calendar and Tasks
 
-### Search
+Direct working surfaces for source-linked documents, scheduled events and accepted operational work.
 
-Exact and semantic search across authorised sources.
+### Search and AI assistance
 
-### AI Workspace
+Exact and semantic search across authorised sources, with contextual AI assistance that can find, explain, summarise, compare, draft and propose changes. Consequential actions require approval.
 
-An assistant that can find, explain, summarise, compare, draft and propose changes. Consequential actions require approval.
+Historical concept name: `AI Workspace`.
 
 ## Safety model
 
 AI may initially read, search, classify, summarise, detect duplicates and propose relationships.
 
-AI may not initially delete or move files, alter financial or booking data, send messages, issue invoices, publish content or merge records without approval.
+AI may not delete or move files, alter production financial or booking data, send messages, issue invoices, publish content or merge records without explicit authority.
 
 Every future write action should record source, timestamp, actor, reason and rollback path.
 
-## Delivery phases
+## Delivery sequence
 
-1. Inventory
-2. Knowledge map
-3. Visual prototype with mock data
-4. Read-only dashboard
-5. Controlled write operations
-6. AI operations
-7. Stable automation through n8n and service APIs
+The canonical delivery sequence is maintained in [`ROADMAP.md`](ROADMAP.md). Current work and dependencies are maintained in [`STATUS.md`](STATUS.md).
 
-## First milestone
+## Historical first milestone
 
-Deliver a polished shell and three mock-data views:
+The original first milestone was a polished mock-data shell using the concept names `Today`, `Matrix` and `Entity Graph`, with no production integrations.
 
-- Today
-- Matrix
-- Entity Graph
-
-No production integrations are required for the first milestone.
+That milestone is historical and substantially completed. Current route names and product structure are defined above and in the implemented application; historical labels must not be treated as parallel canonical navigation.

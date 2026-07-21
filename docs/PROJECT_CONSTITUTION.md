@@ -30,12 +30,13 @@ A feature that does not materially improve understanding, retrieval, coordinatio
 12. **Every canonical entity has one primary domain.** If a concept does not clearly fit the existing Domain Landscape, review the model before introducing it.
 13. **No parallel models.** An AI agent may not introduce a parallel domain model or documentation hierarchy without an explicit reason and migration plan.
 14. **Improve or disprove.** Every model change must improve the existing model or demonstrate why the existing model is wrong.
+15. **Canonical documentation must remain true.** A change that alters system behavior, vocabulary, authority, workflow or product structure is incomplete until the relevant canonical documents are reconciled.
 
 ## 4. Authoritative systems
 
 Until changed by an approved architecture decision:
 
-- Adventure Hub is authoritative for daily activity catalogue, booking and booking lifecycle data available through its API.
+- Adventure Hub is the business source of truth for the daily activity catalogue and booking lifecycle. Adventure OS may only rely on booking, payment, availability or reporting fields that are actually exposed and verified through an approved integration surface.
 - Plane is authoritative for operational tasks once a task is accepted into the shared task system.
 - Docmost is authoritative for maintained internal wiki content.
 - Documenso is authoritative for document-signing state and signed outputs.
@@ -44,6 +45,8 @@ Until changed by an approved architecture decision:
 - Payload CMS is authoritative for public website content.
 - GitHub is authoritative for code, technical decisions and versioned system documentation.
 - Adventure OS stores links, indexes, derived summaries, graph relationships, preferences and audit records; it does not silently replace source records.
+
+Business authority and integration visibility are distinct. A source may remain authoritative even when its current API or connector exposes only a limited subset of that source.
 
 ## 5. Safety boundaries
 
@@ -71,7 +74,24 @@ When instructions conflict, use this order:
 5. current sprint acceptance criteria;
 6. agent implementation preferences.
 
-## 7. Knowledge quality
+## 7. Canonical document ownership
+
+Each durable concern has one primary owner:
+
+- `PROJECT_CONSTITUTION.md` — mission, principles, authority and non-negotiable rules;
+- `DOMAIN_MODEL.md` — canonical entities and vocabulary;
+- `domain/DOMAIN_LANDSCAPE.md` — conceptual business domains;
+- `RELATIONSHIPS.md` — canonical relationship types and relation semantics;
+- `MEMORY_POLICY.md` — memory classes and promotion into durable knowledge;
+- `SYSTEM_ARCHITECTURE.md` — technical architecture and service boundaries;
+- `ROADMAP.md` — delivery phases, sequence and stop conditions;
+- `STATUS.md` — current operational truth and active dependencies;
+- `decisions/` — approved architectural decisions;
+- `IMPLEMENTATION_DECISIONS.md` — concrete implementation choices and verified exceptions.
+
+Other documents may summarise or apply these rules, but should link to the canonical owner instead of creating a competing definition.
+
+## 8. Knowledge quality
 
 Every knowledge record or relation should support:
 
@@ -84,7 +104,7 @@ Every knowledge record or relation should support:
 
 An AI summary is not a fact merely because it is written confidently.
 
-## 8. Development governance
+## 9. Development governance
 
 - Work is performed through focused branches and pull requests.
 - CI must pass before merge.
@@ -94,8 +114,12 @@ An AI summary is not a fact merely because it is written confidently.
 - A stable API or adapter boundary precedes UI coupling.
 - ChatDev or other agent teams may implement and test, but do not determine product truth.
 - Major decisions are recorded as ADRs in `docs/decisions/`.
+- The relevant canonical documentation is reviewed after implementation and before merge.
+- `STATUS.md` is updated last when a change alters current project state.
 
-## 9. Success criteria
+A pull request is not complete when it changes system behavior, vocabulary, authority, workflow or product structure but leaves the relevant canonical documentation inaccurate or contradictory.
+
+## 10. Success criteria
 
 Adventure OS succeeds when Boris can:
 
@@ -106,7 +130,7 @@ Adventure OS succeeds when Boris can:
 - convert notes, messages and observations into organised work with minimal manual entry;
 - trust that automation will not make consequential changes behind his back.
 
-## 10. Non-goals for the initial phases
+## 11. Non-goals for the initial phases
 
 - replacing all existing operational tools;
 - migrating the full historical archive;
