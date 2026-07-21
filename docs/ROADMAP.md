@@ -81,6 +81,13 @@ Outputs:
 - source-specific validation and reconciliation specifications where required.
 - first Operational Integrity Rule Pack reference implementation in Notion.
 
+Operational validation checkpoint after architecture closure:
+
+1. repair the existing 14 Multiday Trip Groups using Financial Integrity Signals;
+2. achieve the first `VERIFIED` Trip Group without bypassing blockers;
+3. validate Financial Integrity in daily operation; and
+4. expand Adventure OS only after that evidence exists.
+
 Exit criteria:
 
 - source audits are evidence-based;
@@ -102,9 +109,9 @@ Deliverables:
 - mock and fixture adapters.
 - Operational Integrity Rule Pack contract at the canonical adapter boundary.
 
-The Financial Integrity reference implementation may remain in Notion during
-this phase. Extracting the evaluator requires evidence that the portable contract
-is useful. A persistent Signal Store is explicitly deferred.
+The Financial Integrity reference implementation remains in Notion. The evaluator
+moves out only when Operational Integrity must evaluate multiple independent systems
+of record. A persistent Signal Store remains explicitly deferred.
 
 Exit criteria:
 

@@ -1,15 +1,16 @@
 # Adventure OS - Operational Integrity
 
-Status: Proposed architecture; Financial Integrity reference implementation active in Notion
+Status: Accepted; ratified by the Adventure OS Architecture Board on 2026-07-21
 
-Proposal: [`ADR-0007`](decisions/0007-operational-integrity-engine.md)
+Decision: [`ADR-0007`](decisions/0007-operational-integrity-engine.md)
 
 ## Purpose
 
 Operational Integrity is the cross-cutting Adventure OS platform capability that
 evaluates canonical business reality against explicit rules and surfaces what needs
-attention. The Operational Integrity Engine is the service that will implement that
-capability when evaluation is extracted from a source system. The capability is not a
+attention. The Operational Integrity Engine is the implementation service for that
+capability; a separate service is not required until evaluation crosses the extraction
+tripwire. The capability is not a
 separate product area, a finance feature or a source-system database.
 
 The durable flow is:
@@ -62,7 +63,7 @@ Data Hygiene
 Existing Notion formulas, rollups, fields and linked views remain valid. Legacy names
 may stay where renaming would break the reference implementation. They should disappear
 gradually after dependent formulas, views and documentation are migrated and verified;
-this proposal does not perform that migration.
+this architecture closure does not perform that migration.
 
 ## Signal
 
@@ -101,9 +102,6 @@ Every Rule must be able to produce these values without AI:
 | `evidence` | Source values that caused the Rule to match. |
 | `source` | Canonical document, rulebook or approved decision that authorizes the Rule. |
 
-Persistence, acknowledgement, waiver and lifecycle history require a future decision.
-They are not required by the current Notion reference implementation.
-
 ## Rules And Rule Packs
 
 The engine is domain-agnostic. A Rule Pack owns its rules and declares:
@@ -115,10 +113,8 @@ The engine is domain-agnostic. A Rule Pack owns its rules and declares:
 - evidence extraction; and
 - the canonical source for each rule.
 
-A future Rule Pack must plug into the same evaluation contract without changing the
-engine core. Fleet Integrity, Booking Integrity, CRM Integrity, Website Integrity and
-Equipment Integrity are extension points only. They are not implemented or scheduled
-by this decision.
+A future Rule Pack must use the same evaluation contract without changing the engine
+core. No additional Rule Pack is defined, implemented or scheduled by this decision.
 
 ## Financial Integrity Reference Implementation
 
@@ -178,31 +174,15 @@ AI must not emit canonical Signals, suppress a deterministic Signal or activate 
 candidate Rule. A Rule becomes active only through the documented implementation and
 review process.
 
-## Current And Future Architecture
+## Current Implementation And Extraction Tripwire
 
 Current reference implementation:
 
 ```text
 Notion
-  -> integrity evaluation in Notion
-  -> Attention views in Notion
+  -> Financial Integrity evaluation
+  -> Attention views
 ```
-
-Portable target architecture:
-
-```text
-Sources
-  -> Adapters
-  -> Canonical Model
-  -> Operational Integrity Engine
-  -> Rule Packs
-  -> Signal Store
-  -> Mission Control
-```
-
-The Signal Store is intentionally postponed. The current Rule Pack must first prove
-its operational value and portable contract. No Signal Store schema, persistence
-model or migration is authorized by this document.
 
 The extraction tripwire is explicit: evaluation should move out of Notion when
 Operational Integrity must evaluate multiple independent systems of record. Until that
@@ -210,6 +190,9 @@ condition exists, the current Notion evaluator remains the valid reference
 implementation. Crossing the tripwire requires a separately reviewed implementation;
 it must preserve Financial Integrity semantics and use the approved adapter and
 canonical-model boundaries.
+
+The Signal Store remains intentionally postponed. This document does not define its
+schema, persistence model or implementation.
 
 ## Boundaries
 
@@ -219,13 +202,12 @@ canonical-model boundaries.
 - Rule definitions are versioned and cite their canonical source.
 - Missing data is not treated as confirmed zero.
 - Attention is a view of Signals, not an independent issue tracker.
-- Mission Control consumes Signals; it does not determine Signal truth.
 - Other Rule Packs stay out of scope until separately approved.
 
 ## Architecture Reconciliation
 
 This file is the only canonical Operational Integrity specification. ADR-0007 records
-the proposed architecture decision; the Constitution records only the governing
+the accepted architecture decision; the Constitution records only the governing
 principle. Architecture-review drafts and historical implementation documents are
 noncanonical and must link here rather than restating a competing specification.
 

@@ -2,7 +2,11 @@
 
 ## Status
 
-Proposed
+Accepted
+
+Ratified by: Adventure OS Architecture Board
+
+Ratified on: 2026-07-21
 
 ## Context
 
@@ -15,7 +19,7 @@ durable platform capability. The same evaluation pattern may later apply to othe
 operational concerns. Replacing the working implementation would add risk without
 adding evidence.
 
-## Proposed Decision
+## Decision
 
 Adopt **Operational Integrity** as a cross-cutting Adventure OS platform capability.
 The **Operational Integrity Engine** is the service that implements that capability
@@ -59,11 +63,8 @@ The detailed contract is defined in
   property or view references, but documentation maps them to canonical terminology.
 - Financial Integrity becomes the first tenant of a reusable platform capability, not
   the owner of a separate issue system.
-- Mission Control Attention is the future primary presentation surface for Signals.
 - Extraction from Notion can happen incrementally after adapter and canonical-data
   boundaries exist and the multiple-systems-of-record tripwire is reached.
-- Signal persistence, acknowledgements, waivers and cross-run history remain future
-  architecture work.
 
 ## Alternatives Rejected
 
@@ -84,5 +85,5 @@ and available without model inference.
 ## Canonical Ownership
 
 [`OPERATIONAL_INTEGRITY.md`](../OPERATIONAL_INTEGRITY.md) is the single canonical
-specification. This ADR records the proposal and rationale. The Project Constitution
+specification. This ADR records the accepted decision and rationale. The Project Constitution
 contains the governing principle only; it does not duplicate the specification.

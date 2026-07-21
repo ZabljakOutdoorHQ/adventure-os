@@ -20,8 +20,8 @@ The underlying Notion record remains the source to repair. A detected Signal
 must disappear when that source record satisfies the Rule. Manual business
 judgment remains explicit and must not be replaced by inferred values.
 
-The proposed canonical Rule, Signal, Rule Pack, Readiness and Attention contract
-is defined in [`OPERATIONAL_INTEGRITY.md`](../OPERATIONAL_INTEGRITY.md). Exact
+The canonical Rule, Signal, Rule Pack, Readiness and Attention contract is
+defined in [`OPERATIONAL_INTEGRITY.md`](../OPERATIONAL_INTEGRITY.md). Exact
 Notion field and view names in this document remain implementation details.
 
 ## Severity
