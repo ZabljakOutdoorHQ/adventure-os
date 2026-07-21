@@ -181,6 +181,432 @@ Open Questions:
 - AQ-007
 - AQ-008
 
+## IMP-0008
+
+Date: 2026-07-20
+
+Sprint: Sprint 2 - Udi Ganani Golden Dataset Validation
+
+Area: Payments
+
+Decision: Populate the existing Notion Payments `Amount` field with transfer received amounts for the Udi Ganani validation dataset.
+
+Reason: The current Payments schema has only one editable amount field, and Trip Groups roll up `PAID Total` from linked Payment Amount values. Expected amounts, bank fees, payment status and payer distinctions were preserved in `docs/reference-data/UDI_GANANI_2026.md` and the validation report instead of being forced into unsupported fields.
+
+Reference Documents:
+
+- `docs/PROJECT_CONSTITUTION.md`
+- `docs/DOMAIN_MODEL.md`
+- `docs/RELATIONSHIPS.md`
+- `docs/reference-data/UDI_GANANI_2026.md`
+
+Implementation Status: Implemented
+
+Open Questions:
+
+- AQ-009
+- AQ-010
+- AQ-017
+
+## IMP-0009
+
+Date: 2026-07-20
+
+Sprint: Sprint 2.2 - Udi Trip Group Operational Page
+
+Area: Trip Group operational pages
+
+Decision: Use the existing Notion Trip Group database record as the operational hub page for the Udi Ganani validation case.
+
+Reason: The existing record already owns the canonical Trip Group properties and relations. Adding operational page content to that record keeps the team in one context without creating a duplicate Trip Group or a separate competing page.
+
+Reference Documents:
+
+- `docs/PROJECT_CONSTITUTION.md`
+- `docs/DOMAIN_MODEL.md`
+- `docs/RELATIONSHIPS.md`
+- `docs/reference-data/UDI_GANANI_2026.md`
+
+Implementation Status: Implemented
+
+Open Questions: None
+
+## IMP-0010
+
+Date: 2026-07-20
+
+Sprint: Sprint 2.2 - Udi Trip Group Operational Page
+
+Area: Operational page content
+
+Decision: Keep the Trip Snapshot, Payment Snapshot, group-level Bike Summary, Day-by-Day Operations, Accommodation Summary and Action Checklist as page content where the current Notion schema has no approved structured representation.
+
+Reason: The operational team needs these verified facts in one working page, while this sprint forbids schema changes, new entities and invented assignments. Page content preserves the facts without changing architecture.
+
+Reference Documents:
+
+- `docs/PROJECT_CONSTITUTION.md`
+- `docs/DOMAIN_MODEL.md`
+- `docs/reference-data/UDI_GANANI_2026.md`
+- `docs/notion/UDI_GANANI_VALIDATION_REPORT.md`
+
+Implementation Status: Implemented
+
+Open Questions:
+
+- AQ-019
+- AQ-020
+
+## IMP-0011
+
+Date: 2026-07-20
+
+Sprint: Sprint 2.2 - Udi Trip Group Operational Page
+
+Area: Related-record presentation
+
+Decision: Preserve existing Trip Group relations as the record boundary and use clear database links when the Notion connector cannot reliably create a linked view filtered by the current Trip Group.
+
+Reason: The connector created an inline Participants linked database block but returned an empty relation filter configuration. Presenting it as filtered would be misleading, and manually copying related records would duplicate data. Payments and Hotel Bookings remain linked through existing relations and clear database links.
+
+Reference Documents:
+
+- `docs/PROJECT_CONSTITUTION.md`
+- `docs/RELATIONSHIPS.md`
+- `docs/notion/UDI_GANANI_VALIDATION_REPORT.md`
+
+Implementation Status: Implemented with connector limitation documented
+
+Open Questions: None
+
+## IMP-0012
+
+Date: 2026-07-20
+
+Sprint: Sprint 2.3 - Complete Udi Structured Relations
+
+Area: Hotel Bookings
+
+Decision: Treat the existing central Hotel Booking records as authoritative structured records and the Trip Group Accommodation Summary as an operational summary.
+
+Reason: The three hotel stays already exist in the central Hotel Bookings database and relate to the Udi Trip Group. Keeping the page table as a summary provides operational readability without creating duplicate accommodation records or making the page the only source of truth.
+
+Reference Documents:
+
+- `docs/PROJECT_CONSTITUTION.md`
+- `docs/DOMAIN_MODEL.md`
+- `docs/RELATIONSHIPS.md`
+- `docs/reference-data/UDI_GANANI_2026.md`
+- `docs/notion/UDI_GANANI_VALIDATION_REPORT.md`
+
+Implementation Status: Implemented
+
+Open Questions: None
+
+## IMP-0013
+
+Date: 2026-07-20
+
+Sprint: Sprint 2.3 - Complete Udi Structured Relations
+
+Area: Expenses
+
+Decision: Do not create a central Expense record without a verified amount and authoritative source evidence.
+
+Reason: The Udi itinerary indicates possible expense categories but does not verify incurred amounts, dates, payment methods or paying companies. Creating placeholder or estimated records would introduce unsupported business facts and could contaminate Trip Group expense rollups.
+
+Reference Documents:
+
+- `docs/PROJECT_CONSTITUTION.md`
+- `docs/DOMAIN_MODEL.md`
+- `docs/RELATIONSHIPS.md`
+- `docs/reference-data/UDI_GANANI_2026.md`
+
+Implementation Status: Implemented by creating zero Expense records
+
+Open Questions:
+
+- AQ-021
+
+## IMP-0014
+
+Date: 2026-07-20
+
+Sprint: Sprint 2.4 - Financial Connection and Rollup Health Audit
+
+Area: Expense-to-Trip-Group financial connection
+
+Decision: Use the existing `Expenses.Trip Group` relation as a reciprocal
+relation to `Trip Groups.Expenses`, and make the existing
+`Trip Groups.Expenses total` rollup sum `Expenses.Amount` through that
+canonical relation.
+
+Reason: The previous rollup referenced a non-exposed legacy relation and did
+not receive records from the existing canonical Expense-to-Trip-Group
+relation. This repair restores the already intended
+`EXPENSE_APPLIES_TO_TRIP_GROUP` connection without introducing a new entity,
+financial concept, formula or business rule.
+
+Reference Documents:
+
+- `docs/PROJECT_CONSTITUTION.md`
+- `docs/DOMAIN_MODEL.md`
+- `docs/RELATIONSHIPS.md`
+- `docs/FINANCE_PROCUREMENT_INVESTMENTS.md`
+- `docs/notion/FINANCIAL_CONNECTION_HEALTH_AUDIT.md`
+
+Implementation Status: Implemented and verified against all 86 active Expense
+records and all 11 affected Trip Groups
+
+Open Questions:
+
+- AQ-022
+- AQ-023
+- AQ-027
+
+## IMP-0015
+
+Date: 2026-07-20
+
+Sprint: Sprint 2.5 - Canonical Financial Consolidation
+
+Area: Financial vocabulary
+
+Decision: Adopt `Program Price`, `Collected Revenue`, `Received Cash`,
+`Recorded Expenses`, `Profit` and `Settlement` as the reference implementation
+financial vocabulary, while preserving historical and supporting properties
+until their live-schema migration is separately approved and verified.
+
+Reason: The reference implementation needs one name for each financial concept
+without deleting evidence or changing historical data. The migration map is
+recorded in `docs/notion/FINANCIAL_CONNECTION_HEALTH_AUDIT.md`. The approved
+Trip Groups names were applied without changing property types, formulas,
+relations, rollups or record values. Company naming remains pending because its
+financial formulas are not yet verified.
+
+Reference Documents:
+
+- `docs/CANONICAL_FINANCIAL_MODEL.md`
+- `docs/DOMAIN_MODEL.md`
+- `docs/FINANCE_PROCUREMENT_INVESTMENTS.md`
+- `docs/notion/FINANCIAL_CONNECTION_HEALTH_AUDIT.md`
+
+Implementation Status: Implemented for seven Trip Groups properties; Company
+formula/property migration remains on hold
+
+Open Questions:
+
+- AQ-023
+- AQ-025
+- AQ-028
+
+## IMP-0016
+
+Date: 2026-07-20
+
+Sprint: Sprint 2.5 - Canonical Financial Consolidation
+
+Area: Revenue and expense source boundaries
+
+Decision: Treat `Program Price` as the sole canonical Trip Group revenue amount,
+Expenses as the sole source of `Recorded Expenses`, and Hotel Bookings as
+operational records outside the financial calculation chain.
+
+Reason: Program and hotel operations must not create parallel financial sources
+of truth. The active Notion chain already rolls Expense amounts into Trip Groups
+without using Hotel Booking costs, so no Hotel Booking schema or data change was
+required.
+
+Reference Documents:
+
+- `docs/CANONICAL_FINANCIAL_MODEL.md`
+- `docs/DOMAIN_MODEL.md`
+- `docs/RELATIONSHIPS.md`
+- `docs/notion/FINANCIAL_CONNECTION_HEALTH_AUDIT.md`
+
+Implementation Status: Boundary verified; no Notion schema change required
+
+Open Questions:
+
+- AQ-023
+- AQ-027
+
+## IMP-0017
+
+Date: 2026-07-20
+
+Sprint: Sprint 2.5 - Canonical Financial Consolidation
+
+Area: Companies and profit
+
+Decision: Keep legal-entity, operational-entity and cash-holder responsibilities
+within the existing Company concept. Define Trip Group Profit as `Collected
+Revenue - Recorded Expenses`, provisional until expense completeness is
+confirmed. Do not reinterpret Company `Current State` as Settlement.
+
+Reason: This applies the approved consolidation boundary without adding
+treasury, accounting or settlement entities and without pretending the current
+opaque Company formula is a verified settlement calculation.
+
+Reference Documents:
+
+- `docs/CANONICAL_FINANCIAL_MODEL.md`
+- `docs/DOMAIN_MODEL.md`
+- `docs/RELATIONSHIPS.md`
+- `docs/notion/FINANCIAL_CONNECTION_HEALTH_AUDIT.md`
+
+Implementation Status: Model boundary documented; live Profit formula migration
+on hold after completed-group proof
+
+Open Questions:
+
+- AQ-023
+- AQ-025
+- AQ-028
+
+## IMP-0018
+
+Date: 2026-07-20
+
+Sprint: Sprint 2.5 - Canonical Financial Consolidation
+
+Area: Trip Groups financial presentation
+
+Decision: Apply only the approved semantic-neutral Trip Groups renames:
+`Program Price`, `Collected Revenue`, `Recorded Expenses`, `Profit`, `Program
+Price Source`, `Program Price Status` and `Program Price Notes`. Preserve
+`Accepted Quote Total`, the existing Profit formula and all Company properties
+and formulas unchanged.
+
+Reason: The names align the active Trip Group presentation with the approved
+financial vocabulary. The MENDY completed-group proof did not establish complete
+hotel Expenses and showed that 3,204.00 EUR of Hub link Payments has no Company
+rollup branch, so formula activation would present unverified financial results
+as authoritative.
+
+Reference Documents:
+
+- `docs/CANONICAL_FINANCIAL_MODEL.md`
+- `docs/DOMAIN_MODEL.md`
+- `docs/RELATIONSHIPS.md`
+- `docs/notion/FINANCIAL_CONNECTION_HEALTH_AUDIT.md`
+
+Implementation Status: Implemented and re-fetched. Property types, relation and
+rollup targets, formula code identifiers and existing record values were
+preserved.
+
+Open Questions:
+
+- AQ-023
+- AQ-025
+- AQ-027
+- AQ-028
+
+## IMP-0019
+
+Date: 2026-07-20
+
+Sprint: Full Financial Reconciliation Audit and Repair
+
+Area: Company financial aggregation
+
+Decision: Calculate Company `Payments TOTAL` as a direct sum of every related
+Payment `Amount`, calculate `Expence TOTAL` as a direct sum of every related
+Expense `Amount`, and calculate `Current State` as `Payments TOTAL - Expence
+TOTAL`. Keep Cash, Bank and Wise rollups as method-specific supporting fields.
+Keep `Hub link` as its own Payment Method and include it in the all-method total
+without reclassifying it.
+
+Reason: Direct source rollups preserve all payment methods, remove dependence on
+incomplete method branches, and avoid double counting. `Current State` is the
+Company's recorded cash position under the existing model; it is not Settlement
+or final Profit. The change was explicitly approved after the all-group
+reconciliation demonstrated the remaining expense-completeness limits.
+
+Reference Documents:
+
+- `docs/CANONICAL_FINANCIAL_MODEL.md`
+- `docs/DOMAIN_MODEL.md`
+- `docs/RELATIONSHIPS.md`
+- `docs/notion/FINANCIAL_CONNECTION_HEALTH_AUDIT.md`
+- `docs/notion/FULL_FINANCIAL_RECONCILIATION.md`
+
+Implementation Status: Implemented and re-fetched. Company rollup definitions
+are verified, 77 Payments and 86 Expenses remain present, and source-record
+totals reconcile. Computed numeric values remain opaque through the connector.
+
+Open Questions:
+
+- AQ-023
+- AQ-027
+- AQ-028
+
+## IMP-0020
+
+Date: 2026-07-20
+
+Sprint: Multiday Data Hygiene Center
+
+Area: Data-quality control layer
+
+Decision: Add explainable, source-backed health fields and issue views to the
+existing Multiday reference databases. Use formulas and rollups for structural
+checks, explicit exception classifications for approved source cases, and
+manual Trip Group review fields for completeness and final sign-off.
+
+Reason: Missing fields and broken relations should disappear from issue views
+when the source record is corrected, while business judgments such as Company
+assignment, financial completeness and final verification must not be inferred
+by formulas.
+
+Reference Documents:
+
+- `docs/notion/DATA_HYGIENE_VALIDATION_SPEC.md`
+- `docs/notion/MULTIDAY_DATA_HYGIENE_CENTER.md`
+- `docs/notion/FULL_FINANCIAL_RECONCILIATION.md`
+- `docs/PROJECT_CONSTITUTION.md`
+
+Implementation Status: Implemented and re-fetched in
+`2026 Multiday - TEST / MCP CLEANUP`. All 14 Trip Groups were classified and
+none was marked ready for sign-off.
+
+Open Questions:
+
+- AQ-023
+- AQ-027
+- AQ-028
+
+## IMP-0021
+
+Date: 2026-07-20
+
+Sprint: Multiday Data Hygiene Center
+
+Area: Hotel Booking reconciliation
+
+Decision: Use a one-way `Hotel Bookings.Related Expense` relation and explicit
+reconciliation status as operational evidence only. Keep Expenses as the sole
+financial cost source.
+
+Reason: The control layer needs to expose missing and ambiguous hotel costs
+without converting Hotel Bookings into Expenses, copying estimates into
+financial totals or introducing a second expense source.
+
+Reference Documents:
+
+- `docs/CANONICAL_FINANCIAL_MODEL.md`
+- `docs/notion/DATA_HYGIENE_VALIDATION_SPEC.md`
+- `docs/notion/MULTIDAY_DATA_HYGIENE_CENTER.md`
+- `docs/notion/FULL_FINANCIAL_RECONCILIATION.md`
+
+Implementation Status: Implemented and re-fetched. Fourteen Hotel Bookings are
+matched to proven Expenses, four retain candidate Expenses while blocked for a
+business decision, and no Expense record or amount was created or changed.
+
+Open Questions:
+
+- AQ-027
+
 ## Architecture Questions
 
 ### AQ-001
